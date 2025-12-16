@@ -1,0 +1,47 @@
+{
+  "function_name": "inflateEnd",
+  "function_code": "FC_ZLIB_INFLATEEND",
+  "function_location": "zlib.h:525",
+  "category": "Compression", 
+  "priority": "Critical",
+  "input_structure": {
+    "strm": "z_streamp - pointer to z_stream structure to cleanup"
+  },
+  "validation_conditions": [
+    "strm != NULL",
+    "strm->state != NULL (must be initialized)"
+  ],
+  "error_codes": [
+    "Z_OK",
+    "Z_STREAM_ERROR"
+  ],
+  "side_effects": [
+    "frees all dynamically allocated data structures",
+    "discards any unprocessed input",
+    "does not flush pending output",
+    "invalidates strm->state"
+  ],
+  "constraints": [
+    "requires inflateInit() called first",
+    "stream should not be used after inflateEnd()",
+    "safe to call multiple times on same stream"
+  ],
+  "fuzzing_strategy": {
+    "input_generation": [
+      "properly initialized stream",
+      "stream with pending data",
+      "stream in various states (init, active, finished, error)",
+      "stream with custom allocators", 
+      "NULL pointer",
+      "already ended stream",
+      "corrupted stream state"
+    ],
+    "coverage_targets": [
+      "normal cleanup path",
+      "error detection paths",
+      "memory deallocation code",
+      "state validation",
+      "double-free protection"
+    ]
+  }
+}
