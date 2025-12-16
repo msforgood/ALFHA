@@ -62,11 +62,13 @@ HARNESSES=(
     "deflateSetDictionary_harness"
 )
 
-# Coverage build flags - instrument both fuzzer and library
-COV_FLAGS="-fprofile-instr-generate -fcoverage-mapping -fsanitize=fuzzer -I$TARGET_DIR -L$TARGET_DIR -lz -O2 -g"
+# Coverage build flags - static link for proper coverage (order matters!)
+COV_FLAGS="-fprofile-instr-generate -fcoverage-mapping -fsanitize=fuzzer -I$TARGET_DIR -O2 -g"
+STATIC_LIB="$TARGET_DIR/libz.a"
 
 echo "🔧 Building harnesses with coverage instrumentation..."
 echo "Flags: $COV_FLAGS"
+echo "Static lib: $STATIC_LIB"
 echo ""
 
 SUCCESS_COUNT=0
@@ -76,13 +78,13 @@ for harness in "${HARNESSES[@]}"; do
     if [ -f "${harness}.c" ]; then
         echo -n "Building $harness with coverage... "
         
-        if clang $COV_FLAGS "${harness}.c" -o "$COV_OUT_DIR/$harness" 2>/dev/null; then
+        if clang $COV_FLAGS "${harness}.c" "$STATIC_LIB" -o "$COV_OUT_DIR/$harness" 2>/dev/null; then
             echo "✅"
             SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
         else
             echo "❌"
             echo "  Error details:"
-            clang $COV_FLAGS "${harness}.c" -o "$COV_OUT_DIR/$harness" 2>&1 | sed 's/^/    /'
+            clang $COV_FLAGS "${harness}.c" "$STATIC_LIB" -o "$COV_OUT_DIR/$harness" 2>&1 | sed 's/^/    /'
             FAIL_COUNT=$((FAIL_COUNT + 1))
         fi
     else
