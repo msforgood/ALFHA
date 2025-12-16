@@ -1,0 +1,24 @@
+<target-root>/
+├── target/                      # (읽기 전용) 타겟 원본 소스
+│   ├── src/ ...
+│   ├── include/ ...
+│   ├── CMakeLists.txt / Makefile / configure ...
+│   └── README* ...
+│
+├── analysis/
+│   ├── target.md                # 타겟 구조/모듈/핵심 객체 분석
+│   ├── results/
+│   │   └── functions.csv        # 함수 리스트 + 우선순위 + 상태
+│   └── logs/
+│       ├── build_run.md         # 빌드/실행 검증 기록
+│       └── iteration.md         # 실패-수정-재검증 루프 기록
+│
+├── fuzzers/
+│   ├── baseline/                # (있다면) 기존 베이스라인 보존
+│   └── alfha/
+│       ├── spec/                # <function>_spec.json
+│       ├── harness/             # 함수별 하니스(향후)
+│       └── build/               # 타겟별 빌드 설정/캐시(향후)
+│
+├── build/                        # 빌드 산출물(자동 생성, 삭제해도 재생성 가능)
+└── README.md                     # 이번에 LLM이 생성할 지시 문서

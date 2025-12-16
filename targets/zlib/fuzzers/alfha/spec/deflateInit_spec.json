@@ -1,0 +1,45 @@
+{
+  "function_name": "deflateInit",
+  "function_code": "FC_ZLIB_DEFLATEINIT",
+  "function_location": "zlib.h:232",
+  "category": "Compression",
+  "priority": "Critical",
+  "input_structure": {
+    "strm": "z_streamp - pointer to z_stream structure",
+    "level": "int - compression level (0-9, Z_DEFAULT_COMPRESSION)"
+  },
+  "validation_conditions": [
+    "strm != NULL",
+    "level == Z_DEFAULT_COMPRESSION || (level >= 0 && level <= 9)"
+  ],
+  "error_codes": [
+    "Z_OK",
+    "Z_MEM_ERROR", 
+    "Z_STREAM_ERROR",
+    "Z_VERSION_ERROR"
+  ],
+  "side_effects": [
+    "initializes strm->state",
+    "sets strm->zalloc/zfree if NULL",
+    "initializes strm->total_in, total_out, adler, msg"
+  ],
+  "constraints": [
+    "strm must be allocated before call",
+    "zalloc/zfree can be NULL (uses default)",
+    "must call deflateEnd() after use"
+  ],
+  "fuzzing_strategy": {
+    "input_generation": [
+      "valid z_stream structure",
+      "compression levels: -1, 0-9, invalid values",
+      "NULL pointer testing",
+      "pre-initialized vs clean z_stream"
+    ],
+    "coverage_targets": [
+      "memory allocation paths",
+      "level validation",
+      "default allocator assignment",
+      "state initialization"
+    ]
+  }
+}

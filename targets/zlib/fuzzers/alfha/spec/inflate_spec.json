@@ -1,0 +1,59 @@
+{
+  "function_name": "inflate",
+  "function_code": "FC_ZLIB_INFLATE", 
+  "function_location": "zlib.h:405",
+  "category": "Compression",
+  "priority": "Critical",
+  "input_structure": {
+    "strm": "z_streamp - pointer to initialized z_stream structure",
+    "flush": "int - flush mode (Z_NO_FLUSH, Z_SYNC_FLUSH, Z_FINISH, Z_BLOCK, Z_TREES)"
+  },
+  "validation_conditions": [
+    "strm != NULL",
+    "strm->state != NULL (must be initialized)",
+    "flush in {Z_NO_FLUSH, Z_SYNC_FLUSH, Z_FINISH, Z_BLOCK, Z_TREES}",
+    "next_in/next_out pointers valid when avail_in/avail_out > 0"
+  ],
+  "error_codes": [
+    "Z_OK",
+    "Z_STREAM_END",
+    "Z_NEED_DICT", 
+    "Z_DATA_ERROR",
+    "Z_STREAM_ERROR",
+    "Z_BUF_ERROR",
+    "Z_MEM_ERROR"
+  ],
+  "side_effects": [
+    "updates strm->next_in and strm->avail_in",
+    "updates strm->next_out and strm->avail_out",
+    "updates strm->total_in and strm->total_out", 
+    "updates strm->adler checksum",
+    "sets strm->data_type with block/bit information",
+    "modifies internal decompression state"
+  ],
+  "constraints": [
+    "requires inflateInit() called first",
+    "must provide input or consume output to avoid no progress",
+    "Z_FINISH requires sufficient output buffer for complete decompression",
+    "should continue until Z_STREAM_END or error"
+  ],
+  "fuzzing_strategy": {
+    "input_generation": [
+      "various compressed data formats (zlib, gzip, raw deflate)",
+      "different flush modes",
+      "incremental data feeding",
+      "corrupted/malformed compressed data",
+      "edge cases: empty input, truncated data",
+      "invalid flush values",
+      "boundary conditions for buffer sizes"
+    ],
+    "coverage_targets": [
+      "all flush mode code paths",
+      "format detection branches",
+      "decompression algorithm paths", 
+      "error handling and recovery",
+      "block boundary processing",
+      "checksum validation"
+    ]
+  }
+}
