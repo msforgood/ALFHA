@@ -1,0 +1,38 @@
+INFO: Running with entropic power schedule (0xFF, 100).
+INFO: Seed: 668647540
+INFO: Loaded 1 modules   (66 inline 8-bit counters): 66 [0x563e40073f80, 0x563e40073fc2), 
+INFO: Loaded 1 PC tables (66 PCs): 66 [0x563e40073fc8,0x563e400743e8), 
+INFO:        0 files found in corpus/uncompress
+INFO: -max_len is not provided; libFuzzer will not generate inputs larger than 4096 bytes
+INFO: A corpus is not provided, starting from an empty corpus
+#2	INITED cov: 2 ft: 2 corp: 1/1b exec/s: 0 rss: 26Mb
+UndefinedBehaviorSanitizer:DEADLYSIGNAL
+==3570406==ERROR: UndefinedBehaviorSanitizer: SEGV on unknown address 0x000000000000 (pc 0x7f0ad16572fe bp 0x7ffd7b353500 sp 0x7ffd7b353440 T3570406)
+==3570406==The signal is caused by a READ memory access.
+==3570406==Hint: address points to the zero page.
+    #0 0x7f0ad16572fe in uncompress2 (/lib/x86_64-linux-gnu/libz.so.1+0x112fe) (BuildId: bbefe2bbdc367b0c3cfbfcf80c579930496fb963)
+    #1 0x7f0ad1657518 in uncompress (/lib/x86_64-linux-gnu/libz.so.1+0x11518) (BuildId: bbefe2bbdc367b0c3cfbfcf80c579930496fb963)
+    #2 0x563e40050a9f in LLVMFuzzerTestOneInput (/home/minseo/alfha/targets/zlib/fuzzers/alfha/harnesses/uncompress_harness+0x6ba9f) (BuildId: 27b099dbbc8c4da758681450a246bf4b29cd66cc)
+    #3 0x563e4000c9fa in fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long) (/home/minseo/alfha/targets/zlib/fuzzers/alfha/harnesses/uncompress_harness+0x279fa) (BuildId: 27b099dbbc8c4da758681450a246bf4b29cd66cc)
+    #4 0x563e4000c0c5 in fuzzer::Fuzzer::RunOne(unsigned char const*, unsigned long, bool, fuzzer::InputInfo*, bool, bool*) (/home/minseo/alfha/targets/zlib/fuzzers/alfha/harnesses/uncompress_harness+0x270c5) (BuildId: 27b099dbbc8c4da758681450a246bf4b29cd66cc)
+    #5 0x563e4000d899 in fuzzer::Fuzzer::MutateAndTestOne() (/home/minseo/alfha/targets/zlib/fuzzers/alfha/harnesses/uncompress_harness+0x28899) (BuildId: 27b099dbbc8c4da758681450a246bf4b29cd66cc)
+    #6 0x563e4000e355 in fuzzer::Fuzzer::Loop(std::vector<fuzzer::SizedFile, std::allocator<fuzzer::SizedFile> >&) (/home/minseo/alfha/targets/zlib/fuzzers/alfha/harnesses/uncompress_harness+0x29355) (BuildId: 27b099dbbc8c4da758681450a246bf4b29cd66cc)
+    #7 0x563e3fffb732 in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char const*, unsigned long)) (/home/minseo/alfha/targets/zlib/fuzzers/alfha/harnesses/uncompress_harness+0x16732) (BuildId: 27b099dbbc8c4da758681450a246bf4b29cd66cc)
+    #8 0x563e40026bd6 in main (/home/minseo/alfha/targets/zlib/fuzzers/alfha/harnesses/uncompress_harness+0x41bd6) (BuildId: 27b099dbbc8c4da758681450a246bf4b29cd66cc)
+    #9 0x7f0ad0e2a1c9 in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #10 0x7f0ad0e2a28a in __libc_start_main csu/../csu/libc-start.c:360:3
+    #11 0x563e3ffefb64 in _start (/home/minseo/alfha/targets/zlib/fuzzers/alfha/harnesses/uncompress_harness+0xab64) (BuildId: 27b099dbbc8c4da758681450a246bf4b29cd66cc)
+
+UndefinedBehaviorSanitizer can not provide additional info.
+SUMMARY: UndefinedBehaviorSanitizer: SEGV (/lib/x86_64-linux-gnu/libz.so.1+0x112fe) (BuildId: bbefe2bbdc367b0c3cfbfcf80c579930496fb963) in uncompress2
+==3570406==ABORTING
+MS: 3 ShuffleBytes-CopyPart-InsertRepeatedBytes-; base unit: adc83b19e793491b1c6ea0fd8b46cd9f32e592fc
+0xff,0xff,0xff,0xff,0xff,0xff,0xa,0xa,
+\377\377\377\377\377\377\012\012
+artifact_prefix='./'; Test unit written to ./crash-495895bbdb9640cc90075248ac0f5c7cae861e81
+Base64: ////////Cgo=
+stat::number_of_executed_units: 420
+stat::average_exec_per_sec:     210
+stat::new_units_added:          0
+stat::slowest_unit_time_sec:    0
+stat::peak_rss_mb:              28

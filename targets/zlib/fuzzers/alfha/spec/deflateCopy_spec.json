@@ -1,0 +1,81 @@
+{
+  "function_name": "deflateCopy",
+  "function_code": "FC_ZLIB_DEFLATECOPY",
+  "function_location": "zlib.h:684",
+  "category": "Compression",
+  "priority": "High",
+  "input_structure": {
+    "dest": "z_streamp - pointer to destination z_stream structure",
+    "source": "z_streamp - pointer to source z_stream structure"
+  },
+  "validation_conditions": [
+    "dest != NULL",
+    "source != NULL", 
+    "source->state != NULL (must be initialized)",
+    "dest != source (cannot copy to self)",
+    "source stream must be in consistent state"
+  ],
+  "error_codes": [
+    "Z_OK",
+    "Z_MEM_ERROR",
+    "Z_STREAM_ERROR"
+  ],
+  "side_effects": [
+    "allocates new internal compression state for dest",
+    "copies complete internal state from source to dest",
+    "duplicates sliding window and all compression parameters",
+    "dest becomes independent copy of source", 
+    "preserves current position and compression progress",
+    "copies allocator functions (zalloc/zfree) from source"
+  ],
+  "constraints": [
+    "source stream must be properly initialized",
+    "dest stream can be uninitialized (will be set up by function)",
+    "both streams must be freed separately with deflateEnd()",
+    "memory usage doubles due to state duplication",
+    "large memory consumption for complex compression states"
+  ],
+  "dependencies": [
+    "source stream must be initialized with deflateInit/deflateInit2",
+    "sufficient memory must be available for state duplication",
+    "dest stream structure must be allocated"
+  ],
+  "fuzzing_strategy": {
+    "input_generation": [
+      "NULL dest pointer",
+      "NULL source pointer",
+      "uninitialized source stream",
+      "corrupted source stream state",
+      "self-copy attempt (dest == source)",
+      "source stream with various compression states",
+      "source stream at different compression stages",
+      "source stream with custom allocators",
+      "source stream with large sliding window",
+      "source stream with dictionary set",
+      "memory allocation failure simulation",
+      "partially processed source streams"
+    ],
+    "coverage_targets": [
+      "pointer validation for both streams",
+      "source state consistency validation",
+      "memory allocation for state duplication", 
+      "complete state copying logic",
+      "allocator function copying",
+      "sliding window duplication",
+      "compression parameter copying",
+      "error handling for allocation failures",
+      "self-reference detection",
+      "state independence verification"
+    ],
+    "vulnerability_focus": [
+      "memory allocation size calculations for state duplication",
+      "buffer overflow during state copying",
+      "double-free vulnerabilities if copy fails partially",
+      "use-after-free if source state corrupted",
+      "integer overflow in memory size calculations",
+      "state inconsistency leading to crashes",
+      "memory leaks on partial copy failures",
+      "corruption of internal pointers during copy"
+    ]
+  }
+}

@@ -1,0 +1,31 @@
+INFO: Running with entropic power schedule (0xFF, 100).
+INFO: Seed: 666910809
+INFO: Loaded 1 modules   (21 inline 8-bit counters): 21 [0x563ba5fb4f70, 0x563ba5fb4f85), 
+INFO: Loaded 1 PC tables (21 PCs): 21 [0x563ba5fb4f88,0x563ba5fb50d8), 
+INFO:        0 files found in corpus/deflateInit
+INFO: -max_len is not provided; libFuzzer will not generate inputs larger than 4096 bytes
+INFO: A corpus is not provided, starting from an empty corpus
+#2	INITED cov: 2 ft: 2 corp: 1/1b exec/s: 0 rss: 27Mb
+#12	NEW    cov: 9 ft: 9 corp: 2/5b lim: 4 exec/s: 0 rss: 27Mb L: 4/4 MS: 5 ChangeByte-ShuffleBytes-InsertByte-InsertByte-InsertByte-
+#319	NEW    cov: 10 ft: 10 corp: 3/10b lim: 6 exec/s: 0 rss: 27Mb L: 5/5 MS: 2 CrossOver-CMP- DE: "\377\377\377\377"-
+#640	REDUCE cov: 10 ft: 10 corp: 3/9b lim: 8 exec/s: 0 rss: 27Mb L: 4/4 MS: 1 EraseBytes-
+#1563	NEW    cov: 12 ft: 12 corp: 4/25b lim: 17 exec/s: 0 rss: 27Mb L: 16/16 MS: 3 InsertByte-CopyPart-InsertRepeatedBytes-
+#1592	NEW    cov: 13 ft: 13 corp: 5/42b lim: 17 exec/s: 0 rss: 27Mb L: 17/17 MS: 4 CopyPart-ChangeBit-PersAutoDict-PersAutoDict- DE: "\377\377\377\377"-"\377\377\377\377"-
+#1693	REDUCE cov: 13 ft: 13 corp: 5/41b lim: 17 exec/s: 0 rss: 27Mb L: 16/16 MS: 1 EraseBytes-
+#2915	NEW    cov: 16 ft: 16 corp: 6/69b lim: 29 exec/s: 2915 rss: 27Mb L: 28/28 MS: 2 ChangeBinInt-CopyPart-
+#2970	NEW    cov: 18 ft: 18 corp: 7/97b lim: 29 exec/s: 2970 rss: 27Mb L: 28/28 MS: 5 CopyPart-ChangeByte-ChangeBinInt-ChangeByte-CopyPart-
+#3320	REDUCE cov: 19 ft: 19 corp: 8/125b lim: 29 exec/s: 3320 rss: 27Mb L: 28/28 MS: 5 InsertRepeatedBytes-InsertByte-InsertByte-ChangeBinInt-CopyPart-
+#8192	pulse  cov: 19 ft: 19 corp: 8/125b lim: 74 exec/s: 2730 rss: 27Mb
+#12871	REDUCE cov: 20 ft: 20 corp: 9/244b lim: 122 exec/s: 2145 rss: 27Mb L: 119/119 MS: 1 InsertRepeatedBytes-
+#14271	REDUCE cov: 20 ft: 20 corp: 9/243b lim: 135 exec/s: 2378 rss: 27Mb L: 118/118 MS: 5 EraseBytes-InsertRepeatedBytes-PersAutoDict-ChangeByte-CrossOver- DE: "\377\377\377\377"-
+#15603	REDUCE cov: 20 ft: 20 corp: 9/242b lim: 142 exec/s: 2229 rss: 27Mb L: 117/117 MS: 2 ChangeByte-EraseBytes-
+#16384	pulse  cov: 20 ft: 20 corp: 9/242b lim: 149 exec/s: 2048 rss: 27Mb
+#32768	pulse  cov: 20 ft: 20 corp: 9/242b lim: 309 exec/s: 2340 rss: 27Mb
+#65536	pulse  cov: 20 ft: 20 corp: 9/242b lim: 634 exec/s: 2730 rss: 27Mb
+#131072	pulse  cov: 20 ft: 20 corp: 9/242b lim: 1290 exec/s: 2912 rss: 27Mb
+==3570398== libFuzzer: run interrupted; exiting
+stat::number_of_executed_units: 175622
+stat::average_exec_per_sec:     2976
+stat::new_units_added:          12
+stat::slowest_unit_time_sec:    0
+stat::peak_rss_mb:              27
