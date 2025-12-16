@@ -75,27 +75,30 @@ echo ""
 # Generate reports
 echo "📊 Generating stable coverage reports..."
 
-# Summary report
+# Summary report with explicit source files
 "$LLVM_COV" report "$REFERENCE_BINARY" \
     -instr-profile="$MERGED_PROFDATA" \
     -path-equivalence="$ZLIB_SRC","$ZLIB_SRC" \
+    "$ZLIB_SRC"/*.c "$HARNESS_DIR"/*.c \
     > "$REPORT_DIR/stable_summary.txt"
 
-# Detailed report  
+# Detailed report with explicit source files
 "$LLVM_COV" show "$REFERENCE_BINARY" \
     -instr-profile="$MERGED_PROFDATA" \
     -show-line-counts-or-regions \
     -show-branches=count \
     -path-equivalence="$ZLIB_SRC","$ZLIB_SRC" \
+    "$ZLIB_SRC"/*.c "$HARNESS_DIR"/*.c \
     > "$REPORT_DIR/stable_detailed.txt"
 
-# HTML report
+# HTML report with explicit source files  
 "$LLVM_COV" show "$REFERENCE_BINARY" \
     -instr-profile="$MERGED_PROFDATA" \
     -format=html \
     -output-dir="$REPORT_DIR/html" \
     -Xdemangler=c++filt \
-    -path-equivalence="$ZLIB_SRC","$ZLIB_SRC"
+    -path-equivalence="$ZLIB_SRC","$ZLIB_SRC" \
+    "$ZLIB_SRC"/*.c "$HARNESS_DIR"/*.c
 
 # Extract statistics
 TOTAL_COVERAGE=$(grep -E "^TOTAL" "$REPORT_DIR/stable_summary.txt" | tail -1)

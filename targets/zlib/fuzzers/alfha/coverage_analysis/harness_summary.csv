@@ -1,0 +1,16 @@
+harness,regions_total,regions_missed,region_coverage,functions_total,functions_missed,function_coverage,lines_total,lines_missed,line_coverage
+compress2_harness,83,83,0.00%,1,1,0.00%,107,107,0.00%
+compress_harness,83,83,0.00%,1,1,0.00%,107,107,0.00%
+deflateCopy_harness,0,0,-,0,0,-,0,0,-
+deflateEnd_harness,83,83,0.00%,1,1,0.00%,107,107,0.00%
+deflate_harness,83,12,85.54%,1,0,100.00%,107,18,83.18%
+deflateInit2_harness,0,0,-,0,0,-,0,0,-
+deflateInit_harness,0,0,-,0,0,-,0,0,-
+deflateSetDictionary_harness,0,0,-,0,0,-,0,0,-
+inflateEnd_harness,83,83,0.00%,1,1,0.00%,107,107,0.00%
+inflate_harness,0,0,-,0,0,-,0,0,-
+inflateInit2_harness,83,83,0.00%,1,1,0.00%,107,107,0.00%
+inflateInit_harness,83,83,0.00%,1,1,0.00%,107,107,0.00%
+inflateSetDictionary_harness,0,0,-,0,0,-,0,0,-
+uncompress2_harness,83,83,0.00%,1,1,0.00%,107,107,0.00%
+uncompress_harness,83,83,0.00%,1,1,0.00%,107,107,0.00%

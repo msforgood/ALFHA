@@ -1,0 +1,37 @@
+# Multi-Binary Coverage Analysis
+Generated: Tue Dec 16 10:43:47 AM UTC 2025
+
+## Individual Harness Coverage
+
+### deflate_harness
+```
+TOTAL                                              83                12    85.54%           1                 0   100.00%         107                18    83.18%          38                14    63.16%
+```
+
+### deflateInit2_harness
+```
+TOTAL                                                  147                 5    96.60%           1                 0   100.00%         162                 9    94.44%          60                 9    85.00%
+```
+
+### deflateInit_harness
+```
+TOTAL                                                  51                 1    98.04%           1                 0   100.00%          57                 1    98.25%          24                 1    95.83%
+```
+
+### inflate_harness
+```
+TOTAL                                             129                12    90.70%           1                 0   100.00%         150                17    88.67%          60                18    70.00%
+```
+
+### inflateSetDictionary_harness
+```
+TOTAL                                                           97                 6    93.81%           1                 0   100.00%         113                 6    94.69%          44                11    75.00%
+```
+
+## Aggregate Statistics (Approximate)
+
+- **Total Regions Instrumented**: ~507
+- **Total Lines Instrumented**: ~589
+- **Total Functions Instrumented**: ~5
+
+*Note: These are approximate totals as some code may be shared between harnesses*

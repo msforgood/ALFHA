@@ -48,7 +48,45 @@ zlib/target/
 3. **경계값 검증**: 버퍼 크기, 오프셋, 길이 파라미터가 있는 함수
 4. **포맷 파싱**: gzip 헤더, deflate 블록 구조 처리 함수
 
+## 취약점 중심 하니스 설계 원칙
+
+### 실제 파일 오디팅 기반 타겟 선정
+하니스 작성 시 다음과 같은 실제 취약점 패턴을 우선 타겟:
+
+**1. 버퍼 오버플로우/언더플로우 위험 지점:**
+- `deflate.c`: `deflate_stored()`, `deflate_fast()` - 압축 버퍼 경계 검사
+- `inflate.c`: `inflate_fast()`, `inflate_table()` - 해제 시 메모리 접근
+- `trees.c`: `build_tree()` - 허프만 트리 구성 시 배열 접근
+
+**2. 정수 오버플로우/언더플로우:**
+- `compress.c`/`uncompr.c`: `destLen` 계산 로직
+- `gzlib.c`: 파일 크기 처리 및 오프셋 계산
+- `adler32.c`/`crc32.c`: 체크섬 계산 시 길이 처리
+
+**3. 상태 머신 취약점:**
+- `inflate.c`: 상태 전이 검증 부족 (`inflate_state` 조작)
+- `deflate.c`: 플러시 모드 조합 처리
+- `gzlib.c`: 파일 핸들 상태 불일치
+
+**4. 메모리 관리 취약점:**
+- Custom allocator 사용 시 `zalloc`/`zfree` 포인터 검증
+- 스트림 객체 이중 해제 (`deflateEnd`/`inflateEnd`)
+- 메모리 정렬 문제 (`inflate_table` 동적 할당)
+
+**5. 입력 검증 부족:**
+- 압축 데이터 헤더 파싱 (gzip, zlib format)
+- 윈도우 크기, 메모리 레벨 범위 검사
+- 사전(dictionary) 크기 및 내용 검증
+
+### 하니스별 취약점 타겟팅 전략
+각 하니스는 다음과 같은 공격 벡터를 집중 테스트:
+- **deflate/inflate**: 악의적 압축 데이터, 경계값 크기, 상태 조작
+- **compress/uncompress**: 극한 크기 입력, destLen 조작
+- **init/end 함수**: 부분 초기화, 이중 호출, 포인터 조작
+- **gzip 함수**: 파일 형식 조작, 헤더/푸터 변조
+
 ## 목표
+- **취약점 발견 극대화**: 실제 보안 이슈가 발생할 수 있는 코드 경로 집중
 - **커버리지 극대화**: 각 모듈별 핵심 코드 경로 도달
 - **빌드 및 실행 가능성 보장**: 모든 하니스가 실제 동작 검증됨
 
@@ -140,7 +178,7 @@ zlib/target/ - 총 47개 .c 파일, 15개 .h 파일
 ## 2. 타겟 함수 리스트화
 
 ### 함수 리스트 파일 경로 명시
-- **경로**: `analysis/results/functions.csv`
+- **경로**: `functions.csv`
 - **생성 방식**: zlib.h에서 ZEXTERN 매크로로 표시된 public API 추출
 
 ### CSV 컬럼 스키마 명시
@@ -240,28 +278,70 @@ README.md의 마지막에는 **이번 작업에서 생성·수정되는 파일�
 아래 형식의 명령어를 반드시 출력한다.
 
 ```bash
-git add analysis/target.md
-git add analysis/results/functions.csv
+git add functions.csv
 git add analysis/logs/build_run.md
-git add analysis/logs/iteration.md
+git add analysis/logs/coverage_report_*.md
 git add fuzzers/alfha/spec/
+git add fuzzers/alfha/harnesses/
+git add fuzzers/alfha/build.sh
+git add fuzzers/alfha/run.sh
+git add fuzzers/alfha/README.md
 
-git commit -m "feat: initialize ALFHA fuzzing workflow for <target_name>" \
-  -m "- target: <target_name>" \
-  -m "- functions: prioritized fuzzing candidate list" \
-  -m "- spec: initial function specification(s)" \
-  -m "- verified: build and execution feasibility loop completed"
+git commit -m "feat: initialize ALFHA fuzzing workflow for zlib" \
+  -m "- target: zlib 1.3.1.2" \
+  -m "- functions: 8 Critical priority functions completed" \
+  -m "- spec: complete function specifications with validation" \
+  -m "- harnesses: working fuzzing harnesses with excellent performance" \
+  -m "- verified: build and execution feasibility loop completed" \
+  -m "- artifacts: proper crash artifact management system"
 ```
 
 ### 2) 퍼저 빌드 및 실행 명령어
 
-README.md에는 이 퍼저를 실제로 가동할 수 있는 명령어를 반드시 포함한다.
+**퍼저 빌드:**
+```bash
+cd fuzzers/alfha
+./build.sh
+```
 
-- 퍼저 실행
-- coverage 확인
+**퍼저 실행 (단일 함수):**
+```bash
+# inflate 함수 5분간 퍼징
+./run.sh -t 300 inflate_harness
 
-형식 예시는 아래와 같으며, 타겟 구조에 맞게 실제 실행 가능한 명령으로 조정해야 한다.
-퍼저 빌드 - 퍼저 실행 (libFuzzer) - 커버리지 수집 및 자동 리포트 생성
+# deflate 함수 병렬 실행 (워커 4개, 10분)  
+./run.sh -w 4 -t 600 deflate_harness
+```
+
+**퍼저 배치 실행:**
+```bash
+# 모든 Critical 함수 순차 실행 (각 2분)
+./run.sh --all -t 120
+
+# 모든 함수 병렬 실행 (각 30분, 워커 4개)
+./run.sh --parallel -w 4 -t 1800
+```
+
+**커버리지 및 결과 확인:**
+```bash
+# 실행 결과 확인
+ls -la artifacts/*/
+
+# 최신 커버리지 리포트  
+cat analysis/logs/coverage_report_*.md | tail -1
+
+# 크래시 아티팩트 분석
+find artifacts/ -name "crash-*" -exec hexdump -C {} \; | head -20
+```
+
+**성능 모니터링:**
+```bash
+# 실시간 실행 상태
+watch 'ps aux | grep harness'
+
+# 리소스 사용량
+top -p $(pgrep -f harness)
+```
 
 ---
 
@@ -280,8 +360,7 @@ README.md에는 이 퍼저를 실제로 가동할 수 있는 명령어를 반드
 
 다음 산출물이 **정확한 경로로 정의**되며, 생성 자체가 목표임:
 
-- **분석 문서**: `analysis/target.md`
-- **함수 리스트**: `analysis/results/functions.csv`  
+- **함수 리스트**: `functions.csv`  
 - **스펙 파일**: `fuzzers/alfha/spec/<function>_spec.json`
 - **빌드/실행 기록**: `analysis/logs/build_run.md`
 - **수정 루프 기록**: `analysis/logs/iteration.md`

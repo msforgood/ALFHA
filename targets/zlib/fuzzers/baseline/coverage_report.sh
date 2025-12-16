@@ -9,7 +9,7 @@ ZLIB_SRC="/home/minseo/alfha/targets/zlib/target"
 
 FUZZER="${1:-compress_fuzzer}"
 CORPUS_DIR="${2:-$ROOT/corpus/$FUZZER}"
-RUN_SECONDS="${3:-5}"
+RUN_SECONDS="${3:-600}"
 
 mkdir -p "$REPORT_DIR/$FUZZER"
 mkdir -p "$PROFILE_DIR/$FUZZER"

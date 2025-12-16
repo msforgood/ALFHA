@@ -1,0 +1,8 @@
+# Function Coverage Analysis
+Generated: Tue Dec 16 10:20:11 AM UTC 2025
+
+## Functions with Low Coverage (<50%)
+
+## Functions with Zero Coverage (0.00%)
+fuzzers/alfha/harnesses/deflate_harness.c          83                12    85.54%           1                 0   100.00%         107                18    83.18%          38                14    63.16%
+TOTAL                                              83                12    85.54%           1                 0   100.00%         107                18    83.18%          38                14    63.16%

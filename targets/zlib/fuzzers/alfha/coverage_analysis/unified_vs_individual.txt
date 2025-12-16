@@ -1,0 +1,6 @@
+# Unified vs Individual Coverage Comparison
+Generated: Tue Dec 16 10:20:11 AM UTC 2025
+
+## Unified Coverage (All Harnesses)
+TOTAL                                              83                12    85.54%           1                 0   100.00%         107                18    83.18%          38                14    63.16%
+
