@@ -1,0 +1,80 @@
+{
+  "function_code": "FC_ZLIB_INFLATEINIT2",
+  "function_name": "inflateInit2",
+  "function_location": "zlib.h:853",
+  "category": "Compression",
+  "priority": "High", 
+  "signature": "int inflateInit2(z_streamp strm, int windowBits)",
+  "input_structure": {
+    "strm": "z_streamp - pointer to z_stream structure for decompression state",
+    "windowBits": "int - window size parameter and format selection"
+  },
+  "validation_conditions": [
+    "strm != NULL",
+    "strm->zalloc and strm->zfree initialized (can be Z_NULL for default)",
+    "windowBits in valid ranges or special values"
+  ],
+  "error_codes": [
+    "Z_OK - success",
+    "Z_MEM_ERROR - insufficient memory for allocation",
+    "Z_VERSION_ERROR - incompatible zlib library version", 
+    "Z_STREAM_ERROR - invalid parameters or null pointer"
+  ],
+  "side_effects": [
+    "initializes strm internal state for decompression",
+    "allocates memory for decompression state",
+    "sets strm->msg to null if no error",
+    "may read zlib header if present (deferred until inflate())"
+  ],
+  "constraints": [
+    "strm must point to valid z_stream structure",
+    "next_in, avail_in, zalloc, zfree, opaque must be pre-initialized", 
+    "windowBits determines both window size and format",
+    "must call inflateEnd() to free allocated memory"
+  ],
+  "windowBits_values": {
+    "standard": "8..15 - standard zlib format with given window size",
+    "default": "15 - maximum window size (32KB)", 
+    "auto_detect": "0 - use window size from zlib header",
+    "raw_deflate": "-8..-15 - raw deflate format (no zlib/gzip headers)",
+    "gzip_only": "15+16=31 - gzip format only",
+    "auto_format": "15+32=47 - auto-detect zlib or gzip format"
+  },
+  "fuzzing_strategy": {
+    "windowBits_values": [
+      "valid range: 8, 9, 10, 11, 12, 13, 14, 15",
+      "auto detect: 0",
+      "raw deflate: -8, -9, -10, -11, -12, -13, -14, -15", 
+      "gzip only: 31 (15+16)",
+      "auto format: 47 (15+32)",
+      "invalid: -100, -7, -1, 7, 16, 100"
+    ],
+    "stream_states": [
+      "null pointer (strm = NULL)",
+      "uninitialized stream structure",
+      "pre-initialized valid stream",
+      "already initialized stream (double init)",
+      "corrupted stream structure"
+    ],
+    "memory_allocators": [
+      "default allocators (Z_NULL)",
+      "custom valid allocators",
+      "invalid allocator pointers",
+      "allocators that fail"
+    ],
+    "edge_cases": [
+      "minimum window size (8)",
+      "maximum window size (15)", 
+      "boundary values (-8, -15, 31, 47)",
+      "format combinations"
+    ]
+  },
+  "vulnerability_targets": [
+    "integer overflow in window size calculations",
+    "null pointer dereference", 
+    "memory allocation failures",
+    "invalid windowBits parameter handling",
+    "double initialization memory leaks",
+    "corrupted stream structure access"
+  ]
+}

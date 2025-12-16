@@ -1,0 +1,37 @@
+INFO: Running with entropic power schedule (0xFF, 100).
+INFO: Seed: 668927017
+INFO: Loaded 1 modules   (61 inline 8-bit counters): 61 [0x5599d7b89f80, 0x5599d7b89fbd), 
+INFO: Loaded 1 PC tables (61 PCs): 61 [0x5599d7b89fc0,0x5599d7b8a390), 
+INFO:        0 files found in corpus/compress
+INFO: -max_len is not provided; libFuzzer will not generate inputs larger than 4096 bytes
+INFO: A corpus is not provided, starting from an empty corpus
+#2	INITED cov: 2 ft: 2 corp: 1/1b exec/s: 0 rss: 26Mb
+UndefinedBehaviorSanitizer:DEADLYSIGNAL
+==3570402==ERROR: UndefinedBehaviorSanitizer: SEGV on unknown address 0x000000000000 (pc 0x7fa1ce77a18c bp 0x7ffc23cdc880 sp 0x7ffc23cdc7c0 T3570402)
+==3570402==The signal is caused by a READ memory access.
+==3570402==Hint: address points to the zero page.
+    #0 0x7fa1ce77a18c in compress2 (/lib/x86_64-linux-gnu/libz.so.1+0x1118c) (BuildId: bbefe2bbdc367b0c3cfbfcf80c579930496fb963)
+    #1 0x5599d7b66aa7 in LLVMFuzzerTestOneInput (/home/minseo/alfha/targets/zlib/fuzzers/alfha/harnesses/compress_harness+0x6baa7) (BuildId: f1308252220b7000b3bbd655373d643a6f2f70f4)
+    #2 0x5599d7b229fa in fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long) (/home/minseo/alfha/targets/zlib/fuzzers/alfha/harnesses/compress_harness+0x279fa) (BuildId: f1308252220b7000b3bbd655373d643a6f2f70f4)
+    #3 0x5599d7b220c5 in fuzzer::Fuzzer::RunOne(unsigned char const*, unsigned long, bool, fuzzer::InputInfo*, bool, bool*) (/home/minseo/alfha/targets/zlib/fuzzers/alfha/harnesses/compress_harness+0x270c5) (BuildId: f1308252220b7000b3bbd655373d643a6f2f70f4)
+    #4 0x5599d7b23899 in fuzzer::Fuzzer::MutateAndTestOne() (/home/minseo/alfha/targets/zlib/fuzzers/alfha/harnesses/compress_harness+0x28899) (BuildId: f1308252220b7000b3bbd655373d643a6f2f70f4)
+    #5 0x5599d7b24355 in fuzzer::Fuzzer::Loop(std::vector<fuzzer::SizedFile, std::allocator<fuzzer::SizedFile> >&) (/home/minseo/alfha/targets/zlib/fuzzers/alfha/harnesses/compress_harness+0x29355) (BuildId: f1308252220b7000b3bbd655373d643a6f2f70f4)
+    #6 0x5599d7b11732 in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char const*, unsigned long)) (/home/minseo/alfha/targets/zlib/fuzzers/alfha/harnesses/compress_harness+0x16732) (BuildId: f1308252220b7000b3bbd655373d643a6f2f70f4)
+    #7 0x5599d7b3cbd6 in main (/home/minseo/alfha/targets/zlib/fuzzers/alfha/harnesses/compress_harness+0x41bd6) (BuildId: f1308252220b7000b3bbd655373d643a6f2f70f4)
+    #8 0x7fa1ce02a1c9 in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #9 0x7fa1ce02a28a in __libc_start_main csu/../csu/libc-start.c:360:3
+    #10 0x5599d7b05b64 in _start (/home/minseo/alfha/targets/zlib/fuzzers/alfha/harnesses/compress_harness+0xab64) (BuildId: f1308252220b7000b3bbd655373d643a6f2f70f4)
+
+UndefinedBehaviorSanitizer can not provide additional info.
+SUMMARY: UndefinedBehaviorSanitizer: SEGV (/lib/x86_64-linux-gnu/libz.so.1+0x1118c) (BuildId: bbefe2bbdc367b0c3cfbfcf80c579930496fb963) in compress2
+==3570402==ABORTING
+MS: 5 InsertRepeatedBytes-CrossOver-InsertByte-ShuffleBytes-InsertRepeatedBytes-; base unit: adc83b19e793491b1c6ea0fd8b46cd9f32e592fc
+0xec,0x27,0x0,0x0,0x0,0x0,0x0,0x0,
+\354'\000\000\000\000\000\000
+artifact_prefix='./'; Test unit written to ./crash-1b43d8421ed0d19af614161d18af2cd25d183b80
+Base64: 7CcAAAAAAAA=
+stat::number_of_executed_units: 512
+stat::average_exec_per_sec:     256
+stat::new_units_added:          0
+stat::slowest_unit_time_sec:    0
+stat::peak_rss_mb:              28

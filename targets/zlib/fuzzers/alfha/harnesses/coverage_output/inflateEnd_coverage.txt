@@ -1,0 +1,49 @@
+INFO: Running with entropic power schedule (0xFF, 100).
+INFO: Seed: 669672710
+INFO: Loaded 1 modules   (43 inline 8-bit counters): 43 [0x560cd0484fa0, 0x560cd0484fcb), 
+INFO: Loaded 1 PC tables (43 PCs): 43 [0x560cd0484fd0,0x560cd0485280), 
+INFO:        0 files found in corpus/inflateEnd
+INFO: -max_len is not provided; libFuzzer will not generate inputs larger than 4096 bytes
+INFO: A corpus is not provided, starting from an empty corpus
+#2	INITED cov: 14 ft: 14 corp: 1/1b exec/s: 0 rss: 27Mb
+#5	NEW    cov: 15 ft: 16 corp: 2/3b lim: 4 exec/s: 0 rss: 27Mb L: 2/2 MS: 3 CopyPart-CrossOver-CopyPart-
+#14	NEW    cov: 17 ft: 21 corp: 3/7b lim: 4 exec/s: 0 rss: 27Mb L: 4/4 MS: 4 CopyPart-InsertByte-CrossOver-CopyPart-
+#17	NEW    cov: 17 ft: 22 corp: 4/10b lim: 4 exec/s: 0 rss: 27Mb L: 3/4 MS: 3 ShuffleBytes-ChangeBinInt-InsertByte-
+#40	NEW    cov: 18 ft: 23 corp: 5/14b lim: 4 exec/s: 0 rss: 27Mb L: 4/4 MS: 3 CopyPart-ChangeByte-InsertByte-
+#246	NEW    cov: 18 ft: 24 corp: 6/19b lim: 6 exec/s: 0 rss: 27Mb L: 5/5 MS: 1 InsertByte-
+#248	NEW    cov: 18 ft: 25 corp: 7/25b lim: 6 exec/s: 0 rss: 27Mb L: 6/6 MS: 2 InsertByte-InsertByte-
+#463	NEW    cov: 18 ft: 26 corp: 8/33b lim: 8 exec/s: 0 rss: 27Mb L: 8/8 MS: 5 CopyPart-EraseBytes-InsertRepeatedBytes-CrossOver-CopyPart-
+#1826	NEW    cov: 21 ft: 29 corp: 9/54b lim: 21 exec/s: 0 rss: 27Mb L: 21/21 MS: 3 EraseBytes-EraseBytes-InsertRepeatedBytes-
+#1929	REDUCE cov: 21 ft: 29 corp: 9/53b lim: 21 exec/s: 0 rss: 27Mb L: 20/20 MS: 3 CrossOver-EraseBytes-InsertRepeatedBytes-
+#6713	REDUCE cov: 22 ft: 30 corp: 10/119b lim: 68 exec/s: 0 rss: 27Mb L: 66/66 MS: 4 InsertRepeatedBytes-ChangeBit-InsertRepeatedBytes-InsertRepeatedBytes-
+#9415	REDUCE cov: 22 ft: 30 corp: 10/118b lim: 92 exec/s: 0 rss: 27Mb L: 65/65 MS: 2 InsertRepeatedBytes-EraseBytes-
+#11908	NEW    cov: 23 ft: 31 corp: 11/230b lim: 116 exec/s: 0 rss: 27Mb L: 112/112 MS: 3 ChangeBinInt-ChangeBinInt-InsertRepeatedBytes-
+UndefinedBehaviorSanitizer:DEADLYSIGNAL
+==3570403==ERROR: UndefinedBehaviorSanitizer: SEGV on unknown address (pc 0x7fd1cc8535f6 bp 0x7ffff62d20b0 sp 0x7ffff62d20a0 T3570403)
+==3570403==The signal is caused by a READ memory access.
+==3570403==Hint: this fault was caused by a dereference of a high value address (see register values below).  Disassemble the provided pc to learn which register was used.
+    #0 0x7fd1cc8535f6 in inflateEnd (/lib/x86_64-linux-gnu/libz.so.1+0x105f6) (BuildId: bbefe2bbdc367b0c3cfbfcf80c579930496fb963)
+    #1 0x560cd04623ce in LLVMFuzzerTestOneInput (/home/minseo/alfha/targets/zlib/fuzzers/alfha/harnesses/inflateEnd_harness+0x6c3ce) (BuildId: 45621a91fa4a16f0540bd064b67a6db89b963a15)
+    #2 0x560cd041da2a in fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long) (/home/minseo/alfha/targets/zlib/fuzzers/alfha/harnesses/inflateEnd_harness+0x27a2a) (BuildId: 45621a91fa4a16f0540bd064b67a6db89b963a15)
+    #3 0x560cd041d0f5 in fuzzer::Fuzzer::RunOne(unsigned char const*, unsigned long, bool, fuzzer::InputInfo*, bool, bool*) (/home/minseo/alfha/targets/zlib/fuzzers/alfha/harnesses/inflateEnd_harness+0x270f5) (BuildId: 45621a91fa4a16f0540bd064b67a6db89b963a15)
+    #4 0x560cd041e8c9 in fuzzer::Fuzzer::MutateAndTestOne() (/home/minseo/alfha/targets/zlib/fuzzers/alfha/harnesses/inflateEnd_harness+0x288c9) (BuildId: 45621a91fa4a16f0540bd064b67a6db89b963a15)
+    #5 0x560cd041f385 in fuzzer::Fuzzer::Loop(std::vector<fuzzer::SizedFile, std::allocator<fuzzer::SizedFile> >&) (/home/minseo/alfha/targets/zlib/fuzzers/alfha/harnesses/inflateEnd_harness+0x29385) (BuildId: 45621a91fa4a16f0540bd064b67a6db89b963a15)
+    #6 0x560cd040c762 in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char const*, unsigned long)) (/home/minseo/alfha/targets/zlib/fuzzers/alfha/harnesses/inflateEnd_harness+0x16762) (BuildId: 45621a91fa4a16f0540bd064b67a6db89b963a15)
+    #7 0x560cd0437c06 in main (/home/minseo/alfha/targets/zlib/fuzzers/alfha/harnesses/inflateEnd_harness+0x41c06) (BuildId: 45621a91fa4a16f0540bd064b67a6db89b963a15)
+    #8 0x7fd1cc02a1c9 in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #9 0x7fd1cc02a28a in __libc_start_main csu/../csu/libc-start.c:360:3
+    #10 0x560cd0400b94 in _start (/home/minseo/alfha/targets/zlib/fuzzers/alfha/harnesses/inflateEnd_harness+0xab94) (BuildId: 45621a91fa4a16f0540bd064b67a6db89b963a15)
+
+UndefinedBehaviorSanitizer can not provide additional info.
+SUMMARY: UndefinedBehaviorSanitizer: SEGV (/lib/x86_64-linux-gnu/libz.so.1+0x105f6) (BuildId: bbefe2bbdc367b0c3cfbfcf80c579930496fb963) in inflateEnd
+==3570403==ABORTING
+MS: 4 ChangeBinInt-InsertRepeatedBytes-ChangeBit-InsertRepeatedBytes-; base unit: 04245d3fe96c35291052a590bcb4746f3f1c2354
+0xa,0xef,0xff,0xa,0xff,0xff,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x41,0x0,0xce,0xce,0xce,0xce,0xce,0xce,0xce,0xce,0xce,0xce,0xce,0xce,0xce,0xce,0xce,0xce,0xce,0xce,0xce,0xce,0x0,0x0,0x0,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xfe,0xff,0xff,0xff,0xff,0xff,0xff,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0xff,0xff,0x5a,0x5a,0x5a,0x5a,0x5a,0x5a,0x5a,0x5a,0x5a,0x5a,0x5a,0x5a,0x5a,0x5a,0x5a,0x5a,0x5a,0x5a,0x5a,0x5a,0x5a,0x5a,0x5a,0x5a,0x5a,0x5a,0x5a,0x5a,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x7d,0x7d,0x7d,0xff,0xff,0xa,
+\012\357\377\012\377\377\000\000\000\000\000\000\000A\000\316\316\316\316\316\316\316\316\316\316\316\316\316\316\316\316\316\316\316\316\000\000\000\377\377\377\377\377\377\377\377\377\377\377\377\377\376\377\377\377\377\377\377\000\000\000\000\000\000\000\000\000\000\377\377ZZZZZZZZZZZZZZZZZZZZZZZZZZZZ\377\377\377\377\377\377\377\377\377}}}\377\377\012
+artifact_prefix='./'; Test unit written to ./crash-79775f5d93a339a44b4c06b18759c718b8a9df8f
+Base64: Cu//Cv//AAAAAAAAAEEAzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs4AAAD//////////////////v///////wAAAAAAAAAAAAD//1paWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlpaWlr///////////99fX3//wo=
+stat::number_of_executed_units: 11982
+stat::average_exec_per_sec:     5991
+stat::new_units_added:          12
+stat::slowest_unit_time_sec:    0
+stat::peak_rss_mb:              29

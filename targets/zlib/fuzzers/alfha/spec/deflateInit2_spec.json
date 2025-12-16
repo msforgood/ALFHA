@@ -1,0 +1,83 @@
+{
+  "function_name": "deflateInit2",
+  "function_code": "FC_ZLIB_DEFLATEINIT2",
+  "function_location": "zlib.h:543",
+  "category": "Compression",
+  "priority": "High",
+  "input_structure": {
+    "strm": "z_streamp - pointer to z_stream structure",
+    "level": "int - compression level (0-9, Z_DEFAULT_COMPRESSION)",
+    "method": "int - compression method (must be Z_DEFLATED)",
+    "windowBits": "int - window size base-2 logarithm (8..15, -8..-15 for raw deflate, +16 for gzip)",
+    "memLevel": "int - memory usage level (1-9, default 8)",
+    "strategy": "int - compression strategy (Z_DEFAULT_STRATEGY, Z_FILTERED, Z_RLE, Z_HUFFMAN_ONLY, Z_FIXED)"
+  },
+  "validation_conditions": [
+    "strm != NULL",
+    "level == Z_DEFAULT_COMPRESSION || (level >= 0 && level <= 9)",
+    "method == Z_DEFLATED",
+    "windowBits in range: 8..15, -8..-15, or 8..15+16",
+    "windowBits != 8 for deflate (will be adjusted to 9)",
+    "windowBits != -8 for raw deflate (invalid)",
+    "memLevel >= 1 && memLevel <= 9",
+    "strategy in {Z_DEFAULT_STRATEGY, Z_FILTERED, Z_RLE, Z_HUFFMAN_ONLY, Z_FIXED}"
+  ],
+  "error_codes": [
+    "Z_OK",
+    "Z_MEM_ERROR",
+    "Z_STREAM_ERROR", 
+    "Z_VERSION_ERROR"
+  ],
+  "side_effects": [
+    "initializes strm->state with compression parameters",
+    "sets strm->zalloc/zfree if NULL to default allocators",
+    "initializes strm->total_in, total_out, adler, msg",
+    "allocates internal compression state memory",
+    "configures window size, memory level, and strategy"
+  ],
+  "constraints": [
+    "strm must be allocated before call",
+    "zalloc/zfree can be NULL (uses default allocators)",
+    "must call deflateEnd() after use to free resources",
+    "windowBits=8 not supported, adjusted to 9",
+    "raw deflate requires windowBits in -9..-15 range",
+    "gzip encoding requires windowBits in 24..31 range"
+  ],
+  "dependencies": [
+    "must be called before any deflate() calls",
+    "strm structure must persist until deflateEnd()"
+  ],
+  "fuzzing_strategy": {
+    "input_generation": [
+      "valid z_stream structure with various allocator configurations",
+      "compression levels: -1, 0-9, invalid values (10, -2, 100)",
+      "method values: Z_DEFLATED, invalid methods (0, 1, 99)",
+      "windowBits boundary testing: 7, 8, 9, 15, 16, -7, -8, -9, -15, -16",
+      "windowBits for different formats: raw deflate (-8..-15), zlib (8..15), gzip (24..31)",
+      "memLevel boundary testing: 0, 1, 8, 9, 10, invalid values",
+      "strategy values: all valid strategies, invalid values",
+      "NULL pointer testing for strm",
+      "pre-initialized vs clean z_stream structures",
+      "memory allocation failure simulation"
+    ],
+    "coverage_targets": [
+      "parameter validation for all inputs",
+      "memory allocation paths for different configurations",
+      "window size adjustment logic (8->9)",
+      "format-specific initialization (raw, zlib, gzip)",
+      "strategy-specific setup code paths",
+      "memory level optimization branches",
+      "error handling for invalid parameters",
+      "default allocator assignment",
+      "state initialization with different parameter combinations"
+    ],
+    "vulnerability_focus": [
+      "integer overflow in windowBits calculations",
+      "memory allocation size calculations with extreme parameters",
+      "buffer size determination based on windowBits and memLevel",
+      "state machine initialization consistency",
+      "parameter validation bypass attempts",
+      "memory allocator callback validation"
+    ]
+  }
+}

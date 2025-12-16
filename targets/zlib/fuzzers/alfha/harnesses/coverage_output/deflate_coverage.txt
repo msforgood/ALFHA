@@ -1,0 +1,30 @@
+INFO: Running with entropic power schedule (0xFF, 100).
+INFO: Seed: 667342695
+INFO: Loaded 1 modules   (32 inline 8-bit counters): 32 [0x5620e8cbcf80, 0x5620e8cbcfa0), 
+INFO: Loaded 1 PC tables (32 PCs): 32 [0x5620e8cbcfa0,0x5620e8cbd1a0), 
+INFO:        0 files found in corpus/deflate
+INFO: -max_len is not provided; libFuzzer will not generate inputs larger than 4096 bytes
+INFO: A corpus is not provided, starting from an empty corpus
+#2	INITED cov: 2 ft: 2 corp: 1/1b exec/s: 0 rss: 27Mb
+#4	NEW    cov: 18 ft: 18 corp: 2/3b lim: 4 exec/s: 0 rss: 27Mb L: 2/2 MS: 2 ShuffleBytes-InsertByte-
+#11	NEW    cov: 18 ft: 19 corp: 3/6b lim: 4 exec/s: 0 rss: 27Mb L: 3/3 MS: 2 ChangeBit-InsertByte-
+#14	NEW    cov: 18 ft: 22 corp: 4/10b lim: 4 exec/s: 0 rss: 27Mb L: 4/4 MS: 3 InsertByte-ShuffleBytes-CopyPart-
+#220	NEW    cov: 18 ft: 23 corp: 5/15b lim: 6 exec/s: 0 rss: 27Mb L: 5/5 MS: 1 InsertRepeatedBytes-
+#458	NEW    cov: 18 ft: 26 corp: 6/23b lim: 8 exec/s: 0 rss: 27Mb L: 8/8 MS: 3 ChangeBinInt-ChangeByte-InsertRepeatedBytes-
+#764	NEW    cov: 18 ft: 27 corp: 7/34b lim: 11 exec/s: 0 rss: 27Mb L: 11/11 MS: 1 InsertRepeatedBytes-
+#1054	REDUCE cov: 18 ft: 27 corp: 7/32b lim: 11 exec/s: 0 rss: 27Mb L: 9/9 MS: 5 CMP-ChangeBit-CopyPart-ShuffleBytes-EraseBytes- DE: "\000\000\000\000"-
+#1671	REDUCE cov: 18 ft: 30 corp: 8/49b lim: 17 exec/s: 0 rss: 27Mb L: 17/17 MS: 2 InsertByte-InsertRepeatedBytes-
+#1725	REDUCE cov: 18 ft: 30 corp: 8/48b lim: 17 exec/s: 0 rss: 27Mb L: 16/16 MS: 4 ChangeBit-PersAutoDict-ChangeByte-CrossOver- DE: "\000\000\000\000"-
+#13834	REDUCE cov: 18 ft: 31 corp: 9/177b lim: 135 exec/s: 4611 rss: 27Mb L: 129/129 MS: 4 InsertByte-InsertRepeatedBytes-ShuffleBytes-InsertRepeatedBytes-
+#16384	pulse  cov: 18 ft: 31 corp: 9/177b lim: 156 exec/s: 5461 rss: 27Mb
+#26896	NEW    cov: 18 ft: 34 corp: 10/433b lim: 261 exec/s: 5379 rss: 27Mb L: 256/256 MS: 2 PersAutoDict-CopyPart- DE: "\000\000\000\000"-
+#32768	pulse  cov: 18 ft: 34 corp: 10/433b lim: 317 exec/s: 5461 rss: 27Mb
+#65536	pulse  cov: 18 ft: 34 corp: 10/433b lim: 643 exec/s: 6553 rss: 27Mb
+#131072	pulse  cov: 18 ft: 34 corp: 10/433b lim: 1290 exec/s: 7281 rss: 27Mb
+#262144	pulse  cov: 18 ft: 34 corp: 10/433b lim: 2600 exec/s: 7710 rss: 27Mb
+==3570401== libFuzzer: run interrupted; exiting
+stat::number_of_executed_units: 476476
+stat::average_exec_per_sec:     8075
+stat::new_units_added:          11
+stat::slowest_unit_time_sec:    0
+stat::peak_rss_mb:              27

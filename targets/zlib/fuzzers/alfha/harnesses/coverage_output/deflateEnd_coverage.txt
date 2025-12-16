@@ -1,0 +1,43 @@
+INFO: Running with entropic power schedule (0xFF, 100).
+INFO: Seed: 666733866
+INFO: Loaded 1 modules   (35 inline 8-bit counters): 35 [0x55936bb97f80, 0x55936bb97fa3), 
+INFO: Loaded 1 PC tables (35 PCs): 35 [0x55936bb97fa8,0x55936bb981d8), 
+INFO:        0 files found in corpus/deflateEnd
+INFO: -max_len is not provided; libFuzzer will not generate inputs larger than 4096 bytes
+INFO: A corpus is not provided, starting from an empty corpus
+#2	INITED cov: 13 ft: 13 corp: 1/1b exec/s: 0 rss: 27Mb
+#67	NEW    cov: 15 ft: 15 corp: 2/5b lim: 4 exec/s: 0 rss: 27Mb L: 4/4 MS: 5 CopyPart-CrossOver-ChangeBit-ChangeByte-InsertByte-
+#82	NEW    cov: 16 ft: 16 corp: 3/9b lim: 4 exec/s: 0 rss: 27Mb L: 4/4 MS: 5 InsertByte-EraseBytes-InsertByte-ChangeBinInt-CMP- DE: "\000\000"-
+#4096	pulse  cov: 16 ft: 16 corp: 3/9b lim: 43 exec/s: 2048 rss: 27Mb
+#6631	NEW    cov: 17 ft: 17 corp: 4/75b lim: 68 exec/s: 1657 rss: 27Mb L: 66/66 MS: 4 InsertByte-ChangeByte-ChangeBinInt-InsertRepeatedBytes-
+#6745	REDUCE cov: 17 ft: 17 corp: 4/73b lim: 68 exec/s: 1686 rss: 27Mb L: 64/64 MS: 4 CopyPart-ChangeBit-CrossOver-EraseBytes-
+#8192	pulse  cov: 17 ft: 17 corp: 4/73b lim: 80 exec/s: 1638 rss: 27Mb
+UndefinedBehaviorSanitizer:DEADLYSIGNAL
+==3570400==ERROR: UndefinedBehaviorSanitizer: SEGV on unknown address (pc 0x7f403f2b7287 bp 0x7fffaa213680 sp 0x7fffaa213670 T3570400)
+==3570400==The signal is caused by a READ memory access.
+==3570400==Hint: this fault was caused by a dereference of a high value address (see register values below).  Disassemble the provided pc to learn which register was used.
+    #0 0x7f403f2b7287 in deflateEnd (/lib/x86_64-linux-gnu/libz.so.1+0xc287) (BuildId: bbefe2bbdc367b0c3cfbfcf80c579930496fb963)
+    #1 0x55936bb75092 in LLVMFuzzerTestOneInput (/home/minseo/alfha/targets/zlib/fuzzers/alfha/harnesses/deflateEnd_harness+0x6c092) (BuildId: e75f2fdae6627fb64047346fd824b4eb4d71c426)
+    #2 0x55936bb309ea in fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long) (/home/minseo/alfha/targets/zlib/fuzzers/alfha/harnesses/deflateEnd_harness+0x279ea) (BuildId: e75f2fdae6627fb64047346fd824b4eb4d71c426)
+    #3 0x55936bb300b5 in fuzzer::Fuzzer::RunOne(unsigned char const*, unsigned long, bool, fuzzer::InputInfo*, bool, bool*) (/home/minseo/alfha/targets/zlib/fuzzers/alfha/harnesses/deflateEnd_harness+0x270b5) (BuildId: e75f2fdae6627fb64047346fd824b4eb4d71c426)
+    #4 0x55936bb31889 in fuzzer::Fuzzer::MutateAndTestOne() (/home/minseo/alfha/targets/zlib/fuzzers/alfha/harnesses/deflateEnd_harness+0x28889) (BuildId: e75f2fdae6627fb64047346fd824b4eb4d71c426)
+    #5 0x55936bb32345 in fuzzer::Fuzzer::Loop(std::vector<fuzzer::SizedFile, std::allocator<fuzzer::SizedFile> >&) (/home/minseo/alfha/targets/zlib/fuzzers/alfha/harnesses/deflateEnd_harness+0x29345) (BuildId: e75f2fdae6627fb64047346fd824b4eb4d71c426)
+    #6 0x55936bb1f722 in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char const*, unsigned long)) (/home/minseo/alfha/targets/zlib/fuzzers/alfha/harnesses/deflateEnd_harness+0x16722) (BuildId: e75f2fdae6627fb64047346fd824b4eb4d71c426)
+    #7 0x55936bb4abc6 in main (/home/minseo/alfha/targets/zlib/fuzzers/alfha/harnesses/deflateEnd_harness+0x41bc6) (BuildId: e75f2fdae6627fb64047346fd824b4eb4d71c426)
+    #8 0x7f403ec2a1c9 in __libc_start_call_main csu/../sysdeps/nptl/libc_start_call_main.h:58:16
+    #9 0x7f403ec2a28a in __libc_start_main csu/../csu/libc-start.c:360:3
+    #10 0x55936bb13b54 in _start (/home/minseo/alfha/targets/zlib/fuzzers/alfha/harnesses/deflateEnd_harness+0xab54) (BuildId: e75f2fdae6627fb64047346fd824b4eb4d71c426)
+
+UndefinedBehaviorSanitizer can not provide additional info.
+SUMMARY: UndefinedBehaviorSanitizer: SEGV (/lib/x86_64-linux-gnu/libz.so.1+0xc287) (BuildId: bbefe2bbdc367b0c3cfbfcf80c579930496fb963) in deflateEnd
+==3570400==ABORTING
+MS: 4 InsertByte-ChangeBit-InsertByte-InsertRepeatedBytes-; base unit: 9e7108d03543748eb81b8dac1a978d0a08a742c1
+0x13,0x35,0x0,0x0,0x27,0x27,0x27,0x27,0x27,0x27,0x27,0x27,0x0,0x27,0x27,0x27,0x27,0x27,0x27,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x27,0x27,0x27,0x27,0x27,0x27,0x27,0x27,0x27,0x27,0x27,0x27,0x27,0x27,0x27,0x27,0x27,0x27,0x27,0x27,0x27,0x27,0x27,0x0,0xff,0x27,0x27,0x27,0x27,0x27,0x27,0x41,0x27,0x27,0x27,0x27,0x27,0x27,0x2f,0xa7,0x27,0x27,0x27,0x27,0x27,0x27,0x5,
+\0235\000\000''''''''\000''''''\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377\377'''''''''''''''''''''''\000\377''''''A''''''/\247''''''\005
+artifact_prefix='./'; Test unit written to ./crash-2d48e8de73a18eeaa227b177ae845252ca1767ba
+Base64: EzUAACcnJycnJycnACcnJycnJ///////////////////////////////////////////////////////////////JycnJycnJycnJycnJycnJycnJycnJycA/ycnJycnJ0EnJycnJycvpycnJycnJwU=
+stat::number_of_executed_units: 11654
+stat::average_exec_per_sec:     1294
+stat::new_units_added:          4
+stat::slowest_unit_time_sec:    0
+stat::peak_rss_mb:              28

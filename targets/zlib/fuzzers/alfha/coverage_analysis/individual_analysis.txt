@@ -1,0 +1,48 @@
+# Individual Harness Coverage Analysis
+Generated: Tue Dec 16 10:20:10 AM UTC 2025
+
+## compress2_harness
+TOTAL                                              83                83     0.00%           1                 1     0.00%         107               107     0.00%          38                38     0.00%
+
+## compress_harness
+TOTAL                                              83                83     0.00%           1                 1     0.00%         107               107     0.00%          38                38     0.00%
+
+## deflateCopy_harness
+TOTAL                               0                 0         -           0                 0         -           0                 0         -           0                 0         -
+
+## deflateEnd_harness
+TOTAL                                              83                83     0.00%           1                 1     0.00%         107               107     0.00%          38                38     0.00%
+
+## deflate_harness
+TOTAL                                              83                12    85.54%           1                 0   100.00%         107                18    83.18%          38                14    63.16%
+
+## deflateInit2_harness
+TOTAL                               0                 0         -           0                 0         -           0                 0         -           0                 0         -
+
+## deflateInit_harness
+TOTAL                               0                 0         -           0                 0         -           0                 0         -           0                 0         -
+
+## deflateSetDictionary_harness
+TOTAL                               0                 0         -           0                 0         -           0                 0         -           0                 0         -
+
+## inflateEnd_harness
+TOTAL                                              83                83     0.00%           1                 1     0.00%         107               107     0.00%          38                38     0.00%
+
+## inflate_harness
+TOTAL                               0                 0         -           0                 0         -           0                 0         -           0                 0         -
+
+## inflateInit2_harness
+TOTAL                                              83                83     0.00%           1                 1     0.00%         107               107     0.00%          38                38     0.00%
+
+## inflateInit_harness
+TOTAL                                              83                83     0.00%           1                 1     0.00%         107               107     0.00%          38                38     0.00%
+
+## inflateSetDictionary_harness
+TOTAL                               0                 0         -           0                 0         -           0                 0         -           0                 0         -
+
+## uncompress2_harness
+TOTAL                                              83                83     0.00%           1                 1     0.00%         107               107     0.00%          38                38     0.00%
+
+## uncompress_harness
+TOTAL                                              83                83     0.00%           1                 1     0.00%         107               107     0.00%          38                38     0.00%
+

@@ -1,0 +1,36 @@
+INFO: Running with entropic power schedule (0xFF, 100).
+INFO: Seed: 668068358
+INFO: Loaded 1 modules   (49 inline 8-bit counters): 49 [0x55700d38efc0, 0x55700d38eff1), 
+INFO: Loaded 1 PC tables (49 PCs): 49 [0x55700d38eff8,0x55700d38f308), 
+INFO:        0 files found in corpus/inflateInit
+INFO: -max_len is not provided; libFuzzer will not generate inputs larger than 4096 bytes
+INFO: A corpus is not provided, starting from an empty corpus
+#2	INITED cov: 21 ft: 21 corp: 1/1b exec/s: 0 rss: 27Mb
+#3	NEW    cov: 21 ft: 24 corp: 2/3b lim: 4 exec/s: 0 rss: 27Mb L: 2/2 MS: 1 CopyPart-
+#5	NEW    cov: 25 ft: 31 corp: 3/7b lim: 4 exec/s: 0 rss: 27Mb L: 4/4 MS: 2 ChangeByte-CopyPart-
+#10	NEW    cov: 25 ft: 33 corp: 4/10b lim: 4 exec/s: 0 rss: 27Mb L: 3/4 MS: 5 ChangeByte-CrossOver-ChangeBinInt-ShuffleBytes-EraseBytes-
+#36	NEW    cov: 26 ft: 34 corp: 5/14b lim: 4 exec/s: 0 rss: 27Mb L: 4/4 MS: 1 ChangeBinInt-
+#61	NEW    cov: 28 ft: 36 corp: 6/18b lim: 4 exec/s: 0 rss: 28Mb L: 4/4 MS: 5 ChangeByte-ChangeBit-ChangeBit-CrossOver-InsertByte-
+#474	NEW    cov: 28 ft: 37 corp: 7/25b lim: 8 exec/s: 0 rss: 28Mb L: 7/7 MS: 3 CopyPart-EraseBytes-InsertRepeatedBytes-
+#523	NEW    cov: 28 ft: 39 corp: 8/33b lim: 8 exec/s: 0 rss: 29Mb L: 8/8 MS: 4 CopyPart-ChangeByte-ChangeByte-InsertRepeatedBytes-
+#856	NEW    cov: 29 ft: 40 corp: 9/43b lim: 11 exec/s: 0 rss: 30Mb L: 10/10 MS: 3 ChangeBit-InsertByte-InsertRepeatedBytes-
+#1472	NEW    cov: 31 ft: 42 corp: 10/59b lim: 17 exec/s: 0 rss: 33Mb L: 16/16 MS: 1 CMP- DE: "\001\000\000\000\000\000\000\010"-
+#3173	NEW    cov: 35 ft: 46 corp: 11/92b lim: 33 exec/s: 0 rss: 39Mb L: 33/33 MS: 1 InsertRepeatedBytes-
+#3371	NEW    cov: 38 ft: 49 corp: 12/124b lim: 33 exec/s: 0 rss: 40Mb L: 32/33 MS: 3 ShuffleBytes-CrossOver-InsertRepeatedBytes-
+#7053	REDUCE cov: 38 ft: 49 corp: 12/123b lim: 68 exec/s: 0 rss: 58Mb L: 32/32 MS: 2 EraseBytes-InsertRepeatedBytes-
+#12122	NEW    cov: 39 ft: 50 corp: 13/238b lim: 116 exec/s: 0 rss: 77Mb L: 115/115 MS: 4 InsertRepeatedBytes-InsertRepeatedBytes-CMP-InsertRepeatedBytes- DE: "<\000\000\000\000\000\000\000"-
+#13672	REDUCE cov: 39 ft: 50 corp: 13/236b lim: 128 exec/s: 0 rss: 84Mb L: 113/113 MS: 5 ChangeBit-EraseBytes-ShuffleBytes-EraseBytes-InsertRepeatedBytes-
+==3570404== ERROR: libFuzzer: out-of-memory (used: 2059Mb; limit: 2048Mb)
+   To change the out-of-memory limit use -rss_limit_mb=<N>
+
+MS: 5 InsertByte-InsertRepeatedBytes-EraseBytes-EraseBytes-ChangeBinInt-; base unit: 065fc82f1cf40774064874e0963180b0ca44eb92
+0x0,0x20,0x24,0x0,0x0,0x4,0x55,0x4,0x7a,0x0,0x55,
+U\004z\001\000\000\000\000\000\000\010
+artifact_prefix='./'; Test unit written to ./oom-33deeb7eacf5fdf847a4fc278349accdc79ee4d9
+Base64: VQR6AQAAAAAAAAg=
+SUMMARY: libFuzzer: out-of-memory
+stat::number_of_executed_units: 520158
+stat::average_exec_per_sec:     173386
+stat::new_units_added:          14
+stat::slowest_unit_time_sec:    0
+stat::peak_rss_mb:              2059

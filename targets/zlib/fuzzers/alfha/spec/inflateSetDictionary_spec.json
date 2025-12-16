@@ -1,0 +1,86 @@
+{
+  "function_code": "FC_ZLIB_INFLATESETDICTIONARY",
+  "function_name": "inflateSetDictionary", 
+  "function_location": "zlib.h:907",
+  "category": "Compression",
+  "priority": "High",
+  "signature": "int inflateSetDictionary(z_streamp strm, const Bytef *dictionary, uInt dictLength)",
+  "input_structure": {
+    "strm": "z_streamp - pointer to initialized z_stream structure",
+    "dictionary": "const Bytef* - uncompressed byte sequence for dictionary",
+    "dictLength": "uInt - length of dictionary in bytes"
+  },
+  "validation_conditions": [
+    "strm != NULL",
+    "strm->state != NULL (must be initialized)",
+    "dictionary != NULL or dictLength == 0", 
+    "stream state must be consistent for dictionary setting",
+    "for standard inflate: must be called immediately after Z_NEED_DICT return"
+  ],
+  "error_codes": [
+    "Z_OK - success",
+    "Z_STREAM_ERROR - invalid parameter or inconsistent stream state",
+    "Z_DATA_ERROR - dictionary doesn't match expected one (wrong Adler-32)"
+  ],
+  "side_effects": [
+    "sets decompression dictionary in stream state",
+    "validates dictionary against expected Adler-32 checksum",
+    "amends existing window data if dictionary smaller than window",
+    "prepares stream for subsequent inflate() calls"
+  ],
+  "constraints": [
+    "must be called after inflateInit()/inflateInit2()",
+    "for standard inflate: only call immediately after Z_NEED_DICT return",
+    "for raw inflate: can be called at any time", 
+    "dictionary must exactly match the one used for compression",
+    "does not perform decompression itself"
+  ],
+  "usage_scenarios": {
+    "standard_inflate": "call immediately after inflate() returns Z_NEED_DICT",
+    "raw_inflate": "can call at any time to set dictionary",
+    "dictionary_matching": "compressor and decompressor must use same dictionary",
+    "adler32_validation": "dictionary validated against expected checksum"
+  },
+  "fuzzing_strategy": {
+    "dictionary_sizes": [
+      "empty dictionary (dictLength=0)",
+      "small dictionary (1-16 bytes)",
+      "medium dictionary (1KB-32KB)",
+      "large dictionary (>32KB)", 
+      "exact window size dictionary",
+      "larger than window dictionary"
+    ],
+    "dictionary_content": [
+      "valid matching dictionary",
+      "wrong dictionary (different content)",
+      "corrupted dictionary data", 
+      "random data as dictionary",
+      "repeated patterns",
+      "null bytes vs actual data"
+    ],
+    "stream_states": [
+      "uninitialized stream",
+      "freshly initialized stream", 
+      "stream after Z_NEED_DICT",
+      "stream in middle of decompression",
+      "already finished stream",
+      "corrupted stream state"
+    ],
+    "timing_conditions": [
+      "call before any inflate()",
+      "call immediately after Z_NEED_DICT",
+      "call after successful inflate()",
+      "call after stream error",
+      "multiple calls with different dictionaries"
+    ]
+  },
+  "vulnerability_targets": [
+    "buffer overflow from large dictLength",
+    "null pointer dereference",
+    "use after free on stream state",
+    "integer overflow in dictLength",
+    "race conditions with concurrent inflate()",
+    "memory corruption from invalid dictionary",
+    "bypass of Adler-32 validation"
+  ]
+}

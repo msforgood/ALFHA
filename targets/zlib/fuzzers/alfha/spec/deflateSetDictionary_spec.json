@@ -1,0 +1,78 @@
+{
+  "function_name": "deflateSetDictionary",
+  "function_code": "FC_ZLIB_DEFLATESETDICTIONARY",
+  "function_location": "zlib.h:618",
+  "category": "Compression",
+  "priority": "High",
+  "input_structure": {
+    "strm": "z_streamp - pointer to initialized z_stream structure",
+    "dictionary": "const Bytef* - dictionary data buffer",
+    "dictLength": "uInt - dictionary length in bytes"
+  },
+  "validation_conditions": [
+    "strm != NULL",
+    "strm->state != NULL (must be initialized with deflateInit/deflateInit2)",
+    "dictionary != NULL",
+    "dictLength > 0",
+    "must be called immediately after deflateInit/deflateInit2/deflateReset for zlib format",
+    "for raw deflate: must be called before first deflate() or after block boundary"
+  ],
+  "error_codes": [
+    "Z_OK",
+    "Z_STREAM_ERROR"
+  ],
+  "side_effects": [
+    "sets internal compression dictionary",
+    "updates strm->adler with Adler-32 of dictionary (zlib format only)",
+    "initializes sliding window with dictionary data",
+    "may discard part of dictionary if larger than window size",
+    "uses up to window_size-262 bytes of dictionary"
+  ],
+  "constraints": [
+    "requires deflateInit/deflateInit2 called first",
+    "timing restrictions: immediately after init for zlib, flexible for raw deflate",
+    "dictionary size limited by window size configuration", 
+    "most useful strings should be at end of dictionary",
+    "compressor and decompressor must use identical dictionary",
+    "no compression performed by this function"
+  ],
+  "dependencies": [
+    "deflate stream must be properly initialized",
+    "dictionary buffer must remain valid during call",
+    "corresponding inflateSetDictionary must use same dictionary"
+  ],
+  "fuzzing_strategy": {
+    "input_generation": [
+      "NULL dictionary pointer",
+      "valid dictionary with various sizes: 0, 1, 256, 32768, 65536",
+      "dictionary larger than window size",
+      "dictionary with various content patterns: zeros, random, repeating patterns",
+      "dictLength larger than actual buffer size",
+      "dictLength = 0 with non-NULL dictionary",
+      "timing violations: call after deflate() started",
+      "multiple dictionary setting attempts",
+      "uninitialized z_stream structure",
+      "corrupted z_stream state"
+    ],
+    "coverage_targets": [
+      "dictionary size validation logic",
+      "window size vs dictionary size handling",
+      "Adler-32 calculation for dictionary",
+      "sliding window initialization with dictionary",
+      "dictionary truncation when too large",
+      "timing validation for different deflate formats",
+      "state consistency checks",
+      "error handling for invalid parameters",
+      "dictionary content processing"
+    ],
+    "vulnerability_focus": [
+      "buffer overflow from dictLength parameter manipulation",
+      "integer overflow in dictionary size calculations", 
+      "use-after-free if dictionary buffer freed before use",
+      "state machine corruption through invalid timing",
+      "memory corruption via oversized dictLength",
+      "Adler-32 calculation buffer overruns",
+      "sliding window boundary violations"
+    ]
+  }
+}
