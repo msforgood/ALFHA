@@ -60,6 +60,20 @@ HARNESSES=(
     "deflateCopy_harness"
     "deflateInit2_harness"
     "deflateSetDictionary_harness"
+    "deflateReset_harness"
+    "inflateCopy_harness"
+    "deflateParams_harness"
+    "inflateSync_harness"
+    "adler32_harness"
+    "inflateReset_harness"
+    "deflateGetDictionary_harness"
+    "gzopen_harness"
+    "crc32_harness"
+    "inflateGetDictionary_harness"
+    "gzread_harness"
+    "gzwrite_harness"
+    "inflateReset2_harness"
+    "compressBound_harness"
 )
 
 # Coverage build flags - static link for proper coverage (order matters!)

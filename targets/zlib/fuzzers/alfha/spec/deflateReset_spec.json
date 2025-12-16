@@ -1,0 +1,103 @@
+{
+  "function_name": "deflateReset",
+  "function_signature": "int deflateReset(z_streamp strm)",
+  "function_code": "0x10",
+  "description": "Resets the deflate stream state for reuse, keeping the compression level and parameters set by deflateInit2",
+  
+  "parameters": [
+    {
+      "name": "strm",
+      "type": "z_streamp",
+      "description": "Pointer to deflate stream structure to reset",
+      "constraints": [
+        "Must be previously initialized with deflateInit/deflateInit2",
+        "Must not be NULL",
+        "Must not be already ended with deflateEnd"
+      ]
+    }
+  ],
+  
+  "return_values": [
+    {
+      "value": "Z_OK",
+      "description": "Stream successfully reset and ready for reuse"
+    },
+    {
+      "value": "Z_STREAM_ERROR", 
+      "description": "Stream state is inconsistent or strm is NULL"
+    }
+  ],
+  
+  "validation_conditions": [
+    "Stream must be in valid state (initialized but not ended)",
+    "All counters (total_in, total_out) are reset to 0",
+    "Stream parameters (level, strategy, etc.) are preserved",
+    "Previous compression state is completely cleared"
+  ],
+  
+  "error_conditions": [
+    {
+      "condition": "strm is NULL",
+      "expected_result": "Z_STREAM_ERROR",
+      "severity": "high"
+    },
+    {
+      "condition": "Stream not initialized",
+      "expected_result": "Z_STREAM_ERROR", 
+      "severity": "high"
+    },
+    {
+      "condition": "Stream already ended",
+      "expected_result": "Z_STREAM_ERROR",
+      "severity": "medium"
+    },
+    {
+      "condition": "Corrupted internal state",
+      "expected_result": "Z_STREAM_ERROR or successful reset",
+      "severity": "high"
+    }
+  ],
+  
+  "fuzzing_strategies": [
+    {
+      "strategy": "null_pointer_testing",
+      "description": "Test with NULL stream pointer to verify error handling",
+      "priority": "high"
+    },
+    {
+      "strategy": "state_lifecycle_testing", 
+      "description": "Test reset at different points in stream lifecycle (after init, after compression, after flush)",
+      "priority": "high"
+    },
+    {
+      "strategy": "multiple_reset_testing",
+      "description": "Test consecutive resets to verify idempotent behavior",
+      "priority": "medium"
+    },
+    {
+      "strategy": "corrupted_state_testing",
+      "description": "Test reset with corrupted internal stream state fields",
+      "priority": "high"
+    },
+    {
+      "strategy": "post_end_testing",
+      "description": "Test reset after deflateEnd to verify proper error handling",
+      "priority": "medium"
+    }
+  ],
+  
+  "security_implications": [
+    "Memory corruption if stream state is not properly validated",
+    "Use-after-free if reset is called after deflateEnd", 
+    "State confusion if internal pointers are not properly reset",
+    "Resource leaks if internal buffers are not properly cleared"
+  ],
+  
+  "coverage_targets": [
+    "Stream state validation logic",
+    "Internal buffer reset code paths",
+    "Parameter preservation logic", 
+    "Error handling for invalid states",
+    "Memory management during reset"
+  ]
+}

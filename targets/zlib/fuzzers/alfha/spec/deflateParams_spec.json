@@ -1,0 +1,152 @@
+{
+  "function_name": "deflateParams",
+  "function_signature": "int deflateParams(z_streamp strm, int level, int strategy)",
+  "function_code": "0x12",
+  "description": "Dynamically updates compression level and strategy for an active deflate stream",
+  
+  "parameters": [
+    {
+      "name": "strm",
+      "type": "z_streamp",
+      "description": "Pointer to active deflate stream structure",
+      "constraints": [
+        "Must be previously initialized with deflateInit/deflateInit2",
+        "Must not be NULL",
+        "Must not be already ended with deflateEnd",
+        "Stream must be in valid state for parameter changes"
+      ]
+    },
+    {
+      "name": "level",
+      "type": "int", 
+      "description": "New compression level (0-9 or Z_DEFAULT_COMPRESSION)",
+      "constraints": [
+        "Valid range: 0-9 or Z_DEFAULT_COMPRESSION (-1)",
+        "0 = no compression, 9 = best compression",
+        "Invalid values should be handled gracefully"
+      ]
+    },
+    {
+      "name": "strategy",
+      "type": "int",
+      "description": "New compression strategy",
+      "constraints": [
+        "Valid values: Z_DEFAULT_STRATEGY, Z_FILTERED, Z_HUFFMAN_ONLY, Z_RLE, Z_FIXED",
+        "Invalid strategies should be handled gracefully"
+      ]
+    }
+  ],
+  
+  "return_values": [
+    {
+      "value": "Z_OK", 
+      "description": "Parameters successfully updated"
+    },
+    {
+      "value": "Z_STREAM_ERROR",
+      "description": "Stream state is inconsistent or parameters invalid"
+    },
+    {
+      "value": "Z_BUF_ERROR",
+      "description": "No progress possible with current buffer state"
+    }
+  ],
+  
+  "validation_conditions": [
+    "Stream must be in valid initialized state",
+    "Level must be in valid range (0-9 or -1)",
+    "Strategy must be a valid compression strategy constant", 
+    "Parameter changes take effect for subsequent deflate calls",
+    "Existing compression state is preserved during parameter change"
+  ],
+  
+  "error_conditions": [
+    {
+      "condition": "strm is NULL",
+      "expected_result": "Z_STREAM_ERROR",
+      "severity": "high"
+    },
+    {
+      "condition": "Stream not initialized",
+      "expected_result": "Z_STREAM_ERROR",
+      "severity": "high"
+    },
+    {
+      "condition": "Stream already ended", 
+      "expected_result": "Z_STREAM_ERROR",
+      "severity": "medium"
+    },
+    {
+      "condition": "Invalid compression level",
+      "expected_result": "Z_STREAM_ERROR",
+      "severity": "medium"
+    },
+    {
+      "condition": "Invalid compression strategy",
+      "expected_result": "Z_STREAM_ERROR", 
+      "severity": "medium"
+    },
+    {
+      "condition": "Buffer state prevents parameter change",
+      "expected_result": "Z_BUF_ERROR",
+      "severity": "low"
+    }
+  ],
+  
+  "fuzzing_strategies": [
+    {
+      "strategy": "null_pointer_testing",
+      "description": "Test with NULL stream pointer",
+      "priority": "high"
+    },
+    {
+      "strategy": "parameter_boundary_testing",
+      "description": "Test with boundary and invalid level/strategy values", 
+      "priority": "high"
+    },
+    {
+      "strategy": "compression_stage_testing",
+      "description": "Test parameter changes at different stages of compression",
+      "priority": "high"
+    },
+    {
+      "strategy": "rapid_change_testing",
+      "description": "Test rapid successive parameter changes",
+      "priority": "medium"
+    },
+    {
+      "strategy": "extreme_value_testing", 
+      "description": "Test with extreme integer values for parameters",
+      "priority": "medium"
+    },
+    {
+      "strategy": "state_lifecycle_testing",
+      "description": "Test parameter changes after deflateEnd or before deflateInit",
+      "priority": "medium"
+    },
+    {
+      "strategy": "strategy_combination_testing",
+      "description": "Test all valid level/strategy combinations",
+      "priority": "medium"
+    }
+  ],
+  
+  "security_implications": [
+    "Integer overflow in level/strategy validation",
+    "State corruption if parameter validation is insufficient", 
+    "Buffer overflow if strategy change affects buffer management",
+    "Use-after-free if stream state is modified incorrectly",
+    "Information disclosure if unvalidated parameters access invalid memory",
+    "Denial of service through infinite loops in parameter validation"
+  ],
+  
+  "coverage_targets": [
+    "Parameter validation logic for level and strategy",
+    "Stream state consistency checks", 
+    "Compression algorithm switching code paths",
+    "Buffer management during parameter changes",
+    "Error handling for invalid parameters",
+    "State preservation during parameter updates",
+    "Interaction with different deflate initialization types"
+  ]
+}
