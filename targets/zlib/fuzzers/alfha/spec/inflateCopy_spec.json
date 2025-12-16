@@ -1,0 +1,142 @@
+{
+  "function_name": "inflateCopy",
+  "function_signature": "int inflateCopy(z_streamp dest, z_streamp source)",
+  "function_code": "0x11",
+  "description": "Copies the complete state from source to dest inflation stream, including history buffer and internal state",
+  
+  "parameters": [
+    {
+      "name": "dest",
+      "type": "z_streamp", 
+      "description": "Pointer to destination stream structure (uninitialized)",
+      "constraints": [
+        "Must not be NULL",
+        "Should be uninitialized (will be initialized by the copy)",
+        "Must have sufficient memory allocated"
+      ]
+    },
+    {
+      "name": "source",
+      "type": "z_streamp",
+      "description": "Pointer to source stream structure to copy from", 
+      "constraints": [
+        "Must not be NULL",
+        "Must be previously initialized with inflateInit/inflateInit2",
+        "Must be in valid state (not ended)"
+      ]
+    }
+  ],
+  
+  "return_values": [
+    {
+      "value": "Z_OK",
+      "description": "Source stream successfully copied to destination"
+    },
+    {
+      "value": "Z_STREAM_ERROR",
+      "description": "Source stream state is inconsistent or parameters are NULL"
+    },
+    {
+      "value": "Z_MEM_ERROR", 
+      "description": "Insufficient memory to allocate internal state for destination"
+    }
+  ],
+  
+  "validation_conditions": [
+    "Source stream must be in valid initialized state",
+    "Destination stream receives complete copy of source state",
+    "Both streams can operate independently after copy",
+    "All internal buffers and history are properly duplicated",
+    "Source stream remains unchanged and usable"
+  ],
+  
+  "error_conditions": [
+    {
+      "condition": "dest is NULL",
+      "expected_result": "Z_STREAM_ERROR",
+      "severity": "high"
+    },
+    {
+      "condition": "source is NULL", 
+      "expected_result": "Z_STREAM_ERROR",
+      "severity": "high"
+    },
+    {
+      "condition": "Source stream not initialized",
+      "expected_result": "Z_STREAM_ERROR",
+      "severity": "high" 
+    },
+    {
+      "condition": "Source stream already ended",
+      "expected_result": "Z_STREAM_ERROR",
+      "severity": "medium"
+    },
+    {
+      "condition": "Insufficient memory for copy",
+      "expected_result": "Z_MEM_ERROR", 
+      "severity": "medium"
+    },
+    {
+      "condition": "Corrupted source internal state",
+      "expected_result": "Z_STREAM_ERROR or undefined behavior",
+      "severity": "critical"
+    }
+  ],
+  
+  "fuzzing_strategies": [
+    {
+      "strategy": "null_pointer_testing",
+      "description": "Test with NULL source and/or dest pointers", 
+      "priority": "high"
+    },
+    {
+      "strategy": "state_lifecycle_testing",
+      "description": "Test copy at different points in inflation lifecycle",
+      "priority": "high"
+    },
+    {
+      "strategy": "multiple_copy_testing",
+      "description": "Test multiple copies from same source and copy-of-copy scenarios",
+      "priority": "medium"
+    },
+    {
+      "strategy": "corrupted_source_testing", 
+      "description": "Test copy from streams with corrupted internal state",
+      "priority": "critical"
+    },
+    {
+      "strategy": "memory_exhaustion_testing",
+      "description": "Test copy operations under memory pressure",
+      "priority": "medium"
+    },
+    {
+      "strategy": "window_size_variation_testing",
+      "description": "Test copy with different window sizes and inflation parameters",
+      "priority": "medium"
+    },
+    {
+      "strategy": "destination_state_testing",
+      "description": "Test copy to already initialized vs uninitialized destinations",
+      "priority": "high"
+    }
+  ],
+  
+  "security_implications": [
+    "Memory corruption during state copying if buffers are not properly allocated",
+    "Use-after-free if source stream internal pointers are copied incorrectly",
+    "Buffer overflow if history buffer size calculations are wrong", 
+    "Memory leaks if copy fails after partial allocation",
+    "Information disclosure if uninitialized memory is copied",
+    "Double-free vulnerabilities if both streams try to free same resources"
+  ],
+  
+  "coverage_targets": [
+    "Source stream state validation logic",
+    "Memory allocation for destination stream state",
+    "History buffer copying mechanisms",
+    "Internal pointer and state duplication",
+    "Error cleanup paths for failed copies",
+    "Different window size handling during copy",
+    "Custom allocator handling during copy operations"
+  ]
+}

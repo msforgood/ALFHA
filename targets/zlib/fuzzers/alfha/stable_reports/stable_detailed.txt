@@ -8,15 +8,15 @@
     7|       |
     8|       |#include "zutil.h"
     9|       |
-   10|  9.66M|#define BASE 65521U     /* largest prime smaller than 65536 */
-   11|  2.02M|#define NMAX 5552
+   10|   291M|#define BASE 65521U     /* largest prime smaller than 65536 */
+   11|  71.8M|#define NMAX 5552
    12|       |/* NMAX is the largest n such that 255n(n+1)/2 + (n+1)(BASE-1) <= 2^32-1 */
    13|       |
-   14|   240M|#define DO1(buf,i)  {adler += (buf)[i]; sum2 += adler;}
-   15|   120M|#define DO2(buf,i)  DO1(buf,i); DO1(buf,i+1);
-   16|  60.0M|#define DO4(buf,i)  DO2(buf,i); DO2(buf,i+2);
-   17|  30.0M|#define DO8(buf,i)  DO4(buf,i); DO4(buf,i+4);
-   18|  15.0M|#define DO16(buf)   DO8(buf,0); DO8(buf,8);
+   14|   113G|#define DO1(buf,i)  {adler += (buf)[i]; sum2 += adler;}
+   15|  56.8G|#define DO2(buf,i)  DO1(buf,i); DO1(buf,i+1);
+   16|  28.4G|#define DO4(buf,i)  DO2(buf,i); DO2(buf,i+2);
+   17|  14.2G|#define DO8(buf,i)  DO4(buf,i); DO4(buf,i+4);
+   18|  7.10G|#define DO16(buf)   DO8(buf,0); DO8(buf,8);
    19|       |
    20|       |/* use NO_DIVIDE if your processor does not do division in hardware --
    21|       |   try it both ways to see which is faster */
@@ -53,72 +53,72 @@
    52|       |        if (a >= BASE) a -= BASE; \
    53|       |    } while (0)
    54|       |#else
-   55|  4.04M|#  define MOD(a) a %= BASE
-   56|  2.49M|#  define MOD28(a) a %= BASE
+   55|   143M|#  define MOD(a) a %= BASE
+   56|  67.2M|#  define MOD28(a) a %= BASE
    57|      0|#  define MOD63(a) a %= BASE
    58|       |#endif
    59|       |
    60|       |/* ========================================================================= */
-   61|  18.0M|uLong ZEXPORT adler32_z(uLong adler, const Bytef *buf, z_size_t len) {
-   62|  18.0M|    unsigned long sum2;
-   63|  18.0M|    unsigned n;
+   61|   362M|uLong ZEXPORT adler32_z(uLong adler, const Bytef *buf, z_size_t len) {
+   62|   362M|    unsigned long sum2;
+   63|   362M|    unsigned n;
    64|       |
    65|       |    /* split Adler-32 into component sums */
-   66|  18.0M|    sum2 = (adler >> 16) & 0xffff;
-   67|  18.0M|    adler &= 0xffff;
+   66|   362M|    sum2 = (adler >> 16) & 0xffff;
+   67|   362M|    adler &= 0xffff;
    68|       |
    69|       |    /* in case user likes doing a byte at a time, keep it fast */
-   70|  18.0M|    if (len == 1) {
+   70|   362M|    if (len == 1) {
   ------------------
-  |  Branch (70:9): [True: 317k, False: 17.6M]
+  |  Branch (70:9): [True: 6.47M, False: 355M]
   ------------------
-   71|   317k|        adler += buf[0];
-   72|   317k|        if (adler >= BASE)
+   71|  6.47M|        adler += buf[0];
+   72|  6.47M|        if (adler >= BASE)
   ------------------
-  |  Branch (72:13): [True: 0, False: 317k]
+  |  Branch (72:13): [True: 36, False: 6.47M]
   ------------------
-   73|      0|            adler -= BASE;
-   74|   317k|        sum2 += adler;
-   75|   317k|        if (sum2 >= BASE)
+   73|     36|            adler -= BASE;
+   74|  6.47M|        sum2 += adler;
+   75|  6.47M|        if (sum2 >= BASE)
   ------------------
-  |  Branch (75:13): [True: 0, False: 317k]
+  |  Branch (75:13): [True: 34.8k, False: 6.44M]
   ------------------
-   76|      0|            sum2 -= BASE;
-   77|   317k|        return adler | (sum2 << 16);
-   78|   317k|    }
+   76|  34.8k|            sum2 -= BASE;
+   77|  6.47M|        return adler | (sum2 << 16);
+   78|  6.47M|    }
    79|       |
    80|       |    /* initial Adler-32 value (deferred check for len == 1 speed) */
-   81|  17.6M|    if (buf == Z_NULL)
+   81|   355M|    if (buf == Z_NULL)
   ------------------
-  |  Branch (81:9): [True: 13.1M, False: 4.51M]
+  |  Branch (81:9): [True: 216M, False: 139M]
   ------------------
-   82|  13.1M|        return 1L;
+   82|   216M|        return 1L;
    83|       |
    84|       |    /* in case short lengths are provided, keep it somewhat fast */
-   85|  4.51M|    if (len < 16) {
+   85|   139M|    if (len < 16) {
   ------------------
-  |  Branch (85:9): [True: 2.49M, False: 2.02M]
+  |  Branch (85:9): [True: 67.2M, False: 71.8M]
   ------------------
-   86|  18.7M|        while (len--) {
+   86|   561M|        while (len--) {
   ------------------
-  |  Branch (86:16): [True: 16.2M, False: 2.49M]
+  |  Branch (86:16): [True: 494M, False: 67.2M]
   ------------------
-   87|  16.2M|            adler += *buf++;
-   88|  16.2M|            sum2 += adler;
-   89|  16.2M|        }
-   90|  2.49M|        if (adler >= BASE)
+   87|   494M|            adler += *buf++;
+   88|   494M|            sum2 += adler;
+   89|   494M|        }
+   90|  67.2M|        if (adler >= BASE)
   ------------------
-  |  Branch (90:13): [True: 0, False: 2.49M]
+  |  Branch (90:13): [True: 5.45k, False: 67.1M]
   ------------------
-   91|      0|            adler -= BASE;
-   92|  2.49M|        MOD28(sum2);            /* only added so many BASE's */
-   93|  2.49M|        return adler | (sum2 << 16);
-   94|  2.49M|    }
+   91|  5.45k|            adler -= BASE;
+   92|  67.2M|        MOD28(sum2);            /* only added so many BASE's */
+   93|  67.2M|        return adler | (sum2 << 16);
+   94|  67.2M|    }
    95|       |
    96|       |    /* do length NMAX blocks -- requires just one modulo operation */
-   97|  2.02M|    while (len >= NMAX) {
+   97|  71.8M|    while (len >= NMAX) {
   ------------------
-  |  Branch (97:12): [True: 0, False: 2.02M]
+  |  Branch (97:12): [True: 0, False: 71.8M]
   ------------------
    98|      0|        len -= NMAX;
    99|      0|        n = NMAX / 16;          /* NMAX is divisible by 16 */
@@ -134,37 +134,37 @@
   106|      0|    }
   107|       |
   108|       |    /* do remaining bytes (less than NMAX, still just one modulo) */
-  109|  2.02M|    if (len) {                  /* avoid modulos if none remaining */
+  109|  71.8M|    if (len) {                  /* avoid modulos if none remaining */
   ------------------
-  |  Branch (109:9): [True: 2.02M, False: 0]
+  |  Branch (109:9): [True: 71.8M, False: 0]
   ------------------
-  110|  17.0M|        while (len >= 16) {
+  110|  7.17G|        while (len >= 16) {
   ------------------
-  |  Branch (110:16): [True: 15.0M, False: 2.02M]
+  |  Branch (110:16): [True: 7.10G, False: 71.8M]
   ------------------
-  111|  15.0M|            len -= 16;
-  112|  15.0M|            DO16(buf);
-  113|  15.0M|            buf += 16;
-  114|  15.0M|        }
-  115|  12.7M|        while (len--) {
+  111|  7.10G|            len -= 16;
+  112|  7.10G|            DO16(buf);
+  113|  7.10G|            buf += 16;
+  114|  7.10G|        }
+  115|   313M|        while (len--) {
   ------------------
-  |  Branch (115:16): [True: 10.7M, False: 2.02M]
+  |  Branch (115:16): [True: 241M, False: 71.8M]
   ------------------
-  116|  10.7M|            adler += *buf++;
-  117|  10.7M|            sum2 += adler;
-  118|  10.7M|        }
-  119|  2.02M|        MOD(adler);
-  120|  2.02M|        MOD(sum2);
-  121|  2.02M|    }
+  116|   241M|            adler += *buf++;
+  117|   241M|            sum2 += adler;
+  118|   241M|        }
+  119|  71.8M|        MOD(adler);
+  120|  71.8M|        MOD(sum2);
+  121|  71.8M|    }
   122|       |
   123|       |    /* return recombined sums */
-  124|  2.02M|    return adler | (sum2 << 16);
-  125|  4.51M|}
+  124|  71.8M|    return adler | (sum2 << 16);
+  125|   139M|}
   126|       |
   127|       |/* ========================================================================= */
-  128|  18.0M|uLong ZEXPORT adler32(uLong adler, const Bytef *buf, uInt len) {
-  129|  18.0M|    return adler32_z(adler, buf, len);
-  130|  18.0M|}
+  128|   362M|uLong ZEXPORT adler32(uLong adler, const Bytef *buf, uInt len) {
+  129|   362M|    return adler32_z(adler, buf, len);
+  130|   362M|}
   131|       |
   132|       |/* ========================================================================= */
   133|      0|local uLong adler32_combine_(uLong adler1, uLong adler2, z_off64_t len2) {
@@ -931,11 +931,11 @@
   692|       |
   693|       |/* ========================================================================= */
   694|       |unsigned long ZEXPORT crc32_z(unsigned long crc, const unsigned char FAR *buf,
-  695|   405k|                              z_size_t len) {
+  695|  3.31M|                              z_size_t len) {
   696|       |    /* Return initial CRC, if requested. */
-  697|   405k|    if (buf == Z_NULL) return 0;
+  697|  3.31M|    if (buf == Z_NULL) return 0;
   ------------------
-  |  Branch (697:9): [True: 405k, False: 0]
+  |  Branch (697:9): [True: 3.31M, False: 0]
   ------------------
   698|       |
   699|       |#ifdef DYNAMIC_CRC_TABLE
@@ -1277,15 +1277,15 @@
  1007|       |
  1008|       |    /* Return the CRC, post-conditioned. */
  1009|      0|    return crc ^ 0xffffffff;
- 1010|   405k|}
+ 1010|  3.31M|}
  1011|       |
  1012|       |#endif
  1013|       |
  1014|       |/* ========================================================================= */
  1015|       |unsigned long ZEXPORT crc32(unsigned long crc, const unsigned char FAR *buf,
- 1016|   405k|                            uInt len) {
- 1017|   405k|    return crc32_z(crc, buf, len);
- 1018|   405k|}
+ 1016|  3.31M|                            uInt len) {
+ 1017|  3.31M|    return crc32_z(crc, buf, len);
+ 1018|  3.31M|}
  1019|       |
  1020|       |/* ========================================================================= */
  1021|      0|uLong ZEXPORT crc32_combine64(uLong crc1, uLong crc2, z_off64_t len2) {
@@ -1403,11 +1403,11 @@
    82|       | * Local data
    83|       | */
    84|       |
-   85|  86.4M|#define NIL 0
+   85|  1.57G|#define NIL 0
    86|       |/* Tail of hash chains */
    87|       |
    88|       |#ifndef TOO_FAR
-   89|   878k|#  define TOO_FAR 4096
+   89|  19.3M|#  define TOO_FAR 4096
    90|       |#endif
    91|       |/* Matches of length 3 are discarded if their distance exceeds TOO_FAR */
    92|       |
@@ -1451,8 +1451,8 @@
   130|       | */
   131|       |
   132|       |/* rank Z_BLOCK between Z_NO_FLUSH and Z_PARTIAL_FLUSH */
-  133|  3.18M|#define RANK(f) (((f) * 2) - ((f) > 4 ? 9 : 0))
-                                            ^425k     ^0  ^425k
+  133|  59.3M|#define RANK(f) (((f) * 2) - ((f) > 4 ? 9 : 0))
+                                            ^8.62M    ^0  ^8.62M
   134|       |
   135|       |/* ===========================================================================
   136|       | * Update a hash value with the given input byte
@@ -1460,7 +1460,7 @@
   138|       | *    characters, so that a running hash key can be computed from the previous
   139|       | *    key instead of complete recalculation each time.
   140|       | */
-  141|   155M|#define UPDATE_HASH(s,h,c) (h = (((h) << s->hash_shift) ^ (c)) & s->hash_mask)
+  141|  2.79G|#define UPDATE_HASH(s,h,c) (h = (((h) << s->hash_shift) ^ (c)) & s->hash_mask)
   142|       |
   143|       |
   144|       |/* ===========================================================================
@@ -1480,9 +1480,9 @@
   158|       |    s->head[s->ins_h] = (Pos)(str))
   159|       |#else
   160|       |#define INSERT_STRING(s, str, match_head) \
-  161|   152M|   (UPDATE_HASH(s, s->ins_h, s->window[(str) + (MIN_MATCH-1)]), \
-  162|   152M|    match_head = s->prev[(str) & s->w_mask] = s->head[s->ins_h], \
-  163|   152M|    s->head[s->ins_h] = (Pos)(str))
+  161|  2.74G|   (UPDATE_HASH(s, s->ins_h, s->window[(str) + (MIN_MATCH-1)]), \
+  162|  2.74G|    match_head = s->prev[(str) & s->w_mask] = s->head[s->ins_h], \
+  163|  2.74G|    s->head[s->ins_h] = (Pos)(str))
   164|       |#endif
   165|       |
   166|       |/* ===========================================================================
@@ -1490,11 +1490,11 @@
   168|       | * prev[] will be initialized on the fly.
   169|       | */
   170|       |#define CLEAR_HASH(s) \
-  171|  5.03M|    do { \
-  172|  5.03M|        s->head[s->hash_size - 1] = NIL; \
-  173|  5.03M|        zmemzero((Bytef *)s->head, \
-  174|  5.03M|                 (unsigned)(s->hash_size - 1)*sizeof(*s->head)); \
-  175|  5.03M|    } while (0)
+  171|  70.9M|    do { \
+  172|  70.9M|        s->head[s->hash_size - 1] = NIL; \
+  173|  70.9M|        zmemzero((Bytef *)s->head, \
+  174|  70.9M|                 (unsigned)(s->hash_size - 1)*sizeof(*s->head)); \
+  175|  70.9M|    } while (0)
   176|       |
   177|       |/* ===========================================================================
   178|       | * Slide the hash table when sliding the window down (could be avoided with 32
@@ -1549,29 +1549,29 @@
   215|       | * allocating a large strm->next_in buffer and copying from it.
   216|       | * (See also flush_pending()).
   217|       | */
-  218|  2.54M|local unsigned read_buf(z_streamp strm, Bytef *buf, unsigned size) {
-  219|  2.54M|    unsigned len = strm->avail_in;
+  218|  46.3M|local unsigned read_buf(z_streamp strm, Bytef *buf, unsigned size) {
+  219|  46.3M|    unsigned len = strm->avail_in;
   220|       |
-  221|  2.54M|    if (len > size) len = size;
+  221|  46.3M|    if (len > size) len = size;
                                   ^0
   ------------------
-  |  Branch (221:9): [True: 0, False: 2.54M]
+  |  Branch (221:9): [True: 0, False: 46.3M]
   ------------------
-  222|  2.54M|    if (len == 0) return 0;
+  222|  46.3M|    if (len == 0) return 0;
                                 ^0
   ------------------
-  |  Branch (222:9): [True: 0, False: 2.54M]
+  |  Branch (222:9): [True: 0, False: 46.3M]
   ------------------
   223|       |
-  224|  2.54M|    strm->avail_in  -= len;
+  224|  46.3M|    strm->avail_in  -= len;
   225|       |
-  226|  2.54M|    zmemcpy(buf, strm->next_in, len);
-  227|  2.54M|    if (strm->state->wrap == 1) {
+  226|  46.3M|    zmemcpy(buf, strm->next_in, len);
+  227|  46.3M|    if (strm->state->wrap == 1) {
   ------------------
-  |  Branch (227:9): [True: 2.54M, False: 0]
+  |  Branch (227:9): [True: 46.3M, False: 0]
   ------------------
-  228|  2.54M|        strm->adler = adler32(strm->adler, buf, len);
-  229|  2.54M|    }
+  228|  46.3M|        strm->adler = adler32(strm->adler, buf, len);
+  229|  46.3M|    }
   230|      0|#ifdef GZIP
   231|      0|    else if (strm->state->wrap == 2) {
   ------------------
@@ -1579,12 +1579,12 @@
   ------------------
   232|      0|        strm->adler = crc32(strm->adler, buf, len);
   233|      0|    }
-  234|  2.54M|#endif
-  235|  2.54M|    strm->next_in  += len;
-  236|  2.54M|    strm->total_in += len;
+  234|  46.3M|#endif
+  235|  46.3M|    strm->next_in  += len;
+  236|  46.3M|    strm->total_in += len;
   237|       |
-  238|  2.54M|    return len;
-  239|  2.54M|}
+  238|  46.3M|    return len;
+  239|  46.3M|}
   240|       |
   241|       |/* ===========================================================================
   242|       | * Fill the window when the lookahead becomes insufficient.
@@ -1596,18 +1596,18 @@
   248|       | *    performed for at least two bytes (required for the zip translate_eol
   249|       | *    option -- not supported here).
   250|       | */
-  251|  25.9M|local void fill_window(deflate_state *s) {
-  252|  25.9M|    unsigned n;
-  253|  25.9M|    unsigned more;    /* Amount of free space at the end of the window. */
-  254|  25.9M|    uInt wsize = s->w_size;
+  251|   477M|local void fill_window(deflate_state *s) {
+  252|   477M|    unsigned n;
+  253|   477M|    unsigned more;    /* Amount of free space at the end of the window. */
+  254|   477M|    uInt wsize = s->w_size;
   255|       |
-  256|  25.9M|    Assert(s->lookahead < MIN_LOOKAHEAD, "already enough lookahead");
+  256|   477M|    Assert(s->lookahead < MIN_LOOKAHEAD, "already enough lookahead");
   257|       |
-  258|  25.9M|    do {
-  259|  25.9M|        more = (unsigned)(s->window_size -(ulg)s->lookahead -(ulg)s->strstart);
+  258|   477M|    do {
+  259|   477M|        more = (unsigned)(s->window_size -(ulg)s->lookahead -(ulg)s->strstart);
   260|       |
   261|       |        /* Deal with !@#$% 64K limit: */
-  262|  25.9M|        if (sizeof(int) <= 2) {
+  262|   477M|        if (sizeof(int) <= 2) {
   ------------------
   |  Branch (262:13): [Folded - Ignored]
   ------------------
@@ -1633,9 +1633,9 @@
   274|       |        /* If the window is almost full and there is insufficient lookahead,
   275|       |         * move the upper half to the lower one to make room in the upper half.
   276|       |         */
-  277|  25.9M|        if (s->strstart >= wsize + MAX_DIST(s)) {
+  277|   477M|        if (s->strstart >= wsize + MAX_DIST(s)) {
   ------------------
-  |  Branch (277:13): [True: 0, False: 25.9M]
+  |  Branch (277:13): [True: 0, False: 477M]
   ------------------
   278|       |
   279|      0|            zmemcpy(s->window, s->window + wsize, (unsigned)wsize - more);
@@ -1650,10 +1650,10 @@
   285|      0|            slide_hash(s);
   286|      0|            more += wsize;
   287|      0|        }
-  288|  25.9M|        if (s->strm->avail_in == 0) break;
-                                                  ^23.4M
+  288|   477M|        if (s->strm->avail_in == 0) break;
+                                                  ^431M
   ------------------
-  |  Branch (288:13): [True: 23.4M, False: 2.54M]
+  |  Branch (288:13): [True: 431M, False: 46.3M]
   ------------------
   289|       |
   290|       |        /* If there was no sliding:
@@ -1667,49 +1667,49 @@
   298|       |         * Otherwise, window_size == 2*WSIZE so more >= 2.
   299|       |         * If there was sliding, more >= WSIZE. So in all cases, more >= 2.
   300|       |         */
-  301|  2.54M|        Assert(more >= 2, "more < 2");
+  301|  46.3M|        Assert(more >= 2, "more < 2");
   302|       |
-  303|  2.54M|        n = read_buf(s->strm, s->window + s->strstart + s->lookahead, more);
-  304|  2.54M|        s->lookahead += n;
+  303|  46.3M|        n = read_buf(s->strm, s->window + s->strstart + s->lookahead, more);
+  304|  46.3M|        s->lookahead += n;
   305|       |
   306|       |        /* Initialize the hash value now that we have some input: */
-  307|  2.54M|        if (s->lookahead + s->insert >= MIN_MATCH) {
+  307|  46.3M|        if (s->lookahead + s->insert >= MIN_MATCH) {
   ------------------
-  |  Branch (307:13): [True: 2.23M, False: 306k]
+  |  Branch (307:13): [True: 40.1M, False: 6.20M]
   ------------------
-  308|  2.23M|            uInt str = s->strstart - s->insert;
-  309|  2.23M|            s->ins_h = s->window[str];
-  310|  2.23M|            UPDATE_HASH(s, s->ins_h, s->window[str + 1]);
+  308|  40.1M|            uInt str = s->strstart - s->insert;
+  309|  40.1M|            s->ins_h = s->window[str];
+  310|  40.1M|            UPDATE_HASH(s, s->ins_h, s->window[str + 1]);
   311|       |#if MIN_MATCH != 3
   312|       |            Call UPDATE_HASH() MIN_MATCH-3 more times
   313|       |#endif
-  314|  2.97M|            while (s->insert) {
+  314|  55.1M|            while (s->insert) {
   ------------------
-  |  Branch (314:20): [True: 813k, False: 2.16M]
+  |  Branch (314:20): [True: 16.4M, False: 38.7M]
   ------------------
-  315|   813k|                UPDATE_HASH(s, s->ins_h, s->window[str + MIN_MATCH-1]);
-  316|   813k|#ifndef FASTEST
-  317|   813k|                s->prev[str & s->w_mask] = s->head[s->ins_h];
-  318|   813k|#endif
-  319|   813k|                s->head[s->ins_h] = (Pos)str;
-  320|   813k|                str++;
-  321|   813k|                s->insert--;
-  322|   813k|                if (s->lookahead + s->insert < MIN_MATCH)
+  315|  16.4M|                UPDATE_HASH(s, s->ins_h, s->window[str + MIN_MATCH-1]);
+  316|  16.4M|#ifndef FASTEST
+  317|  16.4M|                s->prev[str & s->w_mask] = s->head[s->ins_h];
+  318|  16.4M|#endif
+  319|  16.4M|                s->head[s->ins_h] = (Pos)str;
+  320|  16.4M|                str++;
+  321|  16.4M|                s->insert--;
+  322|  16.4M|                if (s->lookahead + s->insert < MIN_MATCH)
   ------------------
-  |  Branch (322:21): [True: 71.9k, False: 741k]
+  |  Branch (322:21): [True: 1.45M, False: 15.0M]
   ------------------
-  323|  71.9k|                    break;
-  324|   813k|            }
-  325|  2.23M|        }
+  323|  1.45M|                    break;
+  324|  16.4M|            }
+  325|  40.1M|        }
   326|       |        /* If the whole input has less than MIN_MATCH bytes, ins_h is garbage,
   327|       |         * but this is not important since only literal bytes will be emitted.
   328|       |         */
   329|       |
-  330|  2.54M|    } while (s->lookahead < MIN_LOOKAHEAD && s->strm->avail_in != 0);
-                                                           ^2.44M
+  330|  46.3M|    } while (s->lookahead < MIN_LOOKAHEAD && s->strm->avail_in != 0);
+                                                           ^44.3M
   ------------------
-  |  Branch (330:14): [True: 2.44M, False: 94.3k]
-  |  Branch (330:46): [True: 0, False: 2.44M]
+  |  Branch (330:14): [True: 44.3M, False: 1.96M]
+  |  Branch (330:46): [True: 0, False: 44.3M]
   ------------------
   331|       |
   332|       |    /* If the WIN_INIT bytes after the end of the current data have never been
@@ -1719,196 +1719,196 @@
   336|       |     * time through here.  WIN_INIT is set to MAX_MATCH since the longest match
   337|       |     * routines allow scanning to strstart + MAX_MATCH, ignoring lookahead.
   338|       |     */
-  339|  25.9M|    if (s->high_water < s->window_size) {
+  339|   477M|    if (s->high_water < s->window_size) {
   ------------------
-  |  Branch (339:9): [True: 25.9M, False: 0]
+  |  Branch (339:9): [True: 477M, False: 0]
   ------------------
-  340|  25.9M|        ulg curr = s->strstart + (ulg)(s->lookahead);
-  341|  25.9M|        ulg init;
+  340|   477M|        ulg curr = s->strstart + (ulg)(s->lookahead);
+  341|   477M|        ulg init;
   342|       |
-  343|  25.9M|        if (s->high_water < curr) {
+  343|   477M|        if (s->high_water < curr) {
   ------------------
-  |  Branch (343:13): [True: 1.08M, False: 24.9M]
+  |  Branch (343:13): [True: 16.8M, False: 460M]
   ------------------
   344|       |            /* Previous high water mark below current data -- zero WIN_INIT
   345|       |             * bytes or up to end of window, whichever is less.
   346|       |             */
-  347|  1.08M|            init = s->window_size - curr;
-  348|  1.08M|            if (init > WIN_INIT)
+  347|  16.8M|            init = s->window_size - curr;
+  348|  16.8M|            if (init > WIN_INIT)
   ------------------
-  |  Branch (348:17): [True: 1.08M, False: 0]
+  |  Branch (348:17): [True: 16.8M, False: 0]
   ------------------
-  349|  1.08M|                init = WIN_INIT;
-  350|  1.08M|            zmemzero(s->window + curr, (unsigned)init);
-  351|  1.08M|            s->high_water = curr + init;
-  352|  1.08M|        }
-  353|  24.9M|        else if (s->high_water < (ulg)curr + WIN_INIT) {
+  349|  16.8M|                init = WIN_INIT;
+  350|  16.8M|            zmemzero(s->window + curr, (unsigned)init);
+  351|  16.8M|            s->high_water = curr + init;
+  352|  16.8M|        }
+  353|   460M|        else if (s->high_water < (ulg)curr + WIN_INIT) {
   ------------------
-  |  Branch (353:18): [True: 1.24M, False: 23.6M]
+  |  Branch (353:18): [True: 25.1M, False: 435M]
   ------------------
   354|       |            /* High water mark at or above current data, but below current data
   355|       |             * plus WIN_INIT -- zero out to current data plus WIN_INIT, or up
   356|       |             * to end of window, whichever is less.
   357|       |             */
-  358|  1.24M|            init = (ulg)curr + WIN_INIT - s->high_water;
-  359|  1.24M|            if (init > s->window_size - s->high_water)
+  358|  25.1M|            init = (ulg)curr + WIN_INIT - s->high_water;
+  359|  25.1M|            if (init > s->window_size - s->high_water)
   ------------------
-  |  Branch (359:17): [True: 0, False: 1.24M]
+  |  Branch (359:17): [True: 0, False: 25.1M]
   ------------------
   360|      0|                init = s->window_size - s->high_water;
-  361|  1.24M|            zmemzero(s->window + s->high_water, (unsigned)init);
-  362|  1.24M|            s->high_water += init;
-  363|  1.24M|        }
-  364|  25.9M|    }
+  361|  25.1M|            zmemzero(s->window + s->high_water, (unsigned)init);
+  362|  25.1M|            s->high_water += init;
+  363|  25.1M|        }
+  364|   477M|    }
   365|       |
-  366|  25.9M|    Assert((ulg)s->strstart <= s->window_size - MIN_LOOKAHEAD,
-  367|  25.9M|           "not enough room for search");
-  368|  25.9M|}
+  366|   477M|    Assert((ulg)s->strstart <= s->window_size - MIN_LOOKAHEAD,
+  367|   477M|           "not enough room for search");
+  368|   477M|}
   369|       |
   370|       |/* ========================================================================= */
   371|       |int ZEXPORT deflateInit_(z_streamp strm, int level, const char *version,
-  372|  2.72M|                         int stream_size) {
-  373|  2.72M|    return deflateInit2_(strm, level, Z_DEFLATED, MAX_WBITS, DEF_MEM_LEVEL,
-  374|  2.72M|                         Z_DEFAULT_STRATEGY, version, stream_size);
+  372|  60.1M|                         int stream_size) {
+  373|  60.1M|    return deflateInit2_(strm, level, Z_DEFLATED, MAX_WBITS, DEF_MEM_LEVEL,
+  374|  60.1M|                         Z_DEFAULT_STRATEGY, version, stream_size);
   375|       |    /* To do: ignore strm->next_in if we use it as window */
-  376|  2.72M|}
+  376|  60.1M|}
   377|       |
   378|       |/* ========================================================================= */
   379|       |int ZEXPORT deflateInit2_(z_streamp strm, int level, int method,
   380|       |                          int windowBits, int memLevel, int strategy,
-  381|  7.13M|                          const char *version, int stream_size) {
-  382|  7.13M|    deflate_state *s;
-  383|  7.13M|    int wrap = 1;
-  384|  7.13M|    static const char my_version[] = ZLIB_VERSION;
+  381|  96.1M|                          const char *version, int stream_size) {
+  382|  96.1M|    deflate_state *s;
+  383|  96.1M|    int wrap = 1;
+  384|  96.1M|    static const char my_version[] = ZLIB_VERSION;
   385|       |
-  386|  7.13M|    if (version == Z_NULL || version[0] != my_version[0] ||
+  386|  96.1M|    if (version == Z_NULL || version[0] != my_version[0] ||
   ------------------
-  |  Branch (386:9): [True: 0, False: 7.13M]
-  |  Branch (386:30): [True: 0, False: 7.13M]
+  |  Branch (386:9): [True: 0, False: 96.1M]
+  |  Branch (386:30): [True: 0, False: 96.1M]
   ------------------
-  387|  7.13M|        stream_size != sizeof(z_stream)) {
+  387|  96.1M|        stream_size != sizeof(z_stream)) {
   ------------------
-  |  Branch (387:9): [True: 0, False: 7.13M]
+  |  Branch (387:9): [True: 0, False: 96.1M]
   ------------------
   388|      0|        return Z_VERSION_ERROR;
   389|      0|    }
-  390|  7.13M|    if (strm == Z_NULL) return Z_STREAM_ERROR;
-                                      ^108k  ^108k
+  390|  96.1M|    if (strm == Z_NULL) return Z_STREAM_ERROR;
+                                      ^2.14M ^2.14M
   ------------------
-  |  Branch (390:9): [True: 108k, False: 7.02M]
+  |  Branch (390:9): [True: 2.14M, False: 94.0M]
   ------------------
   391|       |
-  392|  7.02M|    strm->msg = Z_NULL;
-  393|  7.02M|    if (strm->zalloc == (alloc_func)0) {
+  392|  94.0M|    strm->msg = Z_NULL;
+  393|  94.0M|    if (strm->zalloc == (alloc_func)0) {
   ------------------
-  |  Branch (393:9): [True: 7.02M, False: 0]
+  |  Branch (393:9): [True: 94.0M, False: 0]
   ------------------
   394|       |#ifdef Z_SOLO
   395|       |        return Z_STREAM_ERROR;
   396|       |#else
-  397|  7.02M|        strm->zalloc = zcalloc;
-  398|  7.02M|        strm->opaque = (voidpf)0;
-  399|  7.02M|#endif
-  400|  7.02M|    }
-  401|  7.02M|    if (strm->zfree == (free_func)0)
+  397|  94.0M|        strm->zalloc = zcalloc;
+  398|  94.0M|        strm->opaque = (voidpf)0;
+  399|  94.0M|#endif
+  400|  94.0M|    }
+  401|  94.0M|    if (strm->zfree == (free_func)0)
   ------------------
-  |  Branch (401:9): [True: 7.02M, False: 0]
+  |  Branch (401:9): [True: 94.0M, False: 0]
   ------------------
   402|       |#ifdef Z_SOLO
   403|       |        return Z_STREAM_ERROR;
   404|       |#else
-  405|  7.02M|        strm->zfree = zcfree;
-  406|  7.02M|#endif
+  405|  94.0M|        strm->zfree = zcfree;
+  406|  94.0M|#endif
   407|       |
   408|       |#ifdef FASTEST
   409|       |    if (level != 0) level = 1;
   410|       |#else
-  411|  7.02M|    if (level == Z_DEFAULT_COMPRESSION) level = 6;
-                                                      ^3.75M
+  411|  94.0M|    if (level == Z_DEFAULT_COMPRESSION) level = 6;
+                                                      ^44.1M
   ------------------
-  |  Branch (411:9): [True: 3.75M, False: 3.27M]
+  |  Branch (411:9): [True: 44.1M, False: 49.8M]
   ------------------
-  412|  7.02M|#endif
+  412|  94.0M|#endif
   413|       |
-  414|  7.02M|    if (windowBits < 0) { /* suppress zlib wrapper */
+  414|  94.0M|    if (windowBits < 0) { /* suppress zlib wrapper */
   ------------------
-  |  Branch (414:9): [True: 724k, False: 6.30M]
+  |  Branch (414:9): [True: 5.91M, False: 88.1M]
   ------------------
-  415|   724k|        wrap = 0;
-  416|   724k|        if (windowBits < -15)
+  415|  5.91M|        wrap = 0;
+  416|  5.91M|        if (windowBits < -15)
   ------------------
-  |  Branch (416:13): [True: 133k, False: 591k]
+  |  Branch (416:13): [True: 1.08M, False: 4.82M]
   ------------------
-  417|   133k|            return Z_STREAM_ERROR;
-  418|   591k|        windowBits = -windowBits;
-  419|   591k|    }
-  420|  6.30M|#ifdef GZIP
-  421|  6.30M|    else if (windowBits > 15) {
+  417|  1.08M|            return Z_STREAM_ERROR;
+  418|  4.82M|        windowBits = -windowBits;
+  419|  4.82M|    }
+  420|  88.1M|#ifdef GZIP
+  421|  88.1M|    else if (windowBits > 15) {
   ------------------
-  |  Branch (421:14): [True: 670k, False: 5.63M]
+  |  Branch (421:14): [True: 5.48M, False: 82.6M]
   ------------------
-  422|   670k|        wrap = 2;       /* write gzip wrapper instead */
-  423|   670k|        windowBits -= 16;
-  424|   670k|    }
-  425|  6.89M|#endif
-  426|  6.89M|    if (memLevel < 1 || memLevel > MAX_MEM_LEVEL || method != Z_DEFLATED ||
-                                      ^6.77M     ^6.77M           ^6.59M    ^6.59M
+  422|  5.48M|        wrap = 2;       /* write gzip wrapper instead */
+  423|  5.48M|        windowBits -= 16;
+  424|  5.48M|    }
+  425|  92.9M|#endif
+  426|  92.9M|    if (memLevel < 1 || memLevel > MAX_MEM_LEVEL || method != Z_DEFLATED ||
+                                      ^91.9M     ^91.9M           ^90.4M    ^90.4M
   ------------------
-  |  Branch (426:9): [True: 123k, False: 6.77M]
-  |  Branch (426:25): [True: 175k, False: 6.59M]
-  |  Branch (426:53): [True: 281k, False: 6.31M]
+  |  Branch (426:9): [True: 1.00M, False: 91.9M]
+  |  Branch (426:25): [True: 1.44M, False: 90.4M]
+  |  Branch (426:53): [True: 2.30M, False: 88.1M]
   ------------------
-  427|  6.89M|        windowBits < 8 || windowBits > 15 || level < 0 || level > 9 ||
-                      ^6.31M            ^6.08M             ^5.95M       ^5.59M
+  427|  92.9M|        windowBits < 8 || windowBits > 15 || level < 0 || level > 9 ||
+                      ^88.1M            ^86.3M             ^85.2M       ^78.0M
   ------------------
-  |  Branch (427:9): [True: 225k, False: 6.08M]
-  |  Branch (427:27): [True: 135k, False: 5.95M]
-  |  Branch (427:46): [True: 352k, False: 5.59M]
-  |  Branch (427:59): [True: 505k, False: 5.09M]
+  |  Branch (427:9): [True: 1.84M, False: 86.3M]
+  |  Branch (427:27): [True: 1.10M, False: 85.2M]
+  |  Branch (427:46): [True: 7.19M, False: 78.0M]
+  |  Branch (427:59): [True: 9.20M, False: 68.8M]
   ------------------
-  428|  6.89M|        strategy < 0 || strategy > Z_FIXED || (windowBits == 8 && wrap != 1)) {
-                      ^5.09M          ^5.04M     ^5.04M     ^4.91M^4.91M             ^135k
+  428|  92.9M|        strategy < 0 || strategy > Z_FIXED || (windowBits == 8 && wrap != 1)) {
+                      ^68.8M          ^68.4M     ^68.4M     ^67.3M^67.3M             ^1.10M
   ------------------
-  |  Branch (428:9): [True: 45.0k, False: 5.04M]
-  |  Branch (428:25): [True: 135k, False: 4.91M]
-  |  Branch (428:48): [True: 135k, False: 4.77M]
-  |  Branch (428:67): [True: 90.1k, False: 45.0k]
+  |  Branch (428:9): [True: 368k, False: 68.4M]
+  |  Branch (428:25): [True: 1.10M, False: 67.3M]
+  |  Branch (428:48): [True: 1.10M, False: 66.2M]
+  |  Branch (428:67): [True: 736k, False: 368k]
   ------------------
-  429|  2.07M|        return Z_STREAM_ERROR;
-  430|  2.07M|    }
-  431|  4.82M|    if (windowBits == 8) windowBits = 9;  /* until 256-byte window bug fixed */
-                                       ^45.0k
+  429|  26.3M|        return Z_STREAM_ERROR;
+  430|  26.3M|    }
+  431|  66.6M|    if (windowBits == 8) windowBits = 9;  /* until 256-byte window bug fixed */
+                                       ^368k
   ------------------
-  |  Branch (431:9): [True: 45.0k, False: 4.77M]
+  |  Branch (431:9): [True: 368k, False: 66.2M]
   ------------------
-  432|  4.82M|    s = (deflate_state *) ZALLOC(strm, 1, sizeof(deflate_state));
-  433|  4.82M|    if (s == Z_NULL) return Z_MEM_ERROR;
+  432|  66.6M|    s = (deflate_state *) ZALLOC(strm, 1, sizeof(deflate_state));
+  433|  66.6M|    if (s == Z_NULL) return Z_MEM_ERROR;
                                    ^0     ^0
   ------------------
-  |  Branch (433:9): [True: 0, False: 4.82M]
+  |  Branch (433:9): [True: 0, False: 66.6M]
   ------------------
-  434|  4.82M|    strm->state = (struct internal_state FAR *)s;
-  435|  4.82M|    s->strm = strm;
-  436|  4.82M|    s->status = INIT_STATE;     /* to pass state test in deflateReset() */
+  434|  66.6M|    strm->state = (struct internal_state FAR *)s;
+  435|  66.6M|    s->strm = strm;
+  436|  66.6M|    s->status = INIT_STATE;     /* to pass state test in deflateReset() */
   437|       |
-  438|  4.82M|    s->wrap = wrap;
-  439|  4.82M|    s->gzhead = Z_NULL;
-  440|  4.82M|    s->w_bits = (uInt)windowBits;
-  441|  4.82M|    s->w_size = 1 << s->w_bits;
-  442|  4.82M|    s->w_mask = s->w_size - 1;
+  438|  66.6M|    s->wrap = wrap;
+  439|  66.6M|    s->gzhead = Z_NULL;
+  440|  66.6M|    s->w_bits = (uInt)windowBits;
+  441|  66.6M|    s->w_size = 1 << s->w_bits;
+  442|  66.6M|    s->w_mask = s->w_size - 1;
   443|       |
-  444|  4.82M|    s->hash_bits = (uInt)memLevel + 7;
-  445|  4.82M|    s->hash_size = 1 << s->hash_bits;
-  446|  4.82M|    s->hash_mask = s->hash_size - 1;
-  447|  4.82M|    s->hash_shift =  ((s->hash_bits + MIN_MATCH-1) / MIN_MATCH);
+  444|  66.6M|    s->hash_bits = (uInt)memLevel + 7;
+  445|  66.6M|    s->hash_size = 1 << s->hash_bits;
+  446|  66.6M|    s->hash_mask = s->hash_size - 1;
+  447|  66.6M|    s->hash_shift =  ((s->hash_bits + MIN_MATCH-1) / MIN_MATCH);
   448|       |
-  449|  4.82M|    s->window = (Bytef *) ZALLOC(strm, s->w_size, 2*sizeof(Byte));
-  450|  4.82M|    s->prev   = (Posf *)  ZALLOC(strm, s->w_size, sizeof(Pos));
-  451|  4.82M|    s->head   = (Posf *)  ZALLOC(strm, s->hash_size, sizeof(Pos));
+  449|  66.6M|    s->window = (Bytef *) ZALLOC(strm, s->w_size, 2*sizeof(Byte));
+  450|  66.6M|    s->prev   = (Posf *)  ZALLOC(strm, s->w_size, sizeof(Pos));
+  451|  66.6M|    s->head   = (Posf *)  ZALLOC(strm, s->hash_size, sizeof(Pos));
   452|       |
-  453|  4.82M|    s->high_water = 0;      /* nothing written to s->window yet */
+  453|  66.6M|    s->high_water = 0;      /* nothing written to s->window yet */
   454|       |
-  455|  4.82M|    s->lit_bufsize = 1 << (memLevel + 6); /* 16K elements by default */
+  455|  66.6M|    s->lit_bufsize = 1 << (memLevel + 6); /* 16K elements by default */
   456|       |
   457|       |    /* We overlay pending_buf and sym_buf. This works since the average size
   458|       |     * for length/distance pairs over any compressed block is assured to be 31
@@ -1949,18 +1949,18 @@
   493|       |     * symbols from which it is being constructed.
   494|       |     */
   495|       |
-  496|  4.82M|    s->pending_buf = (uchf *) ZALLOC(strm, s->lit_bufsize, LIT_BUFS);
-  497|  4.82M|    s->pending_buf_size = (ulg)s->lit_bufsize * 4;
+  496|  66.6M|    s->pending_buf = (uchf *) ZALLOC(strm, s->lit_bufsize, LIT_BUFS);
+  497|  66.6M|    s->pending_buf_size = (ulg)s->lit_bufsize * 4;
   498|       |
-  499|  4.82M|    if (s->window == Z_NULL || s->prev == Z_NULL || s->head == Z_NULL ||
+  499|  66.6M|    if (s->window == Z_NULL || s->prev == Z_NULL || s->head == Z_NULL ||
   ------------------
-  |  Branch (499:9): [True: 0, False: 4.82M]
-  |  Branch (499:32): [True: 0, False: 4.82M]
-  |  Branch (499:53): [True: 0, False: 4.82M]
+  |  Branch (499:9): [True: 0, False: 66.6M]
+  |  Branch (499:32): [True: 0, False: 66.6M]
+  |  Branch (499:53): [True: 0, False: 66.6M]
   ------------------
-  500|  4.82M|        s->pending_buf == Z_NULL) {
+  500|  66.6M|        s->pending_buf == Z_NULL) {
   ------------------
-  |  Branch (500:9): [True: 0, False: 4.82M]
+  |  Branch (500:9): [True: 0, False: 66.6M]
   ------------------
   501|      0|        s->status = FINISH_STATE;
   502|      0|        strm->msg = ERR_MSG(Z_MEM_ERROR);
@@ -1972,84 +1972,84 @@
   508|       |    s->l_buf = s->pending_buf + (s->lit_bufsize << 2);
   509|       |    s->sym_end = s->lit_bufsize - 1;
   510|       |#else
-  511|  4.82M|    s->sym_buf = s->pending_buf + s->lit_bufsize;
-  512|  4.82M|    s->sym_end = (s->lit_bufsize - 1) * 3;
-  513|  4.82M|#endif
+  511|  66.6M|    s->sym_buf = s->pending_buf + s->lit_bufsize;
+  512|  66.6M|    s->sym_end = (s->lit_bufsize - 1) * 3;
+  513|  66.6M|#endif
   514|       |    /* We avoid equality with lit_bufsize*3 because of wraparound at 64K
   515|       |     * on 16 bit machines and because stored blocks are restricted to
   516|       |     * 64K-1 bytes.
   517|       |     */
   518|       |
-  519|  4.82M|    s->level = level;
-  520|  4.82M|    s->strategy = strategy;
-  521|  4.82M|    s->method = (Byte)method;
+  519|  66.6M|    s->level = level;
+  520|  66.6M|    s->strategy = strategy;
+  521|  66.6M|    s->method = (Byte)method;
   522|       |
-  523|  4.82M|    return deflateReset(strm);
-  524|  4.82M|}
+  523|  66.6M|    return deflateReset(strm);
+  524|  66.6M|}
   525|       |
   526|       |/* =========================================================================
   527|       | * Check for a valid deflate stream state. Return 0 if ok, 1 if not.
   528|       | */
-  529|  13.2M|local int deflateStateCheck(z_streamp strm) {
-  530|  13.2M|    deflate_state *s;
-  531|  13.2M|    if (strm == Z_NULL ||
+  529|   200M|local int deflateStateCheck(z_streamp strm) {
+  530|   200M|    deflate_state *s;
+  531|   200M|    if (strm == Z_NULL ||
   ------------------
-  |  Branch (531:9): [True: 212k, False: 13.0M]
+  |  Branch (531:9): [True: 4.31M, False: 196M]
   ------------------
-  532|  13.2M|        strm->zalloc == (alloc_func)0 || strm->zfree == (free_func)0)
-                      ^13.0M                           ^13.0M
+  532|   200M|        strm->zalloc == (alloc_func)0 || strm->zfree == (free_func)0)
+                      ^196M                            ^196M
   ------------------
-  |  Branch (532:9): [True: 0, False: 13.0M]
-  |  Branch (532:42): [True: 0, False: 13.0M]
+  |  Branch (532:9): [True: 0, False: 196M]
+  |  Branch (532:42): [True: 0, False: 196M]
   ------------------
-  533|   212k|        return 1;
-  534|  13.0M|    s = strm->state;
-  535|  13.0M|    if (s == Z_NULL || s->strm != strm || (s->status != INIT_STATE &&
+  533|  4.31M|        return 1;
+  534|   196M|    s = strm->state;
+  535|   196M|    if (s == Z_NULL || s->strm != strm || (s->status != INIT_STATE &&
   ------------------
-  |  Branch (535:9): [True: 0, False: 13.0M]
-  |  Branch (535:24): [True: 0, False: 13.0M]
-  |  Branch (535:44): [True: 3.16M, False: 9.84M]
+  |  Branch (535:9): [True: 0, False: 196M]
+  |  Branch (535:24): [True: 0, False: 196M]
+  |  Branch (535:44): [True: 53.9M, False: 142M]
   ------------------
-  536|  13.0M|#ifdef GZIP
-  537|  13.0M|                                           s->status != GZIP_STATE &&
-                                                         ^3.16M       ^3.16M
+  536|   196M|#ifdef GZIP
+  537|   196M|                                           s->status != GZIP_STATE &&
+                                                         ^53.9M       ^53.9M
   ------------------
-  |  Branch (537:44): [True: 2.75M, False: 405k]
+  |  Branch (537:44): [True: 50.6M, False: 3.31M]
   ------------------
-  538|  13.0M|#endif
-  539|  13.0M|                                           s->status != EXTRA_STATE &&
-                                                         ^2.75M       ^2.75M
+  538|   196M|#endif
+  539|   196M|                                           s->status != EXTRA_STATE &&
+                                                         ^50.6M       ^50.6M
   ------------------
-  |  Branch (539:44): [True: 2.75M, False: 0]
+  |  Branch (539:44): [True: 50.6M, False: 0]
   ------------------
-  540|  13.0M|                                           s->status != NAME_STATE &&
-                                                         ^2.75M       ^2.75M
+  540|   196M|                                           s->status != NAME_STATE &&
+                                                         ^50.6M       ^50.6M
   ------------------
-  |  Branch (540:44): [True: 2.75M, False: 0]
+  |  Branch (540:44): [True: 50.6M, False: 0]
   ------------------
-  541|  13.0M|                                           s->status != COMMENT_STATE &&
-                                                         ^2.75M       ^2.75M
+  541|   196M|                                           s->status != COMMENT_STATE &&
+                                                         ^50.6M       ^50.6M
   ------------------
-  |  Branch (541:44): [True: 2.75M, False: 0]
+  |  Branch (541:44): [True: 50.6M, False: 0]
   ------------------
-  542|  13.0M|                                           s->status != HCRC_STATE &&
-                                                         ^2.75M       ^2.75M
+  542|   196M|                                           s->status != HCRC_STATE &&
+                                                         ^50.6M       ^50.6M
   ------------------
-  |  Branch (542:44): [True: 2.75M, False: 0]
+  |  Branch (542:44): [True: 50.6M, False: 0]
   ------------------
-  543|  13.0M|                                           s->status != BUSY_STATE &&
-                                                         ^2.75M       ^2.75M
+  543|   196M|                                           s->status != BUSY_STATE &&
+                                                         ^50.6M       ^50.6M
   ------------------
-  |  Branch (543:44): [True: 1.00M, False: 1.74M]
+  |  Branch (543:44): [True: 15.2M, False: 35.4M]
   ------------------
-  544|  13.0M|                                           s->status != FINISH_STATE))
-                                                         ^1.00M       ^1.00M
+  544|   196M|                                           s->status != FINISH_STATE))
+                                                         ^15.2M       ^15.2M
   ------------------
-  |  Branch (544:44): [True: 0, False: 1.00M]
+  |  Branch (544:44): [True: 0, False: 15.2M]
   ------------------
   545|      0|        return 1;
-  546|  13.0M|    return 0;
-  547|  13.0M|}
+  546|   196M|    return 0;
+  547|   196M|}
   548|       |
   549|       |/* ========================================================================= */
   550|       |int ZEXPORT deflateSetDictionary(z_streamp strm, const Bytef *dictionary,
@@ -2175,93 +2175,93 @@
   632|      0|}
   633|       |
   634|       |/* ========================================================================= */
-  635|  4.82M|int ZEXPORT deflateResetKeep(z_streamp strm) {
-  636|  4.82M|    deflate_state *s;
+  635|  66.6M|int ZEXPORT deflateResetKeep(z_streamp strm) {
+  636|  66.6M|    deflate_state *s;
   637|       |
-  638|  4.82M|    if (deflateStateCheck(strm)) {
+  638|  66.6M|    if (deflateStateCheck(strm)) {
   ------------------
-  |  Branch (638:9): [True: 0, False: 4.82M]
+  |  Branch (638:9): [True: 0, False: 66.6M]
   ------------------
   639|      0|        return Z_STREAM_ERROR;
   640|      0|    }
   641|       |
-  642|  4.82M|    strm->total_in = strm->total_out = 0;
-  643|  4.82M|    strm->msg = Z_NULL; /* use zfree if we ever allocate msg dynamically */
-  644|  4.82M|    strm->data_type = Z_UNKNOWN;
+  642|  66.6M|    strm->total_in = strm->total_out = 0;
+  643|  66.6M|    strm->msg = Z_NULL; /* use zfree if we ever allocate msg dynamically */
+  644|  66.6M|    strm->data_type = Z_UNKNOWN;
   645|       |
-  646|  4.82M|    s = (deflate_state *)strm->state;
-  647|  4.82M|    s->pending = 0;
-  648|  4.82M|    s->pending_out = s->pending_buf;
+  646|  66.6M|    s = (deflate_state *)strm->state;
+  647|  66.6M|    s->pending = 0;
+  648|  66.6M|    s->pending_out = s->pending_buf;
   649|       |
-  650|  4.82M|    if (s->wrap < 0) {
+  650|  66.6M|    if (s->wrap < 0) {
   ------------------
-  |  Branch (650:9): [True: 0, False: 4.82M]
+  |  Branch (650:9): [True: 0, False: 66.6M]
   ------------------
   651|      0|        s->wrap = -s->wrap; /* was made negative by deflate(..., Z_FINISH); */
   652|      0|    }
-  653|  4.82M|    s->status =
-  654|  4.82M|#ifdef GZIP
-  655|  4.82M|        s->wrap == 2 ? GZIP_STATE :
-                                     ^405k
+  653|  66.6M|    s->status =
+  654|  66.6M|#ifdef GZIP
+  655|  66.6M|        s->wrap == 2 ? GZIP_STATE :
+                                     ^3.31M
   ------------------
-  |  Branch (655:9): [True: 405k, False: 4.41M]
+  |  Branch (655:9): [True: 3.31M, False: 63.3M]
   ------------------
-  656|  4.82M|#endif
-  657|  4.82M|        INIT_STATE;
-                      ^4.41M
-  658|  4.82M|    strm->adler =
-  659|  4.82M|#ifdef GZIP
-  660|  4.82M|        s->wrap == 2 ? crc32(0L, Z_NULL, 0) :
-                                     ^405k     ^405k
+  656|  66.6M|#endif
+  657|  66.6M|        INIT_STATE;
+                      ^63.3M
+  658|  66.6M|    strm->adler =
+  659|  66.6M|#ifdef GZIP
+  660|  66.6M|        s->wrap == 2 ? crc32(0L, Z_NULL, 0) :
+                                     ^3.31M    ^3.31M
   ------------------
-  |  Branch (660:9): [True: 405k, False: 4.41M]
+  |  Branch (660:9): [True: 3.31M, False: 63.3M]
   ------------------
-  661|  4.82M|#endif
-  662|  4.82M|        adler32(0L, Z_NULL, 0);
-                      ^4.41M      ^4.41M
-  663|  4.82M|    s->last_flush = -2;
+  661|  66.6M|#endif
+  662|  66.6M|        adler32(0L, Z_NULL, 0);
+                      ^63.3M      ^63.3M
+  663|  66.6M|    s->last_flush = -2;
   664|       |
-  665|  4.82M|    _tr_init(s);
+  665|  66.6M|    _tr_init(s);
   666|       |
-  667|  4.82M|    return Z_OK;
-  668|  4.82M|}
+  667|  66.6M|    return Z_OK;
+  668|  66.6M|}
   669|       |
   670|       |/* ===========================================================================
   671|       | * Initialize the "longest match" routines for a new zlib stream
   672|       | */
-  673|  4.82M|local void lm_init(deflate_state *s) {
-  674|  4.82M|    s->window_size = (ulg)2L*s->w_size;
+  673|  66.6M|local void lm_init(deflate_state *s) {
+  674|  66.6M|    s->window_size = (ulg)2L*s->w_size;
   675|       |
-  676|  4.82M|    CLEAR_HASH(s);
+  676|  66.6M|    CLEAR_HASH(s);
   677|       |
   678|       |    /* Set the default configuration parameters:
   679|       |     */
-  680|  4.82M|    s->max_lazy_match   = configuration_table[s->level].max_lazy;
-  681|  4.82M|    s->good_match       = configuration_table[s->level].good_length;
-  682|  4.82M|    s->nice_match       = configuration_table[s->level].nice_length;
-  683|  4.82M|    s->max_chain_length = configuration_table[s->level].max_chain;
+  680|  66.6M|    s->max_lazy_match   = configuration_table[s->level].max_lazy;
+  681|  66.6M|    s->good_match       = configuration_table[s->level].good_length;
+  682|  66.6M|    s->nice_match       = configuration_table[s->level].nice_length;
+  683|  66.6M|    s->max_chain_length = configuration_table[s->level].max_chain;
   684|       |
-  685|  4.82M|    s->strstart = 0;
-  686|  4.82M|    s->block_start = 0L;
-  687|  4.82M|    s->lookahead = 0;
-  688|  4.82M|    s->insert = 0;
-  689|  4.82M|    s->match_length = s->prev_length = MIN_MATCH-1;
-  690|  4.82M|    s->match_available = 0;
-  691|  4.82M|    s->ins_h = 0;
-  692|  4.82M|}
+  685|  66.6M|    s->strstart = 0;
+  686|  66.6M|    s->block_start = 0L;
+  687|  66.6M|    s->lookahead = 0;
+  688|  66.6M|    s->insert = 0;
+  689|  66.6M|    s->match_length = s->prev_length = MIN_MATCH-1;
+  690|  66.6M|    s->match_available = 0;
+  691|  66.6M|    s->ins_h = 0;
+  692|  66.6M|}
   693|       |
   694|       |/* ========================================================================= */
-  695|  4.82M|int ZEXPORT deflateReset(z_streamp strm) {
-  696|  4.82M|    int ret;
+  695|  66.6M|int ZEXPORT deflateReset(z_streamp strm) {
+  696|  66.6M|    int ret;
   697|       |
-  698|  4.82M|    ret = deflateResetKeep(strm);
-  699|  4.82M|    if (ret == Z_OK)
+  698|  66.6M|    ret = deflateResetKeep(strm);
+  699|  66.6M|    if (ret == Z_OK)
   ------------------
-  |  Branch (699:9): [True: 4.82M, False: 0]
+  |  Branch (699:9): [True: 66.6M, False: 0]
   ------------------
-  700|  4.82M|        lm_init(strm->state);
-  701|  4.82M|    return ret;
-  702|  4.82M|}
+  700|  66.6M|        lm_init(strm->state);
+  701|  66.6M|    return ret;
+  702|  66.6M|}
   703|       |
   704|       |/* ========================================================================= */
   705|      0|int ZEXPORT deflateSetHeader(z_streamp strm, gz_headerp head) {
@@ -2598,10 +2598,10 @@
   909|       | * IN assertion: the stream state is correct and there is enough room in
   910|       | * pending_buf.
   911|       | */
-  912|  3.05M|local void putShortMSB(deflate_state *s, uInt b) {
-  913|  3.05M|    put_byte(s, (Byte)(b >> 8));
-  914|  3.05M|    put_byte(s, (Byte)(b & 0xff));
-  915|  3.05M|}
+  912|  46.4M|local void putShortMSB(deflate_state *s, uInt b) {
+  913|  46.4M|    put_byte(s, (Byte)(b >> 8));
+  914|  46.4M|    put_byte(s, (Byte)(b & 0xff));
+  915|  46.4M|}
   916|       |
   917|       |/* =========================================================================
   918|       | * Flush as much pending output as possible. All deflate() output, except for
@@ -2609,36 +2609,36 @@
   920|       | * applications may wish to modify it to avoid allocating a large
   921|       | * strm->next_out buffer and copying into it. (See also read_buf()).
   922|       | */
-  923|  4.34M|local void flush_pending(z_streamp strm) {
-  924|  4.34M|    unsigned len;
-  925|  4.34M|    deflate_state *s = strm->state;
+  923|  72.5M|local void flush_pending(z_streamp strm) {
+  924|  72.5M|    unsigned len;
+  925|  72.5M|    deflate_state *s = strm->state;
   926|       |
-  927|  4.34M|    _tr_flush_bits(s);
-  928|  4.34M|    len = s->pending;
-  929|  4.34M|    if (len > strm->avail_out) len = strm->avail_out;
+  927|  72.5M|    _tr_flush_bits(s);
+  928|  72.5M|    len = s->pending;
+  929|  72.5M|    if (len > strm->avail_out) len = strm->avail_out;
                                              ^0
   ------------------
-  |  Branch (929:9): [True: 0, False: 4.34M]
+  |  Branch (929:9): [True: 0, False: 72.5M]
   ------------------
-  930|  4.34M|    if (len == 0) return;
-                                ^276
+  930|  72.5M|    if (len == 0) return;
+                                ^5.36k
   ------------------
-  |  Branch (930:9): [True: 276, False: 4.34M]
+  |  Branch (930:9): [True: 5.36k, False: 72.5M]
   ------------------
   931|       |
-  932|  4.34M|    zmemcpy(strm->next_out, s->pending_out, len);
-  933|  4.34M|    strm->next_out  += len;
-  934|  4.34M|    s->pending_out  += len;
-  935|  4.34M|    strm->total_out += len;
-  936|  4.34M|    strm->avail_out -= len;
-  937|  4.34M|    s->pending      -= len;
-  938|  4.34M|    if (s->pending == 0) {
+  932|  72.5M|    zmemcpy(strm->next_out, s->pending_out, len);
+  933|  72.5M|    strm->next_out  += len;
+  934|  72.5M|    s->pending_out  += len;
+  935|  72.5M|    strm->total_out += len;
+  936|  72.5M|    strm->avail_out -= len;
+  937|  72.5M|    s->pending      -= len;
+  938|  72.5M|    if (s->pending == 0) {
   ------------------
-  |  Branch (938:9): [True: 4.34M, False: 0]
+  |  Branch (938:9): [True: 72.5M, False: 0]
   ------------------
-  939|  4.34M|        s->pending_out = s->pending_buf;
-  940|  4.34M|    }
-  941|  4.34M|}
+  939|  72.5M|        s->pending_out = s->pending_buf;
+  940|  72.5M|    }
+  941|  72.5M|}
   942|       |
   943|       |/* ===========================================================================
   944|       | * Update the header CRC with the bytes s->pending_buf[beg..s->pending - 1].
@@ -2651,52 +2651,52 @@
   951|      0|    } while (0)
   952|       |
   953|       |/* ========================================================================= */
-  954|  3.57M|int ZEXPORT deflate(z_streamp strm, int flush) {
-  955|  3.57M|    int old_flush; /* value of flush param for previous deflate call */
-  956|  3.57M|    deflate_state *s;
+  954|  67.2M|int ZEXPORT deflate(z_streamp strm, int flush) {
+  955|  67.2M|    int old_flush; /* value of flush param for previous deflate call */
+  956|  67.2M|    deflate_state *s;
   957|       |
-  958|  3.57M|    if (deflateStateCheck(strm) || flush > Z_BLOCK || flush < 0) {
-                                                 ^3.36M  ^3.36M     ^3.18M
+  958|  67.2M|    if (deflateStateCheck(strm) || flush > Z_BLOCK || flush < 0) {
+                                                 ^62.9M  ^62.9M     ^59.3M
   ------------------
-  |  Branch (958:9): [True: 212k, False: 3.36M]
-  |  Branch (958:36): [True: 178k, False: 3.18M]
-  |  Branch (958:55): [True: 0, False: 3.18M]
+  |  Branch (958:9): [True: 4.31M, False: 62.9M]
+  |  Branch (958:36): [True: 3.60M, False: 59.3M]
+  |  Branch (958:55): [True: 0, False: 59.3M]
   ------------------
-  959|   391k|        return Z_STREAM_ERROR;
-  960|   391k|    }
-  961|  3.18M|    s = strm->state;
+  959|  7.91M|        return Z_STREAM_ERROR;
+  960|  7.91M|    }
+  961|  59.3M|    s = strm->state;
   962|       |
-  963|  3.18M|    if (strm->next_out == Z_NULL ||
+  963|  59.3M|    if (strm->next_out == Z_NULL ||
   ------------------
-  |  Branch (963:9): [True: 212k, False: 2.96M]
+  |  Branch (963:9): [True: 4.31M, False: 54.9M]
   ------------------
-  964|  3.18M|        (strm->avail_in != 0 && strm->next_in == Z_NULL) ||
-                      ^2.96M^2.96M                 ^2.75M           ^2.75M
+  964|  59.3M|        (strm->avail_in != 0 && strm->next_in == Z_NULL) ||
+                      ^54.9M^54.9M                 ^50.6M           ^50.6M
   ------------------
-  |  Branch (964:10): [True: 2.75M, False: 212k]
-  |  Branch (964:33): [True: 0, False: 2.75M]
+  |  Branch (964:10): [True: 50.6M, False: 4.31M]
+  |  Branch (964:33): [True: 0, False: 50.6M]
   ------------------
-  965|  3.18M|        (s->status == FINISH_STATE && flush != Z_FINISH)) {
-                      ^2.96M^2.96M       ^2.96M          ^0       ^0
+  965|  59.3M|        (s->status == FINISH_STATE && flush != Z_FINISH)) {
+                      ^54.9M^54.9M       ^54.9M          ^0       ^0
   ------------------
-  |  Branch (965:10): [True: 0, False: 2.96M]
+  |  Branch (965:10): [True: 0, False: 54.9M]
   |  Branch (965:39): [True: 0, False: 0]
   ------------------
-  966|   212k|        ERR_RETURN(strm, Z_STREAM_ERROR);
-  967|   212k|    }
-  968|  2.96M|    if (strm->avail_out == 0) ERR_RETURN(strm, Z_BUF_ERROR);
-                                            ^212k
+  966|  4.31M|        ERR_RETURN(strm, Z_STREAM_ERROR);
+  967|  4.31M|    }
+  968|  54.9M|    if (strm->avail_out == 0) ERR_RETURN(strm, Z_BUF_ERROR);
+                                            ^4.31M
   ------------------
-  |  Branch (968:9): [True: 212k, False: 2.75M]
+  |  Branch (968:9): [True: 4.31M, False: 50.6M]
   ------------------
   969|       |
-  970|  2.75M|    old_flush = s->last_flush;
-  971|  2.75M|    s->last_flush = flush;
+  970|  50.6M|    old_flush = s->last_flush;
+  971|  50.6M|    s->last_flush = flush;
   972|       |
   973|       |    /* Flush as much pending output as possible */
-  974|  2.75M|    if (s->pending != 0) {
+  974|  50.6M|    if (s->pending != 0) {
   ------------------
-  |  Branch (974:9): [True: 0, False: 2.75M]
+  |  Branch (974:9): [True: 0, False: 50.6M]
   ------------------
   975|      0|        flush_pending(strm);
   976|      0|        if (strm->avail_out == 0) {
@@ -2717,13 +2717,13 @@
   988|       |     * flushes. For repeated and useless calls with Z_FINISH, we keep
   989|       |     * returning Z_STREAM_END instead of Z_BUF_ERROR.
   990|       |     */
-  991|  2.75M|    } else if (strm->avail_in == 0 && RANK(flush) <= RANK(old_flush) &&
-                                                    ^212k^212k      ^212k
+  991|  50.6M|    } else if (strm->avail_in == 0 && RANK(flush) <= RANK(old_flush) &&
+                                                    ^4.31M^4.31M     ^4.31M
   ------------------
-  |  Branch (991:16): [True: 212k, False: 2.54M]
-  |  Branch (991:39): [True: 0, False: 212k]
+  |  Branch (991:16): [True: 4.31M, False: 46.3M]
+  |  Branch (991:39): [True: 0, False: 4.31M]
   ------------------
-  992|  2.75M|               flush != Z_FINISH) {
+  992|  50.6M|               flush != Z_FINISH) {
                              ^0       ^0
   ------------------
   |  Branch (992:16): [True: 0, False: 0]
@@ -2732,84 +2732,84 @@
   994|      0|    }
   995|       |
   996|       |    /* User must not provide more input after the first FINISH: */
-  997|  2.75M|    if (s->status == FINISH_STATE && strm->avail_in != 0) {
+  997|  50.6M|    if (s->status == FINISH_STATE && strm->avail_in != 0) {
                                                    ^0
   ------------------
-  |  Branch (997:9): [True: 0, False: 2.75M]
+  |  Branch (997:9): [True: 0, False: 50.6M]
   |  Branch (997:38): [True: 0, False: 0]
   ------------------
   998|      0|        ERR_RETURN(strm, Z_BUF_ERROR);
   999|      0|    }
  1000|       |
  1001|       |    /* Write the header */
- 1002|  2.75M|    if (s->status == INIT_STATE && s->wrap == 0)
-                                                 ^1.04M
+ 1002|  50.6M|    if (s->status == INIT_STATE && s->wrap == 0)
+                                                 ^15.9M
   ------------------
-  |  Branch (1002:9): [True: 1.04M, False: 1.71M]
-  |  Branch (1002:36): [True: 0, False: 1.04M]
+  |  Branch (1002:9): [True: 15.9M, False: 34.7M]
+  |  Branch (1002:36): [True: 0, False: 15.9M]
   ------------------
  1003|      0|        s->status = BUSY_STATE;
- 1004|  2.75M|    if (s->status == INIT_STATE) {
+ 1004|  50.6M|    if (s->status == INIT_STATE) {
   ------------------
-  |  Branch (1004:9): [True: 1.04M, False: 1.71M]
+  |  Branch (1004:9): [True: 15.9M, False: 34.7M]
   ------------------
  1005|       |        /* zlib header */
- 1006|  1.04M|        uInt header = (Z_DEFLATED + ((s->w_bits - 8) << 4)) << 8;
- 1007|  1.04M|        uInt level_flags;
+ 1006|  15.9M|        uInt header = (Z_DEFLATED + ((s->w_bits - 8) << 4)) << 8;
+ 1007|  15.9M|        uInt level_flags;
  1008|       |
- 1009|  1.04M|        if (s->strategy >= Z_HUFFMAN_ONLY || s->level < 2)
+ 1009|  15.9M|        if (s->strategy >= Z_HUFFMAN_ONLY || s->level < 2)
   ------------------
-  |  Branch (1009:13): [True: 0, False: 1.04M]
-  |  Branch (1009:46): [True: 0, False: 1.04M]
+  |  Branch (1009:13): [True: 0, False: 15.9M]
+  |  Branch (1009:46): [True: 0, False: 15.9M]
   ------------------
  1010|      0|            level_flags = 0;
- 1011|  1.04M|        else if (s->level < 6)
+ 1011|  15.9M|        else if (s->level < 6)
   ------------------
-  |  Branch (1011:18): [True: 0, False: 1.04M]
+  |  Branch (1011:18): [True: 0, False: 15.9M]
   ------------------
  1012|      0|            level_flags = 1;
- 1013|  1.04M|        else if (s->level == 6)
+ 1013|  15.9M|        else if (s->level == 6)
   ------------------
-  |  Branch (1013:18): [True: 1.04M, False: 0]
+  |  Branch (1013:18): [True: 15.9M, False: 0]
   ------------------
- 1014|  1.04M|            level_flags = 2;
+ 1014|  15.9M|            level_flags = 2;
  1015|      0|        else
  1016|      0|            level_flags = 3;
- 1017|  1.04M|        header |= (level_flags << 6);
- 1018|  1.04M|        if (s->strstart != 0) header |= PRESET_DICT;
+ 1017|  15.9M|        header |= (level_flags << 6);
+ 1018|  15.9M|        if (s->strstart != 0) header |= PRESET_DICT;
                                             ^0        ^0
   ------------------
-  |  Branch (1018:13): [True: 0, False: 1.04M]
+  |  Branch (1018:13): [True: 0, False: 15.9M]
   ------------------
- 1019|  1.04M|        header += 31 - (header % 31);
+ 1019|  15.9M|        header += 31 - (header % 31);
  1020|       |
- 1021|  1.04M|        putShortMSB(s, header);
+ 1021|  15.9M|        putShortMSB(s, header);
  1022|       |
  1023|       |        /* Save the adler32 of the preset dictionary: */
- 1024|  1.04M|        if (s->strstart != 0) {
+ 1024|  15.9M|        if (s->strstart != 0) {
   ------------------
-  |  Branch (1024:13): [True: 0, False: 1.04M]
+  |  Branch (1024:13): [True: 0, False: 15.9M]
   ------------------
  1025|      0|            putShortMSB(s, (uInt)(strm->adler >> 16));
  1026|      0|            putShortMSB(s, (uInt)(strm->adler & 0xffff));
  1027|      0|        }
- 1028|  1.04M|        strm->adler = adler32(0L, Z_NULL, 0);
- 1029|  1.04M|        s->status = BUSY_STATE;
+ 1028|  15.9M|        strm->adler = adler32(0L, Z_NULL, 0);
+ 1029|  15.9M|        s->status = BUSY_STATE;
  1030|       |
  1031|       |        /* Compression must start with an empty pending buffer */
- 1032|  1.04M|        flush_pending(strm);
- 1033|  1.04M|        if (s->pending != 0) {
+ 1032|  15.9M|        flush_pending(strm);
+ 1033|  15.9M|        if (s->pending != 0) {
   ------------------
-  |  Branch (1033:13): [True: 0, False: 1.04M]
+  |  Branch (1033:13): [True: 0, False: 15.9M]
   ------------------
  1034|      0|            s->last_flush = -1;
  1035|      0|            return Z_OK;
  1036|      0|        }
- 1037|  1.04M|    }
- 1038|  2.75M|#ifdef GZIP
- 1039|  2.75M|    if (s->status == GZIP_STATE) {
+ 1037|  15.9M|    }
+ 1038|  50.6M|#ifdef GZIP
+ 1039|  50.6M|    if (s->status == GZIP_STATE) {
   ------------------
-  |  Branch (1039:9): [True: 0, False: 2.75M]
+  |  Branch (1039:9): [True: 0, False: 50.6M]
   ------------------
  1040|       |        /* gzip header */
  1041|      0|        strm->adler = crc32(0L, Z_NULL, 0);
@@ -2873,9 +2873,9 @@
  1087|      0|            s->status = EXTRA_STATE;
  1088|      0|        }
  1089|      0|    }
- 1090|  2.75M|    if (s->status == EXTRA_STATE) {
+ 1090|  50.6M|    if (s->status == EXTRA_STATE) {
   ------------------
-  |  Branch (1090:9): [True: 0, False: 2.75M]
+  |  Branch (1090:9): [True: 0, False: 50.6M]
   ------------------
  1091|      0|        if (s->gzhead->extra != Z_NULL) {
   ------------------
@@ -2912,9 +2912,9 @@
  1114|      0|        }
  1115|      0|        s->status = NAME_STATE;
  1116|      0|    }
- 1117|  2.75M|    if (s->status == NAME_STATE) {
+ 1117|  50.6M|    if (s->status == NAME_STATE) {
   ------------------
-  |  Branch (1117:9): [True: 0, False: 2.75M]
+  |  Branch (1117:9): [True: 0, False: 50.6M]
   ------------------
  1118|      0|        if (s->gzhead->name != Z_NULL) {
   ------------------
@@ -2949,9 +2949,9 @@
  1136|      0|        }
  1137|      0|        s->status = COMMENT_STATE;
  1138|      0|    }
- 1139|  2.75M|    if (s->status == COMMENT_STATE) {
+ 1139|  50.6M|    if (s->status == COMMENT_STATE) {
   ------------------
-  |  Branch (1139:9): [True: 0, False: 2.75M]
+  |  Branch (1139:9): [True: 0, False: 50.6M]
   ------------------
  1140|      0|        if (s->gzhead->comment != Z_NULL) {
   ------------------
@@ -2985,9 +2985,9 @@
  1157|      0|        }
  1158|      0|        s->status = HCRC_STATE;
  1159|      0|    }
- 1160|  2.75M|    if (s->status == HCRC_STATE) {
+ 1160|  50.6M|    if (s->status == HCRC_STATE) {
   ------------------
-  |  Branch (1160:9): [True: 0, False: 2.75M]
+  |  Branch (1160:9): [True: 0, False: 50.6M]
   ------------------
  1161|      0|        if (s->gzhead->hcrc) {
   ------------------
@@ -3022,61 +3022,61 @@
  1179|      0|            return Z_OK;
  1180|      0|        }
  1181|      0|    }
- 1182|  2.75M|#endif
+ 1182|  50.6M|#endif
  1183|       |
  1184|       |    /* Start a new block or continue the current one.
  1185|       |     */
- 1186|  2.75M|    if (strm->avail_in != 0 || s->lookahead != 0 ||
-                                             ^212k
+ 1186|  50.6M|    if (strm->avail_in != 0 || s->lookahead != 0 ||
+                                             ^4.31M
   ------------------
-  |  Branch (1186:9): [True: 2.54M, False: 212k]
-  |  Branch (1186:32): [True: 212k, False: 0]
+  |  Branch (1186:9): [True: 46.3M, False: 4.31M]
+  |  Branch (1186:32): [True: 4.31M, False: 0]
   ------------------
- 1187|  2.75M|        (flush != Z_NO_FLUSH && s->status != FINISH_STATE)) {
+ 1187|  50.6M|        (flush != Z_NO_FLUSH && s->status != FINISH_STATE)) {
                       ^0^0       ^0            ^0           ^0
   ------------------
   |  Branch (1187:10): [True: 0, False: 0]
   |  Branch (1187:33): [True: 0, False: 0]
   ------------------
- 1188|  2.75M|        block_state bstate;
+ 1188|  50.6M|        block_state bstate;
  1189|       |
- 1190|  2.75M|        bstate = s->level == 0 ? deflate_stored(s, flush) :
+ 1190|  50.6M|        bstate = s->level == 0 ? deflate_stored(s, flush) :
                                                ^0
   ------------------
-  |  Branch (1190:18): [True: 0, False: 2.75M]
+  |  Branch (1190:18): [True: 0, False: 50.6M]
   ------------------
- 1191|  2.75M|                 s->strategy == Z_HUFFMAN_ONLY ? deflate_huff(s, flush) :
+ 1191|  50.6M|                 s->strategy == Z_HUFFMAN_ONLY ? deflate_huff(s, flush) :
                                                                ^0
   ------------------
-  |  Branch (1191:18): [True: 0, False: 2.75M]
+  |  Branch (1191:18): [True: 0, False: 50.6M]
   ------------------
- 1192|  2.75M|                 s->strategy == Z_RLE ? deflate_rle(s, flush) :
+ 1192|  50.6M|                 s->strategy == Z_RLE ? deflate_rle(s, flush) :
                                                       ^0
   ------------------
-  |  Branch (1192:18): [True: 0, False: 2.75M]
+  |  Branch (1192:18): [True: 0, False: 50.6M]
   ------------------
- 1193|  2.75M|                 (*(configuration_table[s->level].func))(s, flush);
+ 1193|  50.6M|                 (*(configuration_table[s->level].func))(s, flush);
  1194|       |
- 1195|  2.75M|        if (bstate == finish_started || bstate == finish_done) {
+ 1195|  50.6M|        if (bstate == finish_started || bstate == finish_done) {
   ------------------
-  |  Branch (1195:13): [True: 0, False: 2.75M]
-  |  Branch (1195:41): [True: 1.00M, False: 1.74M]
+  |  Branch (1195:13): [True: 0, False: 50.6M]
+  |  Branch (1195:41): [True: 15.2M, False: 35.4M]
   ------------------
- 1196|  1.00M|            s->status = FINISH_STATE;
- 1197|  1.00M|        }
- 1198|  2.75M|        if (bstate == need_more || bstate == finish_started) {
-                                                 ^1.64M
+ 1196|  15.2M|            s->status = FINISH_STATE;
+ 1197|  15.2M|        }
+ 1198|  50.6M|        if (bstate == need_more || bstate == finish_started) {
+                                                 ^28.2M
   ------------------
-  |  Branch (1198:13): [True: 1.10M, False: 1.64M]
-  |  Branch (1198:36): [True: 0, False: 1.64M]
+  |  Branch (1198:13): [True: 22.4M, False: 28.2M]
+  |  Branch (1198:36): [True: 0, False: 28.2M]
   ------------------
- 1199|  1.10M|            if (strm->avail_out == 0) {
+ 1199|  22.4M|            if (strm->avail_out == 0) {
   ------------------
-  |  Branch (1199:17): [True: 0, False: 1.10M]
+  |  Branch (1199:17): [True: 0, False: 22.4M]
   ------------------
  1200|      0|                s->last_flush = -1; /* avoid BUF_ERROR next call, see above */
  1201|      0|            }
- 1202|  1.10M|            return Z_OK;
+ 1202|  22.4M|            return Z_OK;
  1203|       |            /* If flush != Z_NO_FLUSH && avail_out == 0, the next call
  1204|       |             * of deflate should use the same flush parameter to make sure
  1205|       |             * that the flush is complete. So we don't have to output an
@@ -3084,66 +3084,66 @@
  1207|       |             * ensures that for a very small output buffer, we emit at most
  1208|       |             * one empty block.
  1209|       |             */
- 1210|  1.10M|        }
- 1211|  1.64M|        if (bstate == block_done) {
+ 1210|  22.4M|        }
+ 1211|  28.2M|        if (bstate == block_done) {
   ------------------
-  |  Branch (1211:13): [True: 642k, False: 1.00M]
+  |  Branch (1211:13): [True: 13.0M, False: 15.2M]
   ------------------
- 1212|   642k|            if (flush == Z_PARTIAL_FLUSH) {
+ 1212|  13.0M|            if (flush == Z_PARTIAL_FLUSH) {
   ------------------
-  |  Branch (1212:17): [True: 214k, False: 427k]
+  |  Branch (1212:17): [True: 4.34M, False: 8.66M]
   ------------------
- 1213|   214k|                _tr_align(s);
- 1214|   427k|            } else if (flush != Z_BLOCK) { /* FULL_FLUSH or SYNC_FLUSH */
+ 1213|  4.34M|                _tr_align(s);
+ 1214|  8.66M|            } else if (flush != Z_BLOCK) { /* FULL_FLUSH or SYNC_FLUSH */
   ------------------
-  |  Branch (1214:24): [True: 427k, False: 276]
+  |  Branch (1214:24): [True: 8.66M, False: 5.36k]
   ------------------
- 1215|   427k|                _tr_stored_block(s, (char*)0, 0L, 0);
+ 1215|  8.66M|                _tr_stored_block(s, (char*)0, 0L, 0);
  1216|       |                /* For a full flush, this empty block will be recognized
  1217|       |                 * as a special marker by inflate_sync().
  1218|       |                 */
- 1219|   427k|                if (flush == Z_FULL_FLUSH) {
+ 1219|  8.66M|                if (flush == Z_FULL_FLUSH) {
   ------------------
-  |  Branch (1219:21): [True: 213k, False: 214k]
+  |  Branch (1219:21): [True: 4.32M, False: 4.33M]
   ------------------
- 1220|   213k|                    CLEAR_HASH(s);             /* forget history */
- 1221|   213k|                    if (s->lookahead == 0) {
+ 1220|  4.32M|                    CLEAR_HASH(s);             /* forget history */
+ 1221|  4.32M|                    if (s->lookahead == 0) {
   ------------------
-  |  Branch (1221:25): [True: 213k, False: 0]
+  |  Branch (1221:25): [True: 4.32M, False: 0]
   ------------------
- 1222|   213k|                        s->strstart = 0;
- 1223|   213k|                        s->block_start = 0L;
- 1224|   213k|                        s->insert = 0;
- 1225|   213k|                    }
- 1226|   213k|                }
- 1227|   427k|            }
- 1228|   642k|            flush_pending(strm);
- 1229|   642k|            if (strm->avail_out == 0) {
+ 1222|  4.32M|                        s->strstart = 0;
+ 1223|  4.32M|                        s->block_start = 0L;
+ 1224|  4.32M|                        s->insert = 0;
+ 1225|  4.32M|                    }
+ 1226|  4.32M|                }
+ 1227|  8.66M|            }
+ 1228|  13.0M|            flush_pending(strm);
+ 1229|  13.0M|            if (strm->avail_out == 0) {
   ------------------
-  |  Branch (1229:17): [True: 0, False: 642k]
+  |  Branch (1229:17): [True: 0, False: 13.0M]
   ------------------
  1230|      0|              s->last_flush = -1; /* avoid BUF_ERROR at next call, see above */
  1231|      0|              return Z_OK;
  1232|      0|            }
- 1233|   642k|        }
- 1234|  1.64M|    }
+ 1233|  13.0M|        }
+ 1234|  28.2M|    }
  1235|       |
- 1236|  1.64M|    if (flush != Z_FINISH) return Z_OK;
-                                         ^642k  ^642k
+ 1236|  28.2M|    if (flush != Z_FINISH) return Z_OK;
+                                         ^13.0M ^13.0M
   ------------------
-  |  Branch (1236:9): [True: 642k, False: 1.00M]
+  |  Branch (1236:9): [True: 13.0M, False: 15.2M]
   ------------------
- 1237|  1.00M|    if (s->wrap <= 0) return Z_STREAM_END;
+ 1237|  15.2M|    if (s->wrap <= 0) return Z_STREAM_END;
                                     ^0     ^0
   ------------------
-  |  Branch (1237:9): [True: 0, False: 1.00M]
+  |  Branch (1237:9): [True: 0, False: 15.2M]
   ------------------
  1238|       |
  1239|       |    /* Write the trailer */
- 1240|  1.00M|#ifdef GZIP
- 1241|  1.00M|    if (s->wrap == 2) {
+ 1240|  15.2M|#ifdef GZIP
+ 1241|  15.2M|    if (s->wrap == 2) {
   ------------------
-  |  Branch (1241:9): [True: 0, False: 1.00M]
+  |  Branch (1241:9): [True: 0, False: 15.2M]
   ------------------
  1242|      0|        put_byte(s, (Byte)(strm->adler & 0xff));
  1243|      0|        put_byte(s, (Byte)((strm->adler >> 8) & 0xff));
@@ -3154,54 +3154,54 @@
  1248|      0|        put_byte(s, (Byte)((strm->total_in >> 16) & 0xff));
  1249|      0|        put_byte(s, (Byte)((strm->total_in >> 24) & 0xff));
  1250|      0|    }
- 1251|  1.00M|    else
- 1252|  1.00M|#endif
- 1253|  1.00M|    {
- 1254|  1.00M|        putShortMSB(s, (uInt)(strm->adler >> 16));
- 1255|  1.00M|        putShortMSB(s, (uInt)(strm->adler & 0xffff));
- 1256|  1.00M|    }
- 1257|  1.00M|    flush_pending(strm);
+ 1251|  15.2M|    else
+ 1252|  15.2M|#endif
+ 1253|  15.2M|    {
+ 1254|  15.2M|        putShortMSB(s, (uInt)(strm->adler >> 16));
+ 1255|  15.2M|        putShortMSB(s, (uInt)(strm->adler & 0xffff));
+ 1256|  15.2M|    }
+ 1257|  15.2M|    flush_pending(strm);
  1258|       |    /* If avail_out is zero, the application will call deflate again
  1259|       |     * to flush the rest.
  1260|       |     */
- 1261|  1.00M|    if (s->wrap > 0) s->wrap = -s->wrap; /* write the trailer only once! */
+ 1261|  15.2M|    if (s->wrap > 0) s->wrap = -s->wrap; /* write the trailer only once! */
   ------------------
-  |  Branch (1261:9): [True: 1.00M, False: 0]
+  |  Branch (1261:9): [True: 15.2M, False: 0]
   ------------------
- 1262|  1.00M|    return s->pending != 0 ? Z_OK : Z_STREAM_END;
+ 1262|  15.2M|    return s->pending != 0 ? Z_OK : Z_STREAM_END;
                                            ^0
   ------------------
-  |  Branch (1262:12): [True: 0, False: 1.00M]
+  |  Branch (1262:12): [True: 0, False: 15.2M]
   ------------------
- 1263|  1.00M|}
+ 1263|  15.2M|}
  1264|       |
  1265|       |/* ========================================================================= */
- 1266|  4.82M|int ZEXPORT deflateEnd(z_streamp strm) {
- 1267|  4.82M|    int status;
+ 1266|  66.6M|int ZEXPORT deflateEnd(z_streamp strm) {
+ 1267|  66.6M|    int status;
  1268|       |
- 1269|  4.82M|    if (deflateStateCheck(strm)) return Z_STREAM_ERROR;
+ 1269|  66.6M|    if (deflateStateCheck(strm)) return Z_STREAM_ERROR;
                                                ^0     ^0
   ------------------
-  |  Branch (1269:9): [True: 0, False: 4.82M]
+  |  Branch (1269:9): [True: 0, False: 66.6M]
   ------------------
  1270|       |
- 1271|  4.82M|    status = strm->state->status;
+ 1271|  66.6M|    status = strm->state->status;
  1272|       |
  1273|       |    /* Deallocate in reverse order of allocations: */
- 1274|  4.82M|    TRY_FREE(strm, strm->state->pending_buf);
- 1275|  4.82M|    TRY_FREE(strm, strm->state->head);
- 1276|  4.82M|    TRY_FREE(strm, strm->state->prev);
- 1277|  4.82M|    TRY_FREE(strm, strm->state->window);
+ 1274|  66.6M|    TRY_FREE(strm, strm->state->pending_buf);
+ 1275|  66.6M|    TRY_FREE(strm, strm->state->head);
+ 1276|  66.6M|    TRY_FREE(strm, strm->state->prev);
+ 1277|  66.6M|    TRY_FREE(strm, strm->state->window);
  1278|       |
- 1279|  4.82M|    ZFREE(strm, strm->state);
- 1280|  4.82M|    strm->state = Z_NULL;
+ 1279|  66.6M|    ZFREE(strm, strm->state);
+ 1280|  66.6M|    strm->state = Z_NULL;
  1281|       |
- 1282|  4.82M|    return status == BUSY_STATE ? Z_DATA_ERROR : Z_OK;
-                                                ^34.2k         ^4.78M
+ 1282|  66.6M|    return status == BUSY_STATE ? Z_DATA_ERROR : Z_OK;
+                                                ^699k          ^65.9M
   ------------------
-  |  Branch (1282:12): [True: 34.2k, False: 4.78M]
+  |  Branch (1282:12): [True: 699k, False: 65.9M]
   ------------------
- 1283|  4.82M|}
+ 1283|  66.6M|}
  1284|       |
  1285|       |/* =========================================================================
  1286|       | * Copy the source state to the destination state.
@@ -3289,24 +3289,24 @@
  1353|       | *   string (strstart) and its distance is <= MAX_DIST, and prev_length >= 1
  1354|       | * OUT assertion: the match length is not greater than s->lookahead.
  1355|       | */
- 1356|  9.04M|local uInt longest_match(deflate_state *s, IPos cur_match) {
- 1357|  9.04M|    unsigned chain_length = s->max_chain_length;/* max hash chain length */
- 1358|  9.04M|    register Bytef *scan = s->window + s->strstart; /* current string */
- 1359|  9.04M|    register Bytef *match;                      /* matched string */
- 1360|  9.04M|    register int len;                           /* length of current match */
- 1361|  9.04M|    int best_len = (int)s->prev_length;         /* best match length so far */
- 1362|  9.04M|    int nice_match = s->nice_match;             /* stop if match long enough */
- 1363|  9.04M|    IPos limit = s->strstart > (IPos)MAX_DIST(s) ?
+ 1356|   169M|local uInt longest_match(deflate_state *s, IPos cur_match) {
+ 1357|   169M|    unsigned chain_length = s->max_chain_length;/* max hash chain length */
+ 1358|   169M|    register Bytef *scan = s->window + s->strstart; /* current string */
+ 1359|   169M|    register Bytef *match;                      /* matched string */
+ 1360|   169M|    register int len;                           /* length of current match */
+ 1361|   169M|    int best_len = (int)s->prev_length;         /* best match length so far */
+ 1362|   169M|    int nice_match = s->nice_match;             /* stop if match long enough */
+ 1363|   169M|    IPos limit = s->strstart > (IPos)MAX_DIST(s) ?
   ------------------
-  |  Branch (1363:18): [True: 0, False: 9.04M]
+  |  Branch (1363:18): [True: 0, False: 169M]
   ------------------
- 1364|  9.04M|        s->strstart - (IPos)MAX_DIST(s) : NIL;
+ 1364|   169M|        s->strstart - (IPos)MAX_DIST(s) : NIL;
                       ^0                  ^0
  1365|       |    /* Stop when cur_match becomes <= limit. To simplify the code,
  1366|       |     * we prevent matches with the string of window index 0.
  1367|       |     */
- 1368|  9.04M|    Posf *prev = s->prev;
- 1369|  9.04M|    uInt wmask = s->w_mask;
+ 1368|   169M|    Posf *prev = s->prev;
+ 1369|   169M|    uInt wmask = s->w_mask;
  1370|       |
  1371|       |#ifdef UNALIGNED_OK
  1372|       |    /* Compare two bytes at a time. Note: this is not always beneficial.
@@ -3316,38 +3316,38 @@
  1376|       |    register ush scan_start = *(ushf*)scan;
  1377|       |    register ush scan_end   = *(ushf*)(scan + best_len - 1);
  1378|       |#else
- 1379|  9.04M|    register Bytef *strend = s->window + s->strstart + MAX_MATCH;
- 1380|  9.04M|    register Byte scan_end1  = scan[best_len - 1];
- 1381|  9.04M|    register Byte scan_end   = scan[best_len];
- 1382|  9.04M|#endif
+ 1379|   169M|    register Bytef *strend = s->window + s->strstart + MAX_MATCH;
+ 1380|   169M|    register Byte scan_end1  = scan[best_len - 1];
+ 1381|   169M|    register Byte scan_end   = scan[best_len];
+ 1382|   169M|#endif
  1383|       |
  1384|       |    /* The code is optimized for HASH_BITS >= 8 and MAX_MATCH-2 multiple of 16.
  1385|       |     * It is easy to get rid of this optimization if necessary.
  1386|       |     */
- 1387|  9.04M|    Assert(s->hash_bits >= 8 && MAX_MATCH == 258, "Code too clever");
+ 1387|   169M|    Assert(s->hash_bits >= 8 && MAX_MATCH == 258, "Code too clever");
  1388|       |
  1389|       |    /* Do not waste too much time if we already have a good match: */
- 1390|  9.04M|    if (s->prev_length >= s->good_match) {
+ 1390|   169M|    if (s->prev_length >= s->good_match) {
   ------------------
-  |  Branch (1390:9): [True: 1.36M, False: 7.67M]
+  |  Branch (1390:9): [True: 22.7M, False: 146M]
   ------------------
- 1391|  1.36M|        chain_length >>= 2;
- 1392|  1.36M|    }
+ 1391|  22.7M|        chain_length >>= 2;
+ 1392|  22.7M|    }
  1393|       |    /* Do not look for matches beyond the end of the input. This is necessary
  1394|       |     * to make deflate deterministic.
  1395|       |     */
- 1396|  9.04M|    if ((uInt)nice_match > s->lookahead) nice_match = (int)s->lookahead;
-                                                       ^5.55M
+ 1396|   169M|    if ((uInt)nice_match > s->lookahead) nice_match = (int)s->lookahead;
+                                                       ^98.5M
   ------------------
-  |  Branch (1396:9): [True: 5.55M, False: 3.49M]
+  |  Branch (1396:9): [True: 98.5M, False: 71.0M]
   ------------------
  1397|       |
- 1398|  9.04M|    Assert((ulg)s->strstart <= s->window_size - MIN_LOOKAHEAD,
- 1399|  9.04M|           "need lookahead");
+ 1398|   169M|    Assert((ulg)s->strstart <= s->window_size - MIN_LOOKAHEAD,
+ 1399|   169M|           "need lookahead");
  1400|       |
- 1401|   178M|    do {
- 1402|   178M|        Assert(cur_match < s->strstart, "no future");
- 1403|   178M|        match = s->window + cur_match;
+ 1401|  3.21G|    do {
+ 1402|  3.21G|        Assert(cur_match < s->strstart, "no future");
+ 1403|  3.21G|        match = s->window + cur_match;
  1404|       |
  1405|       |        /* Skip to next match if the match length cannot increase
  1406|       |         * or if the match length is less than 2.  Note that the checks below
@@ -3393,24 +3393,24 @@
  1446|       |
  1447|       |#else /* UNALIGNED_OK */
  1448|       |
- 1449|   178M|        if (match[best_len]     != scan_end  ||
+ 1449|  3.21G|        if (match[best_len]     != scan_end  ||
   ------------------
-  |  Branch (1449:13): [True: 110M, False: 67.8M]
+  |  Branch (1449:13): [True: 1.92G, False: 1.28G]
   ------------------
- 1450|   178M|            match[best_len - 1] != scan_end1 ||
-                          ^67.8M
+ 1450|  3.21G|            match[best_len - 1] != scan_end1 ||
+                          ^1.28G
   ------------------
-  |  Branch (1450:13): [True: 12.5M, False: 55.2M]
+  |  Branch (1450:13): [True: 215M, False: 1.06G]
   ------------------
- 1451|   178M|            *match              != *scan     ||
-                          ^55.2M
+ 1451|  3.21G|            *match              != *scan     ||
+                          ^1.06G
   ------------------
-  |  Branch (1451:13): [True: 13.4M, False: 41.8M]
+  |  Branch (1451:13): [True: 311M, False: 757M]
   ------------------
- 1452|   178M|            *++match            != scan[1])      continue;
-                          ^41.8M                               ^136M
+ 1452|  3.21G|            *++match            != scan[1])      continue;
+                          ^757M                                ^2.45G
   ------------------
-  |  Branch (1452:13): [True: 138, False: 41.8M]
+  |  Branch (1452:13): [True: 1.08k, False: 757M]
   ------------------
  1453|       |
  1454|       |        /* The check at best_len - 1 can be removed because it will be made
@@ -3419,86 +3419,86 @@
  1457|       |         * are always equal when the other bytes match, given that
  1458|       |         * the hash keys are equal and that HASH_BITS >= 8.
  1459|       |         */
- 1460|  41.8M|        scan += 2, match++;
- 1461|  41.8M|        Assert(*scan == *match, "match[2]?");
+ 1460|   757M|        scan += 2, match++;
+ 1461|   757M|        Assert(*scan == *match, "match[2]?");
  1462|       |
  1463|       |        /* We check for insufficient lookahead only every 8th comparison;
  1464|       |         * the 256th check will be made at strstart + 258.
  1465|       |         */
- 1466|   130M|        do {
- 1467|   130M|        } while (*++scan == *++match && *++scan == *++match &&
-                                                      ^122M
+ 1466|  2.48G|        do {
+ 1467|  2.48G|        } while (*++scan == *++match && *++scan == *++match &&
+                                                      ^2.35G
   ------------------
-  |  Branch (1467:18): [True: 122M, False: 7.50M]
-  |  Branch (1467:41): [True: 116M, False: 6.51M]
+  |  Branch (1467:18): [True: 2.35G, False: 137M]
+  |  Branch (1467:41): [True: 2.23G, False: 119M]
   ------------------
- 1468|   130M|                 *++scan == *++match && *++scan == *++match &&
-                               ^116M                  ^110M
+ 1468|  2.48G|                 *++scan == *++match && *++scan == *++match &&
+                               ^2.23G                 ^2.13G
   ------------------
-  |  Branch (1468:18): [True: 110M, False: 5.53M]
-  |  Branch (1468:41): [True: 105M, False: 5.09M]
+  |  Branch (1468:18): [True: 2.13G, False: 99.0M]
+  |  Branch (1468:41): [True: 2.03G, False: 94.0M]
   ------------------
- 1469|   130M|                 *++scan == *++match && *++scan == *++match &&
-                               ^105M                  ^101M
+ 1469|  2.48G|                 *++scan == *++match && *++scan == *++match &&
+                               ^2.03G                 ^1.95G
   ------------------
-  |  Branch (1469:18): [True: 101M, False: 4.67M]
-  |  Branch (1469:41): [True: 96.7M, False: 4.32M]
+  |  Branch (1469:18): [True: 1.95G, False: 85.0M]
+  |  Branch (1469:41): [True: 1.87G, False: 77.9M]
   ------------------
- 1470|   130M|                 *++scan == *++match && *++scan == *++match &&
-                               ^96.7M                 ^92.4M
+ 1470|  2.48G|                 *++scan == *++match && *++scan == *++match &&
+                               ^1.87G                 ^1.80G
   ------------------
-  |  Branch (1470:18): [True: 92.4M, False: 4.30M]
-  |  Branch (1470:41): [True: 88.6M, False: 3.80M]
+  |  Branch (1470:18): [True: 1.80G, False: 74.3M]
+  |  Branch (1470:41): [True: 1.73G, False: 68.4M]
   ------------------
- 1471|   130M|                 scan < strend);
-                               ^88.6M
+ 1471|  2.48G|                 scan < strend);
+                               ^1.73G
   ------------------
-  |  Branch (1471:18): [True: 88.5M, False: 89.3k]
+  |  Branch (1471:18): [True: 1.73G, False: 1.69M]
   ------------------
  1472|       |
- 1473|  41.8M|        Assert(scan <= s->window + (unsigned)(s->window_size - 1),
- 1474|  41.8M|               "wild scan");
+ 1473|   757M|        Assert(scan <= s->window + (unsigned)(s->window_size - 1),
+ 1474|   757M|               "wild scan");
  1475|       |
- 1476|  41.8M|        len = MAX_MATCH - (int)(strend - scan);
- 1477|  41.8M|        scan = strend - MAX_MATCH;
+ 1476|   757M|        len = MAX_MATCH - (int)(strend - scan);
+ 1477|   757M|        scan = strend - MAX_MATCH;
  1478|       |
- 1479|  41.8M|#endif /* UNALIGNED_OK */
+ 1479|   757M|#endif /* UNALIGNED_OK */
  1480|       |
- 1481|  41.8M|        if (len > best_len) {
+ 1481|   757M|        if (len > best_len) {
   ------------------
-  |  Branch (1481:13): [True: 35.9M, False: 5.89M]
+  |  Branch (1481:13): [True: 655M, False: 102M]
   ------------------
- 1482|  35.9M|            s->match_start = cur_match;
- 1483|  35.9M|            best_len = len;
- 1484|  35.9M|            if (len >= nice_match) break;
-                                                 ^940k
+ 1482|   655M|            s->match_start = cur_match;
+ 1483|   655M|            best_len = len;
+ 1484|   655M|            if (len >= nice_match) break;
+                                                 ^17.5M
   ------------------
-  |  Branch (1484:17): [True: 940k, False: 35.0M]
+  |  Branch (1484:17): [True: 17.5M, False: 637M]
   ------------------
  1485|       |#ifdef UNALIGNED_OK
  1486|       |            scan_end = *(ushf*)(scan + best_len - 1);
  1487|       |#else
- 1488|  35.0M|            scan_end1  = scan[best_len - 1];
- 1489|  35.0M|            scan_end   = scan[best_len];
- 1490|  35.0M|#endif
- 1491|  35.0M|        }
- 1492|   177M|    } while ((cur_match = prev[cur_match & wmask]) > limit
+ 1488|   637M|            scan_end1  = scan[best_len - 1];
+ 1489|   637M|            scan_end   = scan[best_len];
+ 1490|   637M|#endif
+ 1491|   637M|        }
+ 1492|  3.19G|    } while ((cur_match = prev[cur_match & wmask]) > limit
   ------------------
-  |  Branch (1492:14): [True: 169M, False: 7.37M]
+  |  Branch (1492:14): [True: 3.05G, False: 139M]
   ------------------
- 1493|   177M|             && --chain_length != 0);
-                              ^169M
+ 1493|  3.19G|             && --chain_length != 0);
+                              ^3.05G
   ------------------
-  |  Branch (1493:17): [True: 168M, False: 722k]
+  |  Branch (1493:17): [True: 3.04G, False: 12.9M]
   ------------------
  1494|       |
- 1495|  9.04M|    if ((uInt)best_len <= s->lookahead) return (uInt)best_len;
-                                                      ^8.56M
+ 1495|   169M|    if ((uInt)best_len <= s->lookahead) return (uInt)best_len;
+                                                      ^160M
   ------------------
-  |  Branch (1495:9): [True: 8.56M, False: 479k]
+  |  Branch (1495:9): [True: 160M, False: 8.89M]
   ------------------
- 1496|   479k|    return s->lookahead;
- 1497|  9.04M|}
+ 1496|  8.89M|    return s->lookahead;
+ 1497|   169M|}
  1498|       |
  1499|       |#else /* FASTEST */
  1500|       |
@@ -3598,24 +3598,24 @@
  1594|       | * Flush the current block, with given end-of-file flag.
  1595|       | * IN assertion: strstart is set to the end of the current match.
  1596|       | */
- 1597|  1.64M|#define FLUSH_BLOCK_ONLY(s, last) { \
- 1598|  1.64M|   _tr_flush_block(s, (s->block_start >= 0L ? \
- 1599|  1.64M|                   (charf *)&s->window[(unsigned)s->block_start] : \
- 1600|  1.64M|                   (charf *)Z_NULL), \
+ 1597|  28.2M|#define FLUSH_BLOCK_ONLY(s, last) { \
+ 1598|  28.2M|   _tr_flush_block(s, (s->block_start >= 0L ? \
+ 1599|  28.2M|                   (charf *)&s->window[(unsigned)s->block_start] : \
+ 1600|  28.2M|                   (charf *)Z_NULL), \
                                  ^0       ^0
- 1601|  1.64M|                (ulg)((long)s->strstart - s->block_start), \
- 1602|  1.64M|                (last)); \
- 1603|  1.64M|   s->block_start = s->strstart; \
- 1604|  1.64M|   flush_pending(s->strm); \
- 1605|  1.64M|   Tracev((stderr,"[FLUSH]")); \
- 1606|  1.64M|}
+ 1601|  28.2M|                (ulg)((long)s->strstart - s->block_start), \
+ 1602|  28.2M|                (last)); \
+ 1603|  28.2M|   s->block_start = s->strstart; \
+ 1604|  28.2M|   flush_pending(s->strm); \
+ 1605|  28.2M|   Tracev((stderr,"[FLUSH]")); \
+ 1606|  28.2M|}
  1607|       |
  1608|       |/* Same but force premature exit if necessary. */
- 1609|  1.64M|#define FLUSH_BLOCK(s, last) { \
- 1610|  1.64M|   FLUSH_BLOCK_ONLY(s, last); \
- 1611|  1.64M|   if (s->strm->avail_out == 0) return (last) ? finish_started : need_more; \
+ 1609|  28.2M|#define FLUSH_BLOCK(s, last) { \
+ 1610|  28.2M|   FLUSH_BLOCK_ONLY(s, last); \
+ 1611|  28.2M|   if (s->strm->avail_out == 0) return (last) ? finish_started : need_more; \
                                               ^0     ^0       ^0               ^0
- 1612|  1.64M|}
+ 1612|  28.2M|}
  1613|       |
  1614|       |/* Maximum stored block length in deflate format (not including header). */
  1615|      0|#define MAX_STORED 65535
@@ -4076,201 +4076,201 @@
  1920|       | * evaluation for matches: a match is finally adopted only if there is
  1921|       | * no better match at the next window position.
  1922|       | */
- 1923|  2.75M|local block_state deflate_slow(deflate_state *s, int flush) {
- 1924|  2.75M|    IPos hash_head;          /* head of hash chain */
- 1925|  2.75M|    int bflush;              /* set if current block must be flushed */
+ 1923|  50.6M|local block_state deflate_slow(deflate_state *s, int flush) {
+ 1924|  50.6M|    IPos hash_head;          /* head of hash chain */
+ 1925|  50.6M|    int bflush;              /* set if current block must be flushed */
  1926|       |
  1927|       |    /* Process the input block. */
- 1928|  26.8M|    for (;;) {
+ 1928|   496M|    for (;;) {
  1929|       |        /* Make sure that we always have enough lookahead, except
  1930|       |         * at the end of the input file. We need MAX_MATCH bytes
  1931|       |         * for the next match, plus MIN_MATCH bytes to insert the
  1932|       |         * string following the next match.
  1933|       |         */
- 1934|  26.8M|        if (s->lookahead < MIN_LOOKAHEAD) {
+ 1934|   496M|        if (s->lookahead < MIN_LOOKAHEAD) {
   ------------------
-  |  Branch (1934:13): [True: 25.9M, False: 880k]
+  |  Branch (1934:13): [True: 477M, False: 18.6M]
   ------------------
- 1935|  25.9M|            fill_window(s);
- 1936|  25.9M|            if (s->lookahead < MIN_LOOKAHEAD && flush == Z_NO_FLUSH) {
-                                                              ^25.8M   ^25.8M
+ 1935|   477M|            fill_window(s);
+ 1936|   477M|            if (s->lookahead < MIN_LOOKAHEAD && flush == Z_NO_FLUSH) {
+                                                              ^475M    ^475M
   ------------------
-  |  Branch (1936:17): [True: 25.8M, False: 94.3k]
-  |  Branch (1936:49): [True: 1.10M, False: 24.7M]
+  |  Branch (1936:17): [True: 475M, False: 1.96M]
+  |  Branch (1936:49): [True: 22.4M, False: 453M]
   ------------------
- 1937|  1.10M|                return need_more;
- 1938|  1.10M|            }
- 1939|  24.8M|            if (s->lookahead == 0) break; /* flush the current block */
-                                                 ^1.64M
+ 1937|  22.4M|                return need_more;
+ 1938|  22.4M|            }
+ 1939|   455M|            if (s->lookahead == 0) break; /* flush the current block */
+                                                 ^28.2M
   ------------------
-  |  Branch (1939:17): [True: 1.64M, False: 23.2M]
+  |  Branch (1939:17): [True: 28.2M, False: 427M]
   ------------------
- 1940|  24.8M|        }
+ 1940|   455M|        }
  1941|       |
  1942|       |        /* Insert the string window[strstart .. strstart + 2] in the
  1943|       |         * dictionary, and set hash_head to the head of the hash chain:
  1944|       |         */
- 1945|  24.1M|        hash_head = NIL;
- 1946|  24.1M|        if (s->lookahead >= MIN_MATCH) {
+ 1945|   445M|        hash_head = NIL;
+ 1946|   445M|        if (s->lookahead >= MIN_MATCH) {
   ------------------
-  |  Branch (1946:13): [True: 22.5M, False: 1.53M]
+  |  Branch (1946:13): [True: 421M, False: 24.4M]
   ------------------
- 1947|  22.5M|            INSERT_STRING(s, s->strstart, hash_head);
- 1948|  22.5M|        }
+ 1947|   421M|            INSERT_STRING(s, s->strstart, hash_head);
+ 1948|   421M|        }
  1949|       |
  1950|       |        /* Find the longest match, discarding those <= prev_length.
  1951|       |         */
- 1952|  24.1M|        s->prev_length = s->match_length, s->prev_match = s->match_start;
- 1953|  24.1M|        s->match_length = MIN_MATCH-1;
+ 1952|   445M|        s->prev_length = s->match_length, s->prev_match = s->match_start;
+ 1953|   445M|        s->match_length = MIN_MATCH-1;
  1954|       |
- 1955|  24.1M|        if (hash_head != NIL && s->prev_length < s->max_lazy_match &&
-                                              ^11.3M
+ 1955|   445M|        if (hash_head != NIL && s->prev_length < s->max_lazy_match &&
+                                              ^208M
   ------------------
-  |  Branch (1955:13): [True: 11.3M, False: 12.7M]
-  |  Branch (1955:33): [True: 9.04M, False: 2.33M]
+  |  Branch (1955:13): [True: 208M, False: 237M]
+  |  Branch (1955:33): [True: 169M, False: 38.8M]
   ------------------
- 1956|  24.1M|            s->strstart - hash_head <= MAX_DIST(s)) {
-                          ^9.04M                     ^9.04M
+ 1956|   445M|            s->strstart - hash_head <= MAX_DIST(s)) {
+                          ^169M                      ^169M
   ------------------
-  |  Branch (1956:13): [True: 9.04M, False: 0]
+  |  Branch (1956:13): [True: 169M, False: 0]
   ------------------
  1957|       |            /* To simplify the code, we prevent matches with the string
  1958|       |             * of window index 0 (in particular we have to avoid a match
  1959|       |             * of the string with itself at the start of the input file).
  1960|       |             */
- 1961|  9.04M|            s->match_length = longest_match (s, hash_head);
+ 1961|   169M|            s->match_length = longest_match (s, hash_head);
  1962|       |            /* longest_match() sets match_start */
  1963|       |
- 1964|  9.04M|            if (s->match_length <= 5 && (s->strategy == Z_FILTERED
-                                                      ^3.13M^3.13M         ^3.13M
+ 1964|   169M|            if (s->match_length <= 5 && (s->strategy == Z_FILTERED
+                                                      ^66.6M^66.6M         ^66.6M
   ------------------
-  |  Branch (1964:17): [True: 3.13M, False: 5.90M]
-  |  Branch (1964:42): [True: 0, False: 3.13M]
+  |  Branch (1964:17): [True: 66.6M, False: 102M]
+  |  Branch (1964:42): [True: 0, False: 66.6M]
   ------------------
- 1965|  3.13M|#if TOO_FAR <= 32767
- 1966|  3.13M|                || (s->match_length == MIN_MATCH &&
+ 1965|  66.6M|#if TOO_FAR <= 32767
+ 1966|  66.6M|                || (s->match_length == MIN_MATCH &&
   ------------------
-  |  Branch (1966:21): [True: 878k, False: 2.25M]
+  |  Branch (1966:21): [True: 19.3M, False: 47.3M]
   ------------------
- 1967|  3.13M|                    s->strstart - s->match_start > TOO_FAR)
-                                  ^878k                          ^878k
+ 1967|  66.6M|                    s->strstart - s->match_start > TOO_FAR)
+                                  ^19.3M                         ^19.3M
   ------------------
-  |  Branch (1967:21): [True: 0, False: 878k]
+  |  Branch (1967:21): [True: 0, False: 19.3M]
   ------------------
- 1968|  3.13M|#endif
- 1969|  3.13M|                )) {
+ 1968|  66.6M|#endif
+ 1969|  66.6M|                )) {
  1970|       |
  1971|       |                /* If prev_match is also MIN_MATCH, match_start is garbage
  1972|       |                 * but we will ignore the current match anyway.
  1973|       |                 */
  1974|      0|                s->match_length = MIN_MATCH-1;
  1975|      0|            }
- 1976|  9.04M|        }
+ 1976|   169M|        }
  1977|       |        /* If there was a match at the previous step and the current
  1978|       |         * match is not better, output the previous match:
  1979|       |         */
- 1980|  24.1M|        if (s->prev_length >= MIN_MATCH && s->match_length <= s->prev_length) {
-                                                         ^6.12M
+ 1980|   445M|        if (s->prev_length >= MIN_MATCH && s->match_length <= s->prev_length) {
+                                                         ^112M
   ------------------
-  |  Branch (1980:13): [True: 6.12M, False: 17.9M]
-  |  Branch (1980:44): [True: 5.48M, False: 635k]
+  |  Branch (1980:13): [True: 112M, False: 333M]
+  |  Branch (1980:44): [True: 99.9M, False: 12.0M]
   ------------------
- 1981|  5.48M|            uInt max_insert = s->strstart + s->lookahead - MIN_MATCH;
+ 1981|  99.9M|            uInt max_insert = s->strstart + s->lookahead - MIN_MATCH;
  1982|       |            /* Do not insert strings in hash table beyond this. */
  1983|       |
- 1984|  5.48M|            check_match(s, s->strstart - 1, s->prev_match, s->prev_length);
+ 1984|  99.9M|            check_match(s, s->strstart - 1, s->prev_match, s->prev_length);
  1985|       |
- 1986|  5.48M|            _tr_tally_dist(s, s->strstart - 1 - s->prev_match,
- 1987|  5.48M|                           s->prev_length - MIN_MATCH, bflush);
+ 1986|  99.9M|            _tr_tally_dist(s, s->strstart - 1 - s->prev_match,
+ 1987|  99.9M|                           s->prev_length - MIN_MATCH, bflush);
  1988|       |
  1989|       |            /* Insert in hash table all strings up to the end of the match.
  1990|       |             * strstart - 1 and strstart are already inserted. If there is not
  1991|       |             * enough lookahead, the last two strings are not inserted in
  1992|       |             * the hash table.
  1993|       |             */
- 1994|  5.48M|            s->lookahead -= s->prev_length - 1;
- 1995|  5.48M|            s->prev_length -= 2;
- 1996|   131M|            do {
- 1997|   131M|                if (++s->strstart <= max_insert) {
+ 1994|  99.9M|            s->lookahead -= s->prev_length - 1;
+ 1995|  99.9M|            s->prev_length -= 2;
+ 1996|  2.35G|            do {
+ 1997|  2.35G|                if (++s->strstart <= max_insert) {
   ------------------
-  |  Branch (1997:21): [True: 130M, False: 1.66M]
+  |  Branch (1997:21): [True: 2.32G, False: 30.1M]
   ------------------
- 1998|   130M|                    INSERT_STRING(s, s->strstart, hash_head);
- 1999|   130M|                }
- 2000|   131M|            } while (--s->prev_length != 0);
+ 1998|  2.32G|                    INSERT_STRING(s, s->strstart, hash_head);
+ 1999|  2.32G|                }
+ 2000|  2.35G|            } while (--s->prev_length != 0);
   ------------------
-  |  Branch (2000:22): [True: 126M, False: 5.48M]
+  |  Branch (2000:22): [True: 2.25G, False: 99.9M]
   ------------------
- 2001|  5.48M|            s->match_available = 0;
- 2002|  5.48M|            s->match_length = MIN_MATCH-1;
- 2003|  5.48M|            s->strstart++;
+ 2001|  99.9M|            s->match_available = 0;
+ 2002|  99.9M|            s->match_length = MIN_MATCH-1;
+ 2003|  99.9M|            s->strstart++;
  2004|       |
- 2005|  5.48M|            if (bflush) FLUSH_BLOCK(s, 0);
+ 2005|  99.9M|            if (bflush) FLUSH_BLOCK(s, 0);
                                       ^0
   ------------------
-  |  Branch (2005:17): [True: 0, False: 5.48M]
+  |  Branch (2005:17): [True: 0, False: 99.9M]
   ------------------
  2006|       |
- 2007|  18.6M|        } else if (s->match_available) {
+ 2007|   345M|        } else if (s->match_available) {
   ------------------
-  |  Branch (2007:20): [True: 12.3M, False: 6.31M]
+  |  Branch (2007:20): [True: 232M, False: 113M]
   ------------------
  2008|       |            /* If there was no match at the previous position, output a
  2009|       |             * single literal. If there was a match but the current match
  2010|       |             * is longer, truncate the previous match to a single literal.
  2011|       |             */
- 2012|  12.3M|            Tracevv((stderr,"%c", s->window[s->strstart - 1]));
- 2013|  12.3M|            _tr_tally_lit(s, s->window[s->strstart - 1], bflush);
- 2014|  12.3M|            if (bflush) {
+ 2012|   232M|            Tracevv((stderr,"%c", s->window[s->strstart - 1]));
+ 2013|   232M|            _tr_tally_lit(s, s->window[s->strstart - 1], bflush);
+ 2014|   232M|            if (bflush) {
   ------------------
-  |  Branch (2014:17): [True: 0, False: 12.3M]
+  |  Branch (2014:17): [True: 0, False: 232M]
   ------------------
  2015|      0|                FLUSH_BLOCK_ONLY(s, 0);
  2016|      0|            }
- 2017|  12.3M|            s->strstart++;
- 2018|  12.3M|            s->lookahead--;
- 2019|  12.3M|            if (s->strm->avail_out == 0) return need_more;
+ 2017|   232M|            s->strstart++;
+ 2018|   232M|            s->lookahead--;
+ 2019|   232M|            if (s->strm->avail_out == 0) return need_more;
                                                        ^0
   ------------------
-  |  Branch (2019:17): [True: 0, False: 12.3M]
+  |  Branch (2019:17): [True: 0, False: 232M]
   ------------------
- 2020|  12.3M|        } else {
+ 2020|   232M|        } else {
  2021|       |            /* There is no previous match to compare with, wait for
  2022|       |             * the next step to decide.
  2023|       |             */
- 2024|  6.31M|            s->match_available = 1;
- 2025|  6.31M|            s->strstart++;
- 2026|  6.31M|            s->lookahead--;
- 2027|  6.31M|        }
- 2028|  24.1M|    }
- 2029|  1.64M|    Assert (flush != Z_NO_FLUSH, "no flush?");
- 2030|  1.64M|    if (s->match_available) {
+ 2024|   113M|            s->match_available = 1;
+ 2025|   113M|            s->strstart++;
+ 2026|   113M|            s->lookahead--;
+ 2027|   113M|        }
+ 2028|   445M|    }
+ 2029|  28.2M|    Assert (flush != Z_NO_FLUSH, "no flush?");
+ 2030|  28.2M|    if (s->match_available) {
   ------------------
-  |  Branch (2030:9): [True: 830k, False: 819k]
+  |  Branch (2030:9): [True: 13.1M, False: 15.1M]
   ------------------
- 2031|   830k|        Tracevv((stderr,"%c", s->window[s->strstart - 1]));
- 2032|   830k|        _tr_tally_lit(s, s->window[s->strstart - 1], bflush);
- 2033|   830k|        s->match_available = 0;
- 2034|   830k|    }
- 2035|  1.64M|    s->insert = s->strstart < MIN_MATCH-1 ? s->strstart : MIN_MATCH-1;
-                                                          ^56.0k        ^1.59M   ^1.59M
+ 2031|  13.1M|        Tracevv((stderr,"%c", s->window[s->strstart - 1]));
+ 2032|  13.1M|        _tr_tally_lit(s, s->window[s->strstart - 1], bflush);
+ 2033|  13.1M|        s->match_available = 0;
+ 2034|  13.1M|    }
+ 2035|  28.2M|    s->insert = s->strstart < MIN_MATCH-1 ? s->strstart : MIN_MATCH-1;
+                                                          ^1.13M        ^27.1M   ^27.1M
   ------------------
-  |  Branch (2035:17): [True: 56.0k, False: 1.59M]
+  |  Branch (2035:17): [True: 1.13M, False: 27.1M]
   ------------------
- 2036|  1.64M|    if (flush == Z_FINISH) {
+ 2036|  28.2M|    if (flush == Z_FINISH) {
   ------------------
-  |  Branch (2036:9): [True: 1.00M, False: 642k]
+  |  Branch (2036:9): [True: 15.2M, False: 13.0M]
   ------------------
- 2037|  1.00M|        FLUSH_BLOCK(s, 1);
- 2038|  1.00M|        return finish_done;
- 2039|  1.00M|    }
- 2040|   642k|    if (s->sym_next)
+ 2037|  15.2M|        FLUSH_BLOCK(s, 1);
+ 2038|  15.2M|        return finish_done;
+ 2039|  15.2M|    }
+ 2040|  13.0M|    if (s->sym_next)
   ------------------
-  |  Branch (2040:9): [True: 642k, False: 0]
+  |  Branch (2040:9): [True: 13.0M, False: 0]
   ------------------
- 2041|   642k|        FLUSH_BLOCK(s, 0);
- 2042|   642k|    return block_done;
- 2043|   642k|}
+ 2041|  13.0M|        FLUSH_BLOCK(s, 0);
+ 2042|  13.0M|    return block_done;
+ 2043|  13.0M|}
  2044|       |#endif /* FASTEST */
  2045|       |
  2046|       |/* ===========================================================================
@@ -4502,16 +4502,16 @@
    47|       |#define MAX_BL_BITS 7
    48|       |/* Bit length codes must not exceed MAX_BL_BITS bits */
    49|       |
-   50|  6.47M|#define END_BLOCK 256
+   50|  94.8M|#define END_BLOCK 256
    51|       |/* end of block literal code */
    52|       |
-   53|  88.8k|#define REP_3_6      16
+   53|   918k|#define REP_3_6      16
    54|       |/* repeat previous bit length 3-6 times (2 bits of repeat count) */
    55|       |
-   56|  3.64M|#define REPZ_3_10    17
+   56|  66.2M|#define REPZ_3_10    17
    57|       |/* repeat a zero length 3-10 times  (3 bits of repeat count) */
    58|       |
-   59|  6.44M|#define REPZ_11_138  18
+   59|   111M|#define REPZ_11_138  18
    60|       |/* repeat a zero length 11-138 times  (7 bits of repeat count) */
    61|       |
    62|       |local const int extra_lbits[LENGTH_CODES] /* extra bits for each length code */
@@ -4596,71 +4596,71 @@
   141|       | * Output a short LSB first on the stream.
   142|       | * IN assertion: there is enough room in pendingBuf.
   143|       | */
-  144|  13.7M|#define put_short(s, w) { \
-  145|  13.7M|    put_byte(s, (uch)((w) & 0xff)); \
-  146|  13.7M|    put_byte(s, (uch)((ush)(w) >> 8)); \
-  147|  13.7M|}
+  144|   254M|#define put_short(s, w) { \
+  145|   254M|    put_byte(s, (uch)((w) & 0xff)); \
+  146|   254M|    put_byte(s, (uch)((ush)(w) >> 8)); \
+  147|   254M|}
   148|       |
   149|       |/* ===========================================================================
   150|       | * Reverse the first len bits of a code, using straightforward code (a faster
   151|       | * method would use a table)
   152|       | * IN assertion: 1 <= len <= 15
   153|       | */
-  154|  26.2M|local unsigned bi_reverse(unsigned code, int len) {
-  155|  26.2M|    register unsigned res = 0;
-  156|  79.7M|    do {
-  157|  79.7M|        res |= code & 1;
-  158|  79.7M|        code >>= 1, res <<= 1;
-  159|  79.7M|    } while (--len > 0);
+  154|   447M|local unsigned bi_reverse(unsigned code, int len) {
+  155|   447M|    register unsigned res = 0;
+  156|  1.40G|    do {
+  157|  1.40G|        res |= code & 1;
+  158|  1.40G|        code >>= 1, res <<= 1;
+  159|  1.40G|    } while (--len > 0);
   ------------------
-  |  Branch (159:14): [True: 53.5M, False: 26.2M]
+  |  Branch (159:14): [True: 952M, False: 447M]
   ------------------
-  160|  26.2M|    return res >> 1;
-  161|  26.2M|}
+  160|   447M|    return res >> 1;
+  161|   447M|}
   162|       |
   163|       |/* ===========================================================================
   164|       | * Flush the bit buffer, keeping at most 7 bits in it.
   165|       | */
-  166|  4.55M|local void bi_flush(deflate_state *s) {
-  167|  4.55M|    if (s->bi_valid == 16) {
+  166|  76.8M|local void bi_flush(deflate_state *s) {
+  167|  76.8M|    if (s->bi_valid == 16) {
   ------------------
-  |  Branch (167:9): [True: 56.5k, False: 4.49M]
+  |  Branch (167:9): [True: 1.13M, False: 75.7M]
   ------------------
-  168|  56.5k|        put_short(s, s->bi_buf);
-  169|  56.5k|        s->bi_buf = 0;
-  170|  56.5k|        s->bi_valid = 0;
-  171|  4.49M|    } else if (s->bi_valid >= 8) {
+  168|  1.13M|        put_short(s, s->bi_buf);
+  169|  1.13M|        s->bi_buf = 0;
+  170|  1.13M|        s->bi_valid = 0;
+  171|  75.7M|    } else if (s->bi_valid >= 8) {
   ------------------
-  |  Branch (171:16): [True: 501k, False: 3.99M]
+  |  Branch (171:16): [True: 10.1M, False: 65.5M]
   ------------------
-  172|   501k|        put_byte(s, (Byte)s->bi_buf);
-  173|   501k|        s->bi_buf >>= 8;
-  174|   501k|        s->bi_valid -= 8;
-  175|   501k|    }
-  176|  4.55M|}
+  172|  10.1M|        put_byte(s, (Byte)s->bi_buf);
+  173|  10.1M|        s->bi_buf >>= 8;
+  174|  10.1M|        s->bi_valid -= 8;
+  175|  10.1M|    }
+  176|  76.8M|}
   177|       |
   178|       |/* ===========================================================================
   179|       | * Flush the bit buffer and align the output on a byte boundary
   180|       | */
-  181|  1.43M|local void bi_windup(deflate_state *s) {
-  182|  1.43M|    if (s->bi_valid > 8) {
+  181|  23.9M|local void bi_windup(deflate_state *s) {
+  182|  23.9M|    if (s->bi_valid > 8) {
   ------------------
-  |  Branch (182:9): [True: 610k, False: 824k]
+  |  Branch (182:9): [True: 9.78M, False: 14.1M]
   ------------------
-  183|   610k|        put_short(s, s->bi_buf);
-  184|   824k|    } else if (s->bi_valid > 0) {
+  183|  9.78M|        put_short(s, s->bi_buf);
+  184|  14.1M|    } else if (s->bi_valid > 0) {
   ------------------
-  |  Branch (184:16): [True: 824k, False: 0]
+  |  Branch (184:16): [True: 14.1M, False: 18]
   ------------------
-  185|   824k|        put_byte(s, (Byte)s->bi_buf);
-  186|   824k|    }
-  187|  1.43M|    s->bi_used = ((s->bi_valid - 1) & 7) + 1;
-  188|  1.43M|    s->bi_buf = 0;
-  189|  1.43M|    s->bi_valid = 0;
+  185|  14.1M|        put_byte(s, (Byte)s->bi_buf);
+  186|  14.1M|    }
+  187|  23.9M|    s->bi_used = ((s->bi_valid - 1) & 7) + 1;
+  188|  23.9M|    s->bi_buf = 0;
+  189|  23.9M|    s->bi_valid = 0;
   190|       |#ifdef ZLIB_DEBUG
   191|       |    s->bits_sent = (s->bits_sent + 7) & ~7;
   192|       |#endif
-  193|  1.43M|}
+  193|  23.9M|}
   194|       |
   195|       |/* ===========================================================================
   196|       | * Generate the codes for a given tree and bit counts (which need not be
@@ -4670,55 +4670,55 @@
   200|       | * OUT assertion: the field code is set for all tree elements of non
   201|       | *     zero code length.
   202|       | */
-  203|  4.94M|local void gen_codes(ct_data *tree, int max_code, ushf *bl_count) {
-  204|  4.94M|    ush next_code[MAX_BITS+1]; /* next code value for each bit length */
-  205|  4.94M|    unsigned code = 0;         /* running code value */
-  206|  4.94M|    int bits;                  /* bit index */
-  207|  4.94M|    int n;                     /* code index */
+  203|  84.8M|local void gen_codes(ct_data *tree, int max_code, ushf *bl_count) {
+  204|  84.8M|    ush next_code[MAX_BITS+1]; /* next code value for each bit length */
+  205|  84.8M|    unsigned code = 0;         /* running code value */
+  206|  84.8M|    int bits;                  /* bit index */
+  207|  84.8M|    int n;                     /* code index */
   208|       |
   209|       |    /* The distribution counts are first used to generate the code values
   210|       |     * without bit reversal.
   211|       |     */
-  212|  79.1M|    for (bits = 1; bits <= MAX_BITS; bits++) {
-                                                   ^74.2M
+  212|  1.35G|    for (bits = 1; bits <= MAX_BITS; bits++) {
+                                                   ^1.27G
   ------------------
-  |  Branch (212:20): [True: 74.2M, False: 4.94M]
+  |  Branch (212:20): [True: 1.27G, False: 84.8M]
   ------------------
-  213|  74.2M|        code = (code + bl_count[bits - 1]) << 1;
-  214|  74.2M|        next_code[bits] = (ush)code;
-  215|  74.2M|    }
+  213|  1.27G|        code = (code + bl_count[bits - 1]) << 1;
+  214|  1.27G|        next_code[bits] = (ush)code;
+  215|  1.27G|    }
   216|       |    /* Check that the bit counts in bl_count are consistent. The last code
   217|       |     * must be all ones.
   218|       |     */
-  219|  4.94M|    Assert (code + bl_count[MAX_BITS] - 1 == (1 << MAX_BITS) - 1,
-  220|  4.94M|            "inconsistent bit counts");
-  221|  4.94M|    Tracev((stderr,"\ngen_codes: max_code %d ", max_code));
+  219|  84.8M|    Assert (code + bl_count[MAX_BITS] - 1 == (1 << MAX_BITS) - 1,
+  220|  84.8M|            "inconsistent bit counts");
+  221|  84.8M|    Tracev((stderr,"\ngen_codes: max_code %d ", max_code));
   222|       |
-  223|   491M|    for (n = 0;  n <= max_code; n++) {
-                                              ^486M
+  223|  8.42G|    for (n = 0;  n <= max_code; n++) {
+                                              ^8.33G
   ------------------
-  |  Branch (223:18): [True: 486M, False: 4.94M]
+  |  Branch (223:18): [True: 8.33G, False: 84.8M]
   ------------------
-  224|   486M|        int len = tree[n].Len;
-  225|   486M|        if (len == 0) continue;
-                                    ^459M
+  224|  8.33G|        int len = tree[n].Len;
+  225|  8.33G|        if (len == 0) continue;
+                                    ^7.89G
   ------------------
-  |  Branch (225:13): [True: 459M, False: 26.2M]
+  |  Branch (225:13): [True: 7.89G, False: 447M]
   ------------------
   226|       |        /* Now reverse the bits */
-  227|  26.2M|        tree[n].Code = (ush)bi_reverse(next_code[len]++, len);
+  227|   447M|        tree[n].Code = (ush)bi_reverse(next_code[len]++, len);
   228|       |
-  229|  26.2M|        Tracecv(tree != static_ltree, (stderr,"\nn %3d %c l %2d c %4x (%x) ",
-  230|  26.2M|            n, (isgraph(n) ? n : ' '), len, tree[n].Code, next_code[len] - 1));
-  231|  26.2M|    }
-  232|  4.94M|}
+  229|   447M|        Tracecv(tree != static_ltree, (stderr,"\nn %3d %c l %2d c %4x (%x) ",
+  230|   447M|            n, (isgraph(n) ? n : ' '), len, tree[n].Code, next_code[len] - 1));
+  231|   447M|    }
+  232|  84.8M|}
   233|       |
   234|       |#ifdef GEN_TREES_H
   235|       |local void gen_trees_header(void);
   236|       |#endif
   237|       |
   238|       |#ifndef ZLIB_DEBUG
-  239|  25.9M|#  define send_code(s, c, tree) send_bits(s, tree[c].Code, tree[c].Len)
+  239|   479M|#  define send_code(s, c, tree) send_bits(s, tree[c].Code, tree[c].Len)
   240|       |   /* Send a code of the given tree. c and tree must not have side effects */
   241|       |
   242|       |#else /* !ZLIB_DEBUG */
@@ -4753,19 +4753,19 @@
   271|       |}
   272|       |#else /* !ZLIB_DEBUG */
   273|       |
-  274|  33.8M|#define send_bits(s, value, length) \
-  275|  33.8M|{ int len = length;\
-  276|  33.8M|  if (s->bi_valid > (int)Buf_size - len) {\
-  277|  12.2M|    int val = (int)value;\
-  278|  12.2M|    s->bi_buf |= (ush)val << s->bi_valid;\
-  279|  12.2M|    put_short(s, s->bi_buf);\
-  280|  12.2M|    s->bi_buf = (ush)val >> (Buf_size - s->bi_valid);\
-  281|  12.2M|    s->bi_valid += len - Buf_size;\
-  282|  21.5M|  } else {\
-  283|  21.5M|    s->bi_buf |= (ush)(value) << s->bi_valid;\
-  284|  21.5M|    s->bi_valid += len;\
-  285|  21.5M|  }\
-  286|  33.8M|}
+  274|   619M|#define send_bits(s, value, length) \
+  275|   619M|{ int len = length;\
+  276|   619M|  if (s->bi_valid > (int)Buf_size - len) {\
+  277|   226M|    int val = (int)value;\
+  278|   226M|    s->bi_buf |= (ush)val << s->bi_valid;\
+  279|   226M|    put_short(s, s->bi_buf);\
+  280|   226M|    s->bi_buf = (ush)val >> (Buf_size - s->bi_valid);\
+  281|   226M|    s->bi_valid += len - Buf_size;\
+  282|   392M|  } else {\
+  283|   392M|    s->bi_buf |= (ush)(value) << s->bi_valid;\
+  284|   392M|    s->bi_valid += len;\
+  285|   392M|  }\
+  286|   619M|}
   287|       |#endif /* ZLIB_DEBUG */
   288|       |
   289|       |
@@ -4774,7 +4774,7 @@
   292|       |/* ===========================================================================
   293|       | * Initialize the various 'constant' tables.
   294|       | */
-  295|  4.82M|local void tr_static_init(void) {
+  295|  66.6M|local void tr_static_init(void) {
   296|       |#if defined(GEN_TREES_H) || !defined(STDC)
   297|       |    static int static_init_done = 0;
   298|       |    int n;        /* iterates over tree elements */
@@ -4853,7 +4853,7 @@
   371|       |    gen_trees_header();
   372|       |#  endif
   373|       |#endif /* defined(GEN_TREES_H) || !defined(STDC) */
-  374|  4.82M|}
+  374|  66.6M|}
   375|       |
   376|       |/* ===========================================================================
   377|       | * Generate the file trees.h describing the static trees.
@@ -4919,59 +4919,59 @@
   437|       |/* ===========================================================================
   438|       | * Initialize a new block.
   439|       | */
-  440|  6.47M|local void init_block(deflate_state *s) {
-  441|  6.47M|    int n; /* iterates over tree elements */
+  440|  94.8M|local void init_block(deflate_state *s) {
+  441|  94.8M|    int n; /* iterates over tree elements */
   442|       |
   443|       |    /* Initialize the trees. */
-  444|  1.85G|    for (n = 0; n < L_CODES;  n++) s->dyn_ltree[n].Freq = 0;
-                                            ^1.85G^1.85G          ^1.85G
+  444|  27.2G|    for (n = 0; n < L_CODES;  n++) s->dyn_ltree[n].Freq = 0;
+                                            ^27.1G^27.1G          ^27.1G
   ------------------
-  |  Branch (444:17): [True: 1.85G, False: 6.47M]
+  |  Branch (444:17): [True: 27.1G, False: 94.8M]
   ------------------
-  445|   200M|    for (n = 0; n < D_CODES;  n++) s->dyn_dtree[n].Freq = 0;
-                                            ^194M^194M           ^194M
+  445|  2.94G|    for (n = 0; n < D_CODES;  n++) s->dyn_dtree[n].Freq = 0;
+                                            ^2.84G^2.84G          ^2.84G
   ------------------
-  |  Branch (445:17): [True: 194M, False: 6.47M]
+  |  Branch (445:17): [True: 2.84G, False: 94.8M]
   ------------------
-  446|   129M|    for (n = 0; n < BL_CODES; n++) s->bl_tree[n].Freq = 0;
-                                            ^122M^122M         ^122M
+  446|  1.89G|    for (n = 0; n < BL_CODES; n++) s->bl_tree[n].Freq = 0;
+                                            ^1.80G^1.80G        ^1.80G
   ------------------
-  |  Branch (446:17): [True: 122M, False: 6.47M]
+  |  Branch (446:17): [True: 1.80G, False: 94.8M]
   ------------------
   447|       |
-  448|  6.47M|    s->dyn_ltree[END_BLOCK].Freq = 1;
-  449|  6.47M|    s->opt_len = s->static_len = 0L;
-  450|  6.47M|    s->sym_next = s->matches = 0;
-  451|  6.47M|}
+  448|  94.8M|    s->dyn_ltree[END_BLOCK].Freq = 1;
+  449|  94.8M|    s->opt_len = s->static_len = 0L;
+  450|  94.8M|    s->sym_next = s->matches = 0;
+  451|  94.8M|}
   452|       |
   453|       |/* ===========================================================================
   454|       | * Initialize the tree data structures for a new zlib stream.
   455|       | */
-  456|  4.82M|void ZLIB_INTERNAL _tr_init(deflate_state *s) {
-  457|  4.82M|    tr_static_init();
+  456|  66.6M|void ZLIB_INTERNAL _tr_init(deflate_state *s) {
+  457|  66.6M|    tr_static_init();
   458|       |
-  459|  4.82M|    s->l_desc.dyn_tree = s->dyn_ltree;
-  460|  4.82M|    s->l_desc.stat_desc = &static_l_desc;
+  459|  66.6M|    s->l_desc.dyn_tree = s->dyn_ltree;
+  460|  66.6M|    s->l_desc.stat_desc = &static_l_desc;
   461|       |
-  462|  4.82M|    s->d_desc.dyn_tree = s->dyn_dtree;
-  463|  4.82M|    s->d_desc.stat_desc = &static_d_desc;
+  462|  66.6M|    s->d_desc.dyn_tree = s->dyn_dtree;
+  463|  66.6M|    s->d_desc.stat_desc = &static_d_desc;
   464|       |
-  465|  4.82M|    s->bl_desc.dyn_tree = s->bl_tree;
-  466|  4.82M|    s->bl_desc.stat_desc = &static_bl_desc;
+  465|  66.6M|    s->bl_desc.dyn_tree = s->bl_tree;
+  466|  66.6M|    s->bl_desc.stat_desc = &static_bl_desc;
   467|       |
-  468|  4.82M|    s->bi_buf = 0;
-  469|  4.82M|    s->bi_valid = 0;
-  470|  4.82M|    s->bi_used = 0;
+  468|  66.6M|    s->bi_buf = 0;
+  469|  66.6M|    s->bi_valid = 0;
+  470|  66.6M|    s->bi_used = 0;
   471|       |#ifdef ZLIB_DEBUG
   472|       |    s->compressed_len = 0L;
   473|       |    s->bits_sent = 0L;
   474|       |#endif
   475|       |
   476|       |    /* Initialize the first block of the first file: */
-  477|  4.82M|    init_block(s);
-  478|  4.82M|}
+  477|  66.6M|    init_block(s);
+  478|  66.6M|}
   479|       |
-  480|   132M|#define SMALLEST 1
+  480|  2.26G|#define SMALLEST 1
   481|       |/* Index within the heap array of least frequent node in the Huffman tree */
   482|       |
   483|       |
@@ -4979,21 +4979,21 @@
   485|       | * Remove the smallest element from the heap and recreate the heap with
   486|       | * one less element. Updates heap and heap_len.
   487|       | */
-  488|  21.3M|#define pqremove(s, tree, top) \
-  489|  21.3M|{\
-  490|  21.3M|    top = s->heap[SMALLEST]; \
-  491|  21.3M|    s->heap[SMALLEST] = s->heap[s->heap_len--]; \
-  492|  21.3M|    pqdownheap(s, tree, SMALLEST); \
-  493|  21.3M|}
+  488|   362M|#define pqremove(s, tree, top) \
+  489|   362M|{\
+  490|   362M|    top = s->heap[SMALLEST]; \
+  491|   362M|    s->heap[SMALLEST] = s->heap[s->heap_len--]; \
+  492|   362M|    pqdownheap(s, tree, SMALLEST); \
+  493|   362M|}
   494|       |
   495|       |/* ===========================================================================
   496|       | * Compares to subtrees, using the tree depth as tie breaker when
   497|       | * the subtrees have equal frequency. This minimizes the worst case length.
   498|       | */
   499|       |#define smaller(tree, n, m, depth) \
-  500|   130M|   (tree[n].Freq < tree[m].Freq || \
-  501|   130M|   (tree[n].Freq == tree[m].Freq && depth[n] <= depth[m]))
-                 ^118M^118M   ^118M           ^118M   ^42.9M
+  500|  2.38G|   (tree[n].Freq < tree[m].Freq || \
+  501|  2.38G|   (tree[n].Freq == tree[m].Freq && depth[n] <= depth[m]))
+                 ^2.15G^2.15G  ^2.15G          ^2.15G  ^756M
   502|       |
   503|       |/* ===========================================================================
   504|       | * Restore the heap property by moving down the tree starting at node k,
@@ -5001,34 +5001,34 @@
   506|       | * when the heap property is re-established (each father smaller than its
   507|       | * two sons).
   508|       | */
-  509|  54.8M|local void pqdownheap(deflate_state *s, ct_data *tree, int k) {
-  510|  54.8M|    int v = s->heap[k];
-  511|  54.8M|    int j = k << 1;  /* left son of k */
-  512|   110M|    while (j <= s->heap_len) {
+  509|   935M|local void pqdownheap(deflate_state *s, ct_data *tree, int k) {
+  510|   935M|    int v = s->heap[k];
+  511|   935M|    int j = k << 1;  /* left son of k */
+  512|  1.96G|    while (j <= s->heap_len) {
   ------------------
-  |  Branch (512:12): [True: 72.7M, False: 37.8M]
+  |  Branch (512:12): [True: 1.31G, False: 649M]
   ------------------
   513|       |        /* Set j to the smallest of the two sons: */
-  514|  72.7M|        if (j < s->heap_len &&
+  514|  1.31G|        if (j < s->heap_len &&
   ------------------
-  |  Branch (514:13): [True: 57.8M, False: 14.9M]
+  |  Branch (514:13): [True: 1.06G, False: 248M]
   ------------------
-  515|  72.7M|            smaller(tree, s->heap[j + 1], s->heap[j], s->depth)) {
-                          ^57.8M
-  516|  29.2M|            j++;
-  517|  29.2M|        }
+  515|  1.31G|            smaller(tree, s->heap[j + 1], s->heap[j], s->depth)) {
+                          ^1.06G
+  516|   540M|            j++;
+  517|   540M|        }
   518|       |        /* Exit if v is smaller than both sons */
-  519|  72.7M|        if (smaller(tree, v, s->heap[j], s->depth)) break;
-                                                                  ^16.9M
+  519|  1.31G|        if (smaller(tree, v, s->heap[j], s->depth)) break;
+                                                                  ^285M
   520|       |
   521|       |        /* Exchange v with the smallest son */
-  522|  55.7M|        s->heap[k] = s->heap[j];  k = j;
+  522|  1.02G|        s->heap[k] = s->heap[j];  k = j;
   523|       |
   524|       |        /* And continue down the tree, setting j to the left son of k */
-  525|  55.7M|        j <<= 1;
-  526|  55.7M|    }
-  527|  54.8M|    s->heap[k] = v;
-  528|  54.8M|}
+  525|  1.02G|        j <<= 1;
+  526|  1.02G|    }
+  527|   935M|    s->heap[k] = v;
+  528|   935M|}
   529|       |
   530|       |/* ===========================================================================
   531|       | * Compute the optimal bit lengths for a tree and update the total bit length
@@ -5040,70 +5040,70 @@
   537|       | *     The length opt_len is updated; static_len is also updated if stree is
   538|       | *     not null.
   539|       | */
-  540|  4.94M|local void gen_bitlen(deflate_state *s, tree_desc *desc) {
-  541|  4.94M|    ct_data *tree        = desc->dyn_tree;
-  542|  4.94M|    int max_code         = desc->max_code;
-  543|  4.94M|    const ct_data *stree = desc->stat_desc->static_tree;
-  544|  4.94M|    const intf *extra    = desc->stat_desc->extra_bits;
-  545|  4.94M|    int base             = desc->stat_desc->extra_base;
-  546|  4.94M|    int max_length       = desc->stat_desc->max_length;
-  547|  4.94M|    int h;              /* heap index */
-  548|  4.94M|    int n, m;           /* iterate over the tree elements */
-  549|  4.94M|    int bits;           /* bit length */
-  550|  4.94M|    int xbits;          /* extra bits */
-  551|  4.94M|    ush f;              /* frequency */
-  552|  4.94M|    int overflow = 0;   /* number of elements with bit length too large */
+  540|  84.8M|local void gen_bitlen(deflate_state *s, tree_desc *desc) {
+  541|  84.8M|    ct_data *tree        = desc->dyn_tree;
+  542|  84.8M|    int max_code         = desc->max_code;
+  543|  84.8M|    const ct_data *stree = desc->stat_desc->static_tree;
+  544|  84.8M|    const intf *extra    = desc->stat_desc->extra_bits;
+  545|  84.8M|    int base             = desc->stat_desc->extra_base;
+  546|  84.8M|    int max_length       = desc->stat_desc->max_length;
+  547|  84.8M|    int h;              /* heap index */
+  548|  84.8M|    int n, m;           /* iterate over the tree elements */
+  549|  84.8M|    int bits;           /* bit length */
+  550|  84.8M|    int xbits;          /* extra bits */
+  551|  84.8M|    ush f;              /* frequency */
+  552|  84.8M|    int overflow = 0;   /* number of elements with bit length too large */
   553|       |
-  554|  84.1M|    for (bits = 0; bits <= MAX_BITS; bits++) s->bl_count[bits] = 0;
-                                                   ^79.1M  ^79.1M
+  554|  1.44G|    for (bits = 0; bits <= MAX_BITS; bits++) s->bl_count[bits] = 0;
+                                                   ^1.35G  ^1.35G
   ------------------
-  |  Branch (554:20): [True: 79.1M, False: 4.94M]
+  |  Branch (554:20): [True: 1.35G, False: 84.8M]
   ------------------
   555|       |
   556|       |    /* In a first pass, compute the optimal bit lengths (which may
   557|       |     * overflow in the case of the bit length tree).
   558|       |     */
-  559|  4.94M|    tree[s->heap[s->heap_max]].Len = 0; /* root of the heap */
+  559|  84.8M|    tree[s->heap[s->heap_max]].Len = 0; /* root of the heap */
   560|       |
-  561|  47.5M|    for (h = s->heap_max + 1; h < HEAP_SIZE; h++) {
-                                                           ^42.6M
+  561|   810M|    for (h = s->heap_max + 1; h < HEAP_SIZE; h++) {
+                                                           ^725M
   ------------------
-  |  Branch (561:31): [True: 42.6M, False: 4.94M]
+  |  Branch (561:31): [True: 725M, False: 84.8M]
   ------------------
-  562|  42.6M|        n = s->heap[h];
-  563|  42.6M|        bits = tree[tree[n].Dad].Len + 1;
-  564|  42.6M|        if (bits > max_length) bits = max_length, overflow++;
+  562|   725M|        n = s->heap[h];
+  563|   725M|        bits = tree[tree[n].Dad].Len + 1;
+  564|   725M|        if (bits > max_length) bits = max_length, overflow++;
                                              ^0
   ------------------
-  |  Branch (564:13): [True: 0, False: 42.6M]
+  |  Branch (564:13): [True: 0, False: 725M]
   ------------------
-  565|  42.6M|        tree[n].Len = (ush)bits;
+  565|   725M|        tree[n].Len = (ush)bits;
   566|       |        /* We overwrite tree[n].Dad which is no longer needed */
   567|       |
-  568|  42.6M|        if (n > max_code) continue; /* not a leaf node */
-                                        ^16.3M
+  568|   725M|        if (n > max_code) continue; /* not a leaf node */
+                                        ^278M
   ------------------
-  |  Branch (568:13): [True: 16.3M, False: 26.2M]
+  |  Branch (568:13): [True: 278M, False: 447M]
   ------------------
   569|       |
-  570|  26.2M|        s->bl_count[bits]++;
-  571|  26.2M|        xbits = 0;
-  572|  26.2M|        if (n >= base) xbits = extra[n - base];
-                                     ^17.0M
+  570|   447M|        s->bl_count[bits]++;
+  571|   447M|        xbits = 0;
+  572|   447M|        if (n >= base) xbits = extra[n - base];
+                                     ^287M
   ------------------
-  |  Branch (572:13): [True: 17.0M, False: 9.17M]
+  |  Branch (572:13): [True: 287M, False: 160M]
   ------------------
-  573|  26.2M|        f = tree[n].Freq;
-  574|  26.2M|        s->opt_len += (ulg)f * (unsigned)(bits + xbits);
-  575|  26.2M|        if (stree) s->static_len += (ulg)f * (unsigned)(stree[n].Len + xbits);
-                                 ^18.1M                                        ^18.1M
+  573|   447M|        f = tree[n].Freq;
+  574|   447M|        s->opt_len += (ulg)f * (unsigned)(bits + xbits);
+  575|   447M|        if (stree) s->static_len += (ulg)f * (unsigned)(stree[n].Len + xbits);
+                                 ^313M                                         ^313M
   ------------------
-  |  Branch (575:13): [True: 18.1M, False: 8.13M]
+  |  Branch (575:13): [True: 313M, False: 134M]
   ------------------
-  576|  26.2M|    }
-  577|  4.94M|    if (overflow == 0) return;
+  576|   447M|    }
+  577|  84.8M|    if (overflow == 0) return;
   ------------------
-  |  Branch (577:9): [True: 4.94M, False: 0]
+  |  Branch (577:9): [True: 84.8M, False: 0]
   ------------------
   578|       |
   579|      0|    Tracev((stderr,"\nbit length overflow\n"));
@@ -5172,89 +5172,89 @@
   624|       | *     and corresponding code. The length opt_len is updated; static_len is
   625|       | *     also updated if stree is not null. The field max_code is set.
   626|       | */
-  627|  4.94M|local void build_tree(deflate_state *s, tree_desc *desc) {
-  628|  4.94M|    ct_data *tree         = desc->dyn_tree;
-  629|  4.94M|    const ct_data *stree  = desc->stat_desc->static_tree;
-  630|  4.94M|    int elems             = desc->stat_desc->elems;
-  631|  4.94M|    int n, m;          /* iterate over heap elements */
-  632|  4.94M|    int max_code = -1; /* largest code with non zero frequency */
-  633|  4.94M|    int node;          /* new node being created */
+  627|  84.8M|local void build_tree(deflate_state *s, tree_desc *desc) {
+  628|  84.8M|    ct_data *tree         = desc->dyn_tree;
+  629|  84.8M|    const ct_data *stree  = desc->stat_desc->static_tree;
+  630|  84.8M|    int elems             = desc->stat_desc->elems;
+  631|  84.8M|    int n, m;          /* iterate over heap elements */
+  632|  84.8M|    int max_code = -1; /* largest code with non zero frequency */
+  633|  84.8M|    int node;          /* new node being created */
   634|       |
   635|       |    /* Construct the initial heap, with least frequent element in
   636|       |     * heap[SMALLEST]. The sons of heap[n] are heap[2*n] and heap[2*n + 1].
   637|       |     * heap[0] is not used.
   638|       |     */
-  639|  4.94M|    s->heap_len = 0, s->heap_max = HEAP_SIZE;
+  639|  84.8M|    s->heap_len = 0, s->heap_max = HEAP_SIZE;
   640|       |
-  641|   557M|    for (n = 0; n < elems; n++) {
-                                         ^552M
+  641|  9.55G|    for (n = 0; n < elems; n++) {
+                                         ^9.47G
   ------------------
-  |  Branch (641:17): [True: 552M, False: 4.94M]
+  |  Branch (641:17): [True: 9.47G, False: 84.8M]
   ------------------
-  642|   552M|        if (tree[n].Freq != 0) {
+  642|  9.47G|        if (tree[n].Freq != 0) {
   ------------------
-  |  Branch (642:13): [True: 24.7M, False: 527M]
+  |  Branch (642:13): [True: 422M, False: 9.05G]
   ------------------
-  643|  24.7M|            s->heap[++(s->heap_len)] = max_code = n;
-  644|  24.7M|            s->depth[n] = 0;
-  645|   527M|        } else {
-  646|   527M|            tree[n].Len = 0;
-  647|   527M|        }
-  648|   552M|    }
+  643|   422M|            s->heap[++(s->heap_len)] = max_code = n;
+  644|   422M|            s->depth[n] = 0;
+  645|  9.05G|        } else {
+  646|  9.05G|            tree[n].Len = 0;
+  647|  9.05G|        }
+  648|  9.47G|    }
   649|       |
   650|       |    /* The pkzip format requires that at least one distance code exists,
   651|       |     * and that at least one bit should be sent even if there is only one
   652|       |     * possible code. So to avoid special checks later on we force at least
   653|       |     * two codes of non zero frequency.
   654|       |     */
-  655|  6.42M|    while (s->heap_len < 2) {
+  655|   110M|    while (s->heap_len < 2) {
   ------------------
-  |  Branch (655:12): [True: 1.47M, False: 4.94M]
+  |  Branch (655:12): [True: 25.6M, False: 84.8M]
   ------------------
-  656|  1.47M|        node = s->heap[++(s->heap_len)] = (max_code < 2 ? ++max_code : 0);
-                                                                        ^1.10M       ^372k
+  656|  25.6M|        node = s->heap[++(s->heap_len)] = (max_code < 2 ? ++max_code : 0);
+                                                                        ^18.2M       ^7.43M
   ------------------
-  |  Branch (656:44): [True: 1.10M, False: 372k]
+  |  Branch (656:44): [True: 18.2M, False: 7.43M]
   ------------------
-  657|  1.47M|        tree[node].Freq = 1;
-  658|  1.47M|        s->depth[node] = 0;
-  659|  1.47M|        s->opt_len--; if (stree) s->static_len -= stree[node].Len;
+  657|  25.6M|        tree[node].Freq = 1;
+  658|  25.6M|        s->depth[node] = 0;
+  659|  25.6M|        s->opt_len--; if (stree) s->static_len -= stree[node].Len;
   ------------------
-  |  Branch (659:27): [True: 1.47M, False: 0]
+  |  Branch (659:27): [True: 25.6M, False: 0]
   ------------------
   660|       |        /* node is 0 or 1 so it does not have extra bits */
-  661|  1.47M|    }
-  662|  4.94M|    desc->max_code = max_code;
+  661|  25.6M|    }
+  662|  84.8M|    desc->max_code = max_code;
   663|       |
   664|       |    /* The elements heap[heap_len/2 + 1 .. heap_len] are leaves of the tree,
   665|       |     * establish sub-heaps of increasing lengths:
   666|       |     */
-  667|  17.2M|    for (n = s->heap_len/2; n >= 1; n--) pqdownheap(s, tree, n);
-                                                  ^12.2M^12.2M
+  667|   294M|    for (n = s->heap_len/2; n >= 1; n--) pqdownheap(s, tree, n);
+                                                  ^209M^209M
   ------------------
-  |  Branch (667:29): [True: 12.2M, False: 4.94M]
+  |  Branch (667:29): [True: 209M, False: 84.8M]
   ------------------
   668|       |
   669|       |    /* Construct the Huffman tree by repeatedly combining the least two
   670|       |     * frequent nodes.
   671|       |     */
-  672|  4.94M|    node = elems;              /* next internal node of the tree */
-  673|  21.3M|    do {
-  674|  21.3M|        pqremove(s, tree, n);  /* n = node of least frequency */
-  675|  21.3M|        m = s->heap[SMALLEST]; /* m = node of next least frequency */
+  672|  84.8M|    node = elems;              /* next internal node of the tree */
+  673|   362M|    do {
+  674|   362M|        pqremove(s, tree, n);  /* n = node of least frequency */
+  675|   362M|        m = s->heap[SMALLEST]; /* m = node of next least frequency */
   676|       |
-  677|  21.3M|        s->heap[--(s->heap_max)] = n; /* keep the nodes sorted by frequency */
-  678|  21.3M|        s->heap[--(s->heap_max)] = m;
+  677|   362M|        s->heap[--(s->heap_max)] = n; /* keep the nodes sorted by frequency */
+  678|   362M|        s->heap[--(s->heap_max)] = m;
   679|       |
   680|       |        /* Create a new node father of n and m */
-  681|  21.3M|        tree[node].Freq = tree[n].Freq + tree[m].Freq;
-  682|  21.3M|        s->depth[node] = (uch)((s->depth[n] >= s->depth[m] ?
+  681|   362M|        tree[node].Freq = tree[n].Freq + tree[m].Freq;
+  682|   362M|        s->depth[node] = (uch)((s->depth[n] >= s->depth[m] ?
   ------------------
-  |  Branch (682:33): [True: 16.5M, False: 4.80M]
+  |  Branch (682:33): [True: 281M, False: 81.3M]
   ------------------
-  683|  16.5M|                                s->depth[n] : s->depth[m]) + 1);
-                                                            ^4.80M
-  684|  21.3M|        tree[n].Dad = tree[m].Dad = (ush)node;
+  683|   281M|                                s->depth[n] : s->depth[m]) + 1);
+                                                            ^81.3M
+  684|   362M|        tree[n].Dad = tree[m].Dad = (ush)node;
   685|       |#ifdef DUMP_BL_TREE
   686|       |        if (tree == s->bl_tree) {
   687|       |            fprintf(stderr,"\nnode %d(%d), sons %d(%d) %d(%d)",
@@ -5262,196 +5262,196 @@
   689|       |        }
   690|       |#endif
   691|       |        /* and insert the new node in the heap */
-  692|  21.3M|        s->heap[SMALLEST] = node++;
-  693|  21.3M|        pqdownheap(s, tree, SMALLEST);
+  692|   362M|        s->heap[SMALLEST] = node++;
+  693|   362M|        pqdownheap(s, tree, SMALLEST);
   694|       |
-  695|  21.3M|    } while (s->heap_len >= 2);
+  695|   362M|    } while (s->heap_len >= 2);
   ------------------
-  |  Branch (695:14): [True: 16.3M, False: 4.94M]
+  |  Branch (695:14): [True: 278M, False: 84.8M]
   ------------------
   696|       |
-  697|  4.94M|    s->heap[--(s->heap_max)] = s->heap[SMALLEST];
+  697|  84.8M|    s->heap[--(s->heap_max)] = s->heap[SMALLEST];
   698|       |
   699|       |    /* At this point, the fields freq and dad are set. We can now
   700|       |     * generate the bit lengths.
   701|       |     */
-  702|  4.94M|    gen_bitlen(s, (tree_desc *)desc);
+  702|  84.8M|    gen_bitlen(s, (tree_desc *)desc);
   703|       |
   704|       |    /* The field len is now set, we can generate the bit codes */
-  705|  4.94M|    gen_codes ((ct_data *)tree, max_code, s->bl_count);
-  706|  4.94M|}
+  705|  84.8M|    gen_codes ((ct_data *)tree, max_code, s->bl_count);
+  706|  84.8M|}
   707|       |
   708|       |/* ===========================================================================
   709|       | * Scan a literal or distance tree to determine the frequencies of the codes
   710|       | * in the bit length tree.
   711|       | */
-  712|  3.29M|local void scan_tree(deflate_state *s, ct_data *tree, int max_code) {
-  713|  3.29M|    int n;                     /* iterates over all tree elements */
-  714|  3.29M|    int prevlen = -1;          /* last emitted length */
-  715|  3.29M|    int curlen;                /* length of current code */
-  716|  3.29M|    int nextlen = tree[0].Len; /* length of next code */
-  717|  3.29M|    int count = 0;             /* repeat count of the current code */
-  718|  3.29M|    int max_count = 7;         /* max repeat count */
-  719|  3.29M|    int min_count = 4;         /* min repeat count */
+  712|  56.5M|local void scan_tree(deflate_state *s, ct_data *tree, int max_code) {
+  713|  56.5M|    int n;                     /* iterates over all tree elements */
+  714|  56.5M|    int prevlen = -1;          /* last emitted length */
+  715|  56.5M|    int curlen;                /* length of current code */
+  716|  56.5M|    int nextlen = tree[0].Len; /* length of next code */
+  717|  56.5M|    int count = 0;             /* repeat count of the current code */
+  718|  56.5M|    int max_count = 7;         /* max repeat count */
+  719|  56.5M|    int min_count = 4;         /* min repeat count */
   720|       |
-  721|  3.29M|    if (nextlen == 0) max_count = 138, min_count = 3;
-                                    ^884k
+  721|  56.5M|    if (nextlen == 0) max_count = 138, min_count = 3;
+                                    ^16.6M
   ------------------
-  |  Branch (721:9): [True: 884k, False: 2.41M]
+  |  Branch (721:9): [True: 16.6M, False: 39.9M]
   ------------------
-  722|  3.29M|    tree[max_code + 1].Len = (ush)0xffff; /* guard */
+  722|  56.5M|    tree[max_code + 1].Len = (ush)0xffff; /* guard */
   723|       |
-  724|   458M|    for (n = 0; n <= max_code; n++) {
-                                             ^454M
+  724|  7.85G|    for (n = 0; n <= max_code; n++) {
+                                             ^7.80G
   ------------------
-  |  Branch (724:17): [True: 454M, False: 3.29M]
+  |  Branch (724:17): [True: 7.80G, False: 56.5M]
   ------------------
-  725|   454M|        curlen = nextlen; nextlen = tree[n + 1].Len;
-  726|   454M|        if (++count < max_count && curlen == nextlen) {
-                                                 ^453M
+  725|  7.80G|        curlen = nextlen; nextlen = tree[n + 1].Len;
+  726|  7.80G|        if (++count < max_count && curlen == nextlen) {
+                                                 ^7.78G
   ------------------
-  |  Branch (726:13): [True: 453M, False: 1.03M]
-  |  Branch (726:36): [True: 426M, False: 27.5M]
+  |  Branch (726:13): [True: 7.78G, False: 19.4M]
+  |  Branch (726:36): [True: 7.30G, False: 482M]
   ------------------
-  727|   426M|            continue;
-  728|   426M|        } else if (count < min_count) {
-                             ^28.6M^28.6M
+  727|  7.30G|            continue;
+  728|  7.30G|        } else if (count < min_count) {
+                             ^501M^501M
   ------------------
-  |  Branch (728:20): [True: 18.4M, False: 10.1M]
+  |  Branch (728:20): [True: 322M, False: 178M]
   ------------------
-  729|  18.4M|            s->bl_tree[curlen].Freq += (ush)count;
-  730|  18.4M|        } else if (curlen != 0) {
-                             ^10.1M^10.1M
+  729|   322M|            s->bl_tree[curlen].Freq += (ush)count;
+  730|   322M|        } else if (curlen != 0) {
+                             ^178M^178M
   ------------------
-  |  Branch (730:20): [True: 88.8k, False: 10.0M]
+  |  Branch (730:20): [True: 918k, False: 177M]
   ------------------
-  731|  88.8k|            if (curlen != prevlen) s->bl_tree[curlen].Freq++;
-                                                 ^88.7k             ^88.7k
+  731|   918k|            if (curlen != prevlen) s->bl_tree[curlen].Freq++;
+                                                 ^918k              ^918k
   ------------------
-  |  Branch (731:17): [True: 88.7k, False: 26]
+  |  Branch (731:17): [True: 918k, False: 187]
   ------------------
-  732|  88.8k|            s->bl_tree[REP_3_6].Freq++;
-  733|  10.0M|        } else if (count <= 10) {
+  732|   918k|            s->bl_tree[REP_3_6].Freq++;
+  733|   177M|        } else if (count <= 10) {
   ------------------
-  |  Branch (733:20): [True: 3.64M, False: 6.44M]
+  |  Branch (733:20): [True: 66.2M, False: 111M]
   ------------------
-  734|  3.64M|            s->bl_tree[REPZ_3_10].Freq++;
-  735|  6.44M|        } else {
-  736|  6.44M|            s->bl_tree[REPZ_11_138].Freq++;
-  737|  6.44M|        }
-  738|  28.6M|        count = 0; prevlen = curlen;
-  739|  28.6M|        if (nextlen == 0) {
+  734|  66.2M|            s->bl_tree[REPZ_3_10].Freq++;
+  735|   111M|        } else {
+  736|   111M|            s->bl_tree[REPZ_11_138].Freq++;
+  737|   111M|        }
+  738|   501M|        count = 0; prevlen = curlen;
+  739|   501M|        if (nextlen == 0) {
   ------------------
-  |  Branch (739:13): [True: 11.9M, False: 16.7M]
+  |  Branch (739:13): [True: 208M, False: 293M]
   ------------------
-  740|  11.9M|            max_count = 138, min_count = 3;
-  741|  16.7M|        } else if (curlen == nextlen) {
+  740|   208M|            max_count = 138, min_count = 3;
+  741|   293M|        } else if (curlen == nextlen) {
   ------------------
-  |  Branch (741:20): [True: 377, False: 16.7M]
+  |  Branch (741:20): [True: 3.13k, False: 293M]
   ------------------
-  742|    377|            max_count = 6, min_count = 3;
-  743|  16.7M|        } else {
-  744|  16.7M|            max_count = 7, min_count = 4;
-  745|  16.7M|        }
-  746|  28.6M|    }
-  747|  3.29M|}
+  742|  3.13k|            max_count = 6, min_count = 3;
+  743|   293M|        } else {
+  744|   293M|            max_count = 7, min_count = 4;
+  745|   293M|        }
+  746|   501M|    }
+  747|  56.5M|}
   748|       |
   749|       |/* ===========================================================================
   750|       | * Send a literal or distance tree in compressed form, using the codes in
   751|       | * bl_tree.
   752|       | */
-  753|    228|local void send_tree(deflate_state *s, ct_data *tree, int max_code) {
-  754|    228|    int n;                     /* iterates over all tree elements */
-  755|    228|    int prevlen = -1;          /* last emitted length */
-  756|    228|    int curlen;                /* length of current code */
-  757|    228|    int nextlen = tree[0].Len; /* length of next code */
-  758|    228|    int count = 0;             /* repeat count of the current code */
-  759|    228|    int max_count = 7;         /* max repeat count */
-  760|    228|    int min_count = 4;         /* min repeat count */
+  753|  28.3k|local void send_tree(deflate_state *s, ct_data *tree, int max_code) {
+  754|  28.3k|    int n;                     /* iterates over all tree elements */
+  755|  28.3k|    int prevlen = -1;          /* last emitted length */
+  756|  28.3k|    int curlen;                /* length of current code */
+  757|  28.3k|    int nextlen = tree[0].Len; /* length of next code */
+  758|  28.3k|    int count = 0;             /* repeat count of the current code */
+  759|  28.3k|    int max_count = 7;         /* max repeat count */
+  760|  28.3k|    int min_count = 4;         /* min repeat count */
   761|       |
   762|       |    /* tree[max_code + 1].Len = -1; */  /* guard already set */
-  763|    228|    if (nextlen == 0) max_count = 138, min_count = 3;
-                                    ^1
+  763|  28.3k|    if (nextlen == 0) max_count = 138, min_count = 3;
+                                    ^10
   ------------------
-  |  Branch (763:9): [True: 1, False: 227]
+  |  Branch (763:9): [True: 10, False: 28.3k]
   ------------------
   764|       |
-  765|  32.7k|    for (n = 0; n <= max_code; n++) {
-                                             ^32.4k
+  765|  4.07M|    for (n = 0; n <= max_code; n++) {
+                                             ^4.04M
   ------------------
-  |  Branch (765:17): [True: 32.4k, False: 228]
+  |  Branch (765:17): [True: 4.04M, False: 28.3k]
   ------------------
-  766|  32.4k|        curlen = nextlen; nextlen = tree[n + 1].Len;
-  767|  32.4k|        if (++count < max_count && curlen == nextlen) {
-                                                 ^32.4k
+  766|  4.04M|        curlen = nextlen; nextlen = tree[n + 1].Len;
+  767|  4.04M|        if (++count < max_count && curlen == nextlen) {
+                                                 ^4.04M
   ------------------
-  |  Branch (767:13): [True: 32.4k, False: 1]
-  |  Branch (767:36): [True: 26.3k, False: 6.10k]
+  |  Branch (767:13): [True: 4.04M, False: 306]
+  |  Branch (767:36): [True: 3.28M, False: 761k]
   ------------------
-  768|  26.3k|            continue;
-  769|  26.3k|        } else if (count < min_count) {
-                             ^6.10k^6.10k
+  768|  3.28M|            continue;
+  769|  3.28M|        } else if (count < min_count) {
+                             ^761k^761k
   ------------------
-  |  Branch (769:20): [True: 4.66k, False: 1.44k]
+  |  Branch (769:20): [True: 588k, False: 173k]
   ------------------
-  770|  5.40k|            do { send_code(s, curlen, s->bl_tree); } while (--count != 0);
+  770|   707k|            do { send_code(s, curlen, s->bl_tree); } while (--count != 0);
   ------------------
-  |  Branch (770:61): [True: 748, False: 4.66k]
+  |  Branch (770:61): [True: 119k, False: 588k]
   ------------------
   771|       |
-  772|  4.66k|        } else if (curlen != 0) {
-                             ^1.44k^1.44k
+  772|   588k|        } else if (curlen != 0) {
+                             ^173k^173k
   ------------------
-  |  Branch (772:20): [True: 40, False: 1.40k]
+  |  Branch (772:20): [True: 4.51k, False: 169k]
   ------------------
-  773|     40|            if (curlen != prevlen) {
+  773|  4.51k|            if (curlen != prevlen) {
   ------------------
-  |  Branch (773:17): [True: 40, False: 0]
+  |  Branch (773:17): [True: 4.51k, False: 2]
   ------------------
-  774|     40|                send_code(s, curlen, s->bl_tree); count--;
-  775|     40|            }
-  776|     40|            Assert(count >= 3 && count <= 6, " 3_6?");
-  777|     40|            send_code(s, REP_3_6, s->bl_tree); send_bits(s, count - 3, 2);
+  774|  4.51k|                send_code(s, curlen, s->bl_tree); count--;
+  775|  4.51k|            }
+  776|  4.51k|            Assert(count >= 3 && count <= 6, " 3_6?");
+  777|  4.51k|            send_code(s, REP_3_6, s->bl_tree); send_bits(s, count - 3, 2);
   778|       |
-  779|  1.40k|        } else if (count <= 10) {
+  779|   169k|        } else if (count <= 10) {
   ------------------
-  |  Branch (779:20): [True: 682, False: 719]
+  |  Branch (779:20): [True: 73.4k, False: 95.7k]
   ------------------
-  780|    682|            send_code(s, REPZ_3_10, s->bl_tree); send_bits(s, count - 3, 3);
+  780|  73.4k|            send_code(s, REPZ_3_10, s->bl_tree); send_bits(s, count - 3, 3);
   781|       |
-  782|    719|        } else {
-  783|    719|            send_code(s, REPZ_11_138, s->bl_tree); send_bits(s, count - 11, 7);
-  784|    719|        }
-  785|  6.10k|        count = 0; prevlen = curlen;
-  786|  6.10k|        if (nextlen == 0) {
+  782|  95.7k|        } else {
+  783|  95.7k|            send_code(s, REPZ_11_138, s->bl_tree); send_bits(s, count - 11, 7);
+  784|  95.7k|        }
+  785|   761k|        count = 0; prevlen = curlen;
+  786|   761k|        if (nextlen == 0) {
   ------------------
-  |  Branch (786:13): [True: 2.37k, False: 3.73k]
+  |  Branch (786:13): [True: 292k, False: 468k]
   ------------------
-  787|  2.37k|            max_count = 138, min_count = 3;
-  788|  3.73k|        } else if (curlen == nextlen) {
+  787|   292k|            max_count = 138, min_count = 3;
+  788|   468k|        } else if (curlen == nextlen) {
   ------------------
-  |  Branch (788:20): [True: 0, False: 3.73k]
+  |  Branch (788:20): [True: 32, False: 468k]
   ------------------
-  789|      0|            max_count = 6, min_count = 3;
-  790|  3.73k|        } else {
-  791|  3.73k|            max_count = 7, min_count = 4;
-  792|  3.73k|        }
-  793|  6.10k|    }
-  794|    228|}
+  789|     32|            max_count = 6, min_count = 3;
+  790|   468k|        } else {
+  791|   468k|            max_count = 7, min_count = 4;
+  792|   468k|        }
+  793|   761k|    }
+  794|  28.3k|}
   795|       |
   796|       |/* ===========================================================================
   797|       | * Construct the Huffman tree for the bit lengths and return the index in
   798|       | * bl_order of the last bit length code to send.
   799|       | */
-  800|  1.64M|local int build_bl_tree(deflate_state *s) {
-  801|  1.64M|    int max_blindex;  /* index of last bit length code of non zero freq */
+  800|  28.2M|local int build_bl_tree(deflate_state *s) {
+  801|  28.2M|    int max_blindex;  /* index of last bit length code of non zero freq */
   802|       |
   803|       |    /* Determine the bit length frequencies for literal and distance trees */
-  804|  1.64M|    scan_tree(s, (ct_data *)s->dyn_ltree, s->l_desc.max_code);
-  805|  1.64M|    scan_tree(s, (ct_data *)s->dyn_dtree, s->d_desc.max_code);
+  804|  28.2M|    scan_tree(s, (ct_data *)s->dyn_ltree, s->l_desc.max_code);
+  805|  28.2M|    scan_tree(s, (ct_data *)s->dyn_dtree, s->d_desc.max_code);
   806|       |
   807|       |    /* Build the bit length tree: */
-  808|  1.64M|    build_tree(s, (tree_desc *)(&(s->bl_desc)));
+  808|  28.2M|    build_tree(s, (tree_desc *)(&(s->bl_desc)));
   809|       |    /* opt_len now includes the length of the tree representations, except the
   810|       |     * lengths of the bit lengths codes and the 5 + 5 + 4 bits for the counts.
   811|       |     */
@@ -5460,24 +5460,24 @@
   814|       |     * requires that at least 4 bit length codes be sent. (appnote.txt says
   815|       |     * 3 but the actual value used is 4.)
   816|       |     */
-  817|  3.48M|    for (max_blindex = BL_CODES-1; max_blindex >= 3; max_blindex--) {
-                                     ^1.64M                        ^1.83M
+  817|  59.8M|    for (max_blindex = BL_CODES-1; max_blindex >= 3; max_blindex--) {
+                                     ^28.2M                        ^31.5M
   ------------------
-  |  Branch (817:36): [True: 3.48M, False: 0]
+  |  Branch (817:36): [True: 59.8M, False: 0]
   ------------------
-  818|  3.48M|        if (s->bl_tree[bl_order[max_blindex]].Len != 0) break;
-                                                                      ^1.64M
+  818|  59.8M|        if (s->bl_tree[bl_order[max_blindex]].Len != 0) break;
+                                                                      ^28.2M
   ------------------
-  |  Branch (818:13): [True: 1.64M, False: 1.83M]
+  |  Branch (818:13): [True: 28.2M, False: 31.5M]
   ------------------
-  819|  3.48M|    }
+  819|  59.8M|    }
   820|       |    /* Update opt_len to include the bit length tree and counts */
-  821|  1.64M|    s->opt_len += 3*((ulg)max_blindex + 1) + 5 + 5 + 4;
-  822|  1.64M|    Tracev((stderr, "\ndyn trees: dyn %ld, stat %ld",
-  823|  1.64M|            s->opt_len, s->static_len));
+  821|  28.2M|    s->opt_len += 3*((ulg)max_blindex + 1) + 5 + 5 + 4;
+  822|  28.2M|    Tracev((stderr, "\ndyn trees: dyn %ld, stat %ld",
+  823|  28.2M|            s->opt_len, s->static_len));
   824|       |
-  825|  1.64M|    return max_blindex;
-  826|  1.64M|}
+  825|  28.2M|    return max_blindex;
+  826|  28.2M|}
   827|       |
   828|       |/* ===========================================================================
   829|       | * Send the header for a block using dynamic Huffman trees: the counts, the
@@ -5485,147 +5485,147 @@
   831|       | * IN assertion: lcodes >= 257, dcodes >= 1, blcodes >= 4.
   832|       | */
   833|       |local void send_all_trees(deflate_state *s, int lcodes, int dcodes,
-  834|    114|                          int blcodes) {
-  835|    114|    int rank;                    /* index in bl_order */
+  834|  14.1k|                          int blcodes) {
+  835|  14.1k|    int rank;                    /* index in bl_order */
   836|       |
-  837|    114|    Assert (lcodes >= 257 && dcodes >= 1 && blcodes >= 4, "not enough codes");
-  838|    114|    Assert (lcodes <= L_CODES && dcodes <= D_CODES && blcodes <= BL_CODES,
-  839|    114|            "too many codes");
-  840|    114|    Tracev((stderr, "\nbl counts: "));
-  841|    114|    send_bits(s, lcodes - 257, 5);  /* not +255 as stated in appnote.txt */
-  842|    114|    send_bits(s, dcodes - 1,   5);
-  843|    114|    send_bits(s, blcodes - 4,  4);  /* not -3 as stated in appnote.txt */
-  844|  2.14k|    for (rank = 0; rank < blcodes; rank++) {
-                                                 ^2.03k
+  837|  14.1k|    Assert (lcodes >= 257 && dcodes >= 1 && blcodes >= 4, "not enough codes");
+  838|  14.1k|    Assert (lcodes <= L_CODES && dcodes <= D_CODES && blcodes <= BL_CODES,
+  839|  14.1k|            "too many codes");
+  840|  14.1k|    Tracev((stderr, "\nbl counts: "));
+  841|  14.1k|    send_bits(s, lcodes - 257, 5);  /* not +255 as stated in appnote.txt */
+  842|  14.1k|    send_bits(s, dcodes - 1,   5);
+  843|  14.1k|    send_bits(s, blcodes - 4,  4);  /* not -3 as stated in appnote.txt */
+  844|   265k|    for (rank = 0; rank < blcodes; rank++) {
+                                                 ^251k
   ------------------
-  |  Branch (844:20): [True: 2.03k, False: 114]
+  |  Branch (844:20): [True: 251k, False: 14.1k]
   ------------------
-  845|  2.03k|        Tracev((stderr, "\nbl code %2d ", bl_order[rank]));
-  846|  2.03k|        send_bits(s, s->bl_tree[bl_order[rank]].Len, 3);
-  847|  2.03k|    }
-  848|    114|    Tracev((stderr, "\nbl tree: sent %ld", s->bits_sent));
+  845|   251k|        Tracev((stderr, "\nbl code %2d ", bl_order[rank]));
+  846|   251k|        send_bits(s, s->bl_tree[bl_order[rank]].Len, 3);
+  847|   251k|    }
+  848|  14.1k|    Tracev((stderr, "\nbl tree: sent %ld", s->bits_sent));
   849|       |
-  850|    114|    send_tree(s, (ct_data *)s->dyn_ltree, lcodes - 1);  /* literal tree */
-  851|    114|    Tracev((stderr, "\nlit tree: sent %ld", s->bits_sent));
+  850|  14.1k|    send_tree(s, (ct_data *)s->dyn_ltree, lcodes - 1);  /* literal tree */
+  851|  14.1k|    Tracev((stderr, "\nlit tree: sent %ld", s->bits_sent));
   852|       |
-  853|    114|    send_tree(s, (ct_data *)s->dyn_dtree, dcodes - 1);  /* distance tree */
-  854|    114|    Tracev((stderr, "\ndist tree: sent %ld", s->bits_sent));
-  855|    114|}
+  853|  14.1k|    send_tree(s, (ct_data *)s->dyn_dtree, dcodes - 1);  /* distance tree */
+  854|  14.1k|    Tracev((stderr, "\ndist tree: sent %ld", s->bits_sent));
+  855|  14.1k|}
   856|       |
   857|       |/* ===========================================================================
   858|       | * Send a stored block
   859|       | */
   860|       |void ZLIB_INTERNAL _tr_stored_block(deflate_state *s, charf *buf,
-  861|   427k|                                    ulg stored_len, int last) {
-  862|   427k|    send_bits(s, (STORED_BLOCK<<1) + last, 3);  /* send block type */
-  863|   427k|    bi_windup(s);        /* align on byte boundary */
-  864|   427k|    put_short(s, (ush)stored_len);
-  865|   427k|    put_short(s, (ush)~stored_len);
-  866|   427k|    if (stored_len)
+  861|  8.66M|                                    ulg stored_len, int last) {
+  862|  8.66M|    send_bits(s, (STORED_BLOCK<<1) + last, 3);  /* send block type */
+  863|  8.66M|    bi_windup(s);        /* align on byte boundary */
+  864|  8.66M|    put_short(s, (ush)stored_len);
+  865|  8.66M|    put_short(s, (ush)~stored_len);
+  866|  8.66M|    if (stored_len)
   ------------------
-  |  Branch (866:9): [True: 0, False: 427k]
+  |  Branch (866:9): [True: 18, False: 8.66M]
   ------------------
-  867|      0|        zmemcpy(s->pending_buf + s->pending, (Bytef *)buf, stored_len);
-  868|   427k|    s->pending += stored_len;
+  867|     18|        zmemcpy(s->pending_buf + s->pending, (Bytef *)buf, stored_len);
+  868|  8.66M|    s->pending += stored_len;
   869|       |#ifdef ZLIB_DEBUG
   870|       |    s->compressed_len = (s->compressed_len + 3 + 7) & (ulg)~7L;
   871|       |    s->compressed_len += (stored_len + 4) << 3;
   872|       |    s->bits_sent += 2*16;
   873|       |    s->bits_sent += stored_len << 3;
   874|       |#endif
-  875|   427k|}
+  875|  8.66M|}
   876|       |
   877|       |/* ===========================================================================
   878|       | * Flush the bits in the bit buffer to pending output (leaves at most 7 bits)
   879|       | */
-  880|  4.34M|void ZLIB_INTERNAL _tr_flush_bits(deflate_state *s) {
-  881|  4.34M|    bi_flush(s);
-  882|  4.34M|}
+  880|  72.5M|void ZLIB_INTERNAL _tr_flush_bits(deflate_state *s) {
+  881|  72.5M|    bi_flush(s);
+  882|  72.5M|}
   883|       |
   884|       |/* ===========================================================================
   885|       | * Send one empty static block to give enough lookahead for inflate.
   886|       | * This takes 10 bits, of which 7 may remain in the bit buffer.
   887|       | */
-  888|   214k|void ZLIB_INTERNAL _tr_align(deflate_state *s) {
-  889|   214k|    send_bits(s, STATIC_TREES<<1, 3);
-  890|   214k|    send_code(s, END_BLOCK, static_ltree);
+  888|  4.34M|void ZLIB_INTERNAL _tr_align(deflate_state *s) {
+  889|  4.34M|    send_bits(s, STATIC_TREES<<1, 3);
+  890|  4.34M|    send_code(s, END_BLOCK, static_ltree);
   891|       |#ifdef ZLIB_DEBUG
   892|       |    s->compressed_len += 10L; /* 3 for block type, 7 for EOB */
   893|       |#endif
-  894|   214k|    bi_flush(s);
-  895|   214k|}
+  894|  4.34M|    bi_flush(s);
+  895|  4.34M|}
   896|       |
   897|       |/* ===========================================================================
   898|       | * Send the block data compressed using the given Huffman trees
   899|       | */
   900|       |local void compress_block(deflate_state *s, const ct_data *ltree,
-  901|  1.64M|                          const ct_data *dtree) {
-  902|  1.64M|    unsigned dist;      /* distance of matched string */
-  903|  1.64M|    int lc;             /* match length or unmatched char (if dist == 0) */
-  904|  1.64M|    unsigned sx = 0;    /* running index in symbol buffers */
-  905|  1.64M|    unsigned code;      /* the code to send */
-  906|  1.64M|    int extra;          /* number of extra bits to send */
+  901|  28.2M|                          const ct_data *dtree) {
+  902|  28.2M|    unsigned dist;      /* distance of matched string */
+  903|  28.2M|    int lc;             /* match length or unmatched char (if dist == 0) */
+  904|  28.2M|    unsigned sx = 0;    /* running index in symbol buffers */
+  905|  28.2M|    unsigned code;      /* the code to send */
+  906|  28.2M|    int extra;          /* number of extra bits to send */
   907|       |
-  908|  18.6M|    if (s->sym_next != 0) do {
-                      ^1.64M            ^1.64M
+  908|   345M|    if (s->sym_next != 0) do {
+                      ^28.2M            ^28.2M
   ------------------
-  |  Branch (908:9): [True: 1.64M, False: 0]
+  |  Branch (908:9): [True: 28.2M, False: 0]
   ------------------
   909|       |#ifdef LIT_MEM
   910|       |        dist = s->d_buf[sx];
   911|       |        lc = s->l_buf[sx++];
   912|       |#else
-  913|  18.6M|        dist = s->sym_buf[sx++] & 0xff;
-  914|  18.6M|        dist += (unsigned)(s->sym_buf[sx++] & 0xff) << 8;
-  915|  18.6M|        lc = s->sym_buf[sx++];
-  916|  18.6M|#endif
-  917|  18.6M|        if (dist == 0) {
+  913|   345M|        dist = s->sym_buf[sx++] & 0xff;
+  914|   345M|        dist += (unsigned)(s->sym_buf[sx++] & 0xff) << 8;
+  915|   345M|        lc = s->sym_buf[sx++];
+  916|   345M|#endif
+  917|   345M|        if (dist == 0) {
   ------------------
-  |  Branch (917:13): [True: 13.1M, False: 5.48M]
+  |  Branch (917:13): [True: 245M, False: 99.9M]
   ------------------
-  918|  13.1M|            send_code(s, lc, ltree); /* send a literal byte */
-  919|  13.1M|            Tracecv(isgraph(lc), (stderr," '%c' ", lc));
-  920|  13.1M|        } else {
+  918|   245M|            send_code(s, lc, ltree); /* send a literal byte */
+  919|   245M|            Tracecv(isgraph(lc), (stderr," '%c' ", lc));
+  920|   245M|        } else {
   921|       |            /* Here, lc is the match length - MIN_MATCH */
-  922|  5.48M|            code = _length_code[lc];
-  923|  5.48M|            send_code(s, code + LITERALS + 1, ltree);   /* send length code */
-  924|  5.48M|            extra = extra_lbits[code];
-  925|  5.48M|            if (extra != 0) {
+  922|  99.9M|            code = _length_code[lc];
+  923|  99.9M|            send_code(s, code + LITERALS + 1, ltree);   /* send length code */
+  924|  99.9M|            extra = extra_lbits[code];
+  925|  99.9M|            if (extra != 0) {
   ------------------
-  |  Branch (925:17): [True: 2.94M, False: 2.54M]
+  |  Branch (925:17): [True: 48.3M, False: 51.6M]
   ------------------
-  926|  2.94M|                lc -= base_length[code];
-  927|  2.94M|                send_bits(s, lc, extra);       /* send the extra length bits */
-  928|  2.94M|            }
-  929|  5.48M|            dist--; /* dist is now the match distance - 1 */
-  930|  5.48M|            code = d_code(dist);
-  931|  5.48M|            Assert (code < D_CODES, "bad d_code");
+  926|  48.3M|                lc -= base_length[code];
+  927|  48.3M|                send_bits(s, lc, extra);       /* send the extra length bits */
+  928|  48.3M|            }
+  929|  99.9M|            dist--; /* dist is now the match distance - 1 */
+  930|  99.9M|            code = d_code(dist);
+  931|  99.9M|            Assert (code < D_CODES, "bad d_code");
   932|       |
-  933|  5.48M|            send_code(s, code, dtree);       /* send the distance code */
-  934|  5.48M|            extra = extra_dbits[code];
-  935|  5.48M|            if (extra != 0) {
+  933|  99.9M|            send_code(s, code, dtree);       /* send the distance code */
+  934|  99.9M|            extra = extra_dbits[code];
+  935|  99.9M|            if (extra != 0) {
   ------------------
-  |  Branch (935:17): [True: 2.58M, False: 2.90M]
+  |  Branch (935:17): [True: 50.1M, False: 49.7M]
   ------------------
-  936|  2.58M|                dist -= (unsigned)base_dist[code];
-  937|  2.58M|                send_bits(s, dist, extra);   /* send the extra distance bits */
-  938|  2.58M|            }
-  939|  5.48M|        } /* literal or match pair ? */
+  936|  50.1M|                dist -= (unsigned)base_dist[code];
+  937|  50.1M|                send_bits(s, dist, extra);   /* send the extra distance bits */
+  938|  50.1M|            }
+  939|  99.9M|        } /* literal or match pair ? */
   940|       |
   941|       |        /* Check for no overlay of pending_buf on needed symbols */
   942|       |#ifdef LIT_MEM
   943|       |        Assert(s->pending < 2 * (s->lit_bufsize + sx), "pendingBuf overflow");
   944|       |#else
-  945|  18.6M|        Assert(s->pending < s->lit_bufsize + sx, "pendingBuf overflow");
-  946|  18.6M|#endif
+  945|   345M|        Assert(s->pending < s->lit_bufsize + sx, "pendingBuf overflow");
+  946|   345M|#endif
   947|       |
-  948|  18.6M|    } while (sx < s->sym_next);
+  948|   345M|    } while (sx < s->sym_next);
   ------------------
-  |  Branch (948:14): [True: 16.9M, False: 1.64M]
+  |  Branch (948:14): [True: 317M, False: 28.2M]
   ------------------
   949|       |
-  950|  1.64M|    send_code(s, END_BLOCK, ltree);
-  951|  1.64M|}
+  950|  28.2M|    send_code(s, END_BLOCK, ltree);
+  951|  28.2M|}
   952|       |
   953|       |/* ===========================================================================
   954|       | * Check if the data type is TEXT or BINARY, using the following algorithm:
@@ -5640,88 +5640,88 @@
   963|       | *   (7 {BEL}, 8 {BS}, 11 {VT}, 12 {FF}, 26 {SUB}, 27 {ESC}).
   964|       | * IN assertion: the fields Freq of dyn_ltree are set.
   965|       | */
-  966|  1.01M|local int detect_data_type(deflate_state *s) {
+  966|  15.3M|local int detect_data_type(deflate_state *s) {
   967|       |    /* block_mask is the bit mask of block-listed bytes
   968|       |     * set bits 0..6, 14..25, and 28..31
   969|       |     * 0xf3ffc07f = binary 11110011111111111100000001111111
   970|       |     */
-  971|  1.01M|    unsigned long block_mask = 0xf3ffc07fUL;
-  972|  1.01M|    int n;
+  971|  15.3M|    unsigned long block_mask = 0xf3ffc07fUL;
+  972|  15.3M|    int n;
   973|       |
   974|       |    /* Check for non-textual ("block-listed") bytes. */
-  975|  11.1M|    for (n = 0; n <= 31; n++, block_mask >>= 1)
-                                       ^10.1M
+  975|   181M|    for (n = 0; n <= 31; n++, block_mask >>= 1)
+                                       ^166M
   ------------------
-  |  Branch (975:17): [True: 10.8M, False: 304k]
+  |  Branch (975:17): [True: 176M, False: 4.97M]
   ------------------
-  976|  10.8M|        if ((block_mask & 1) && (s->dyn_ltree[n].Freq != 0))
-                                              ^7.98M           ^7.98M
+  976|   176M|        if ((block_mask & 1) && (s->dyn_ltree[n].Freq != 0))
+                                              ^129M            ^129M
   ------------------
-  |  Branch (976:13): [True: 7.98M, False: 2.88M]
-  |  Branch (976:33): [True: 706k, False: 7.27M]
+  |  Branch (976:13): [True: 129M, False: 47.2M]
+  |  Branch (976:33): [True: 10.3M, False: 118M]
   ------------------
-  977|   706k|            return Z_BINARY;
+  977|  10.3M|            return Z_BINARY;
   978|       |
   979|       |    /* Check for textual ("allow-listed") bytes. */
-  980|   304k|    if (s->dyn_ltree[9].Freq != 0 || s->dyn_ltree[10].Freq != 0
-                                                   ^302k            ^302k
+  980|  4.97M|    if (s->dyn_ltree[9].Freq != 0 || s->dyn_ltree[10].Freq != 0
+                                                   ^4.93M           ^4.93M
   ------------------
-  |  Branch (980:9): [True: 2.19k, False: 302k]
-  |  Branch (980:38): [True: 65.8k, False: 236k]
+  |  Branch (980:9): [True: 39.0k, False: 4.93M]
+  |  Branch (980:38): [True: 1.35M, False: 3.58M]
   ------------------
-  981|   304k|            || s->dyn_ltree[13].Freq != 0)
-                             ^236k            ^236k
+  981|  4.97M|            || s->dyn_ltree[13].Freq != 0)
+                             ^3.58M           ^3.58M
   ------------------
-  |  Branch (981:16): [True: 823, False: 235k]
+  |  Branch (981:16): [True: 10.8k, False: 3.57M]
   ------------------
-  982|  68.8k|        return Z_TEXT;
-  983|  9.40M|    for (n = 32; n < LITERALS; n++)
-                  ^235k                      ^9.16M
+  982|  1.40M|        return Z_TEXT;
+  983|   146M|    for (n = 32; n < LITERALS; n++)
+                  ^3.57M                     ^143M
   ------------------
-  |  Branch (983:18): [True: 9.40M, False: 1.40k]
+  |  Branch (983:18): [True: 146M, False: 26.8k]
   ------------------
-  984|  9.40M|        if (s->dyn_ltree[n].Freq != 0)
+  984|   146M|        if (s->dyn_ltree[n].Freq != 0)
   ------------------
-  |  Branch (984:13): [True: 234k, False: 9.16M]
+  |  Branch (984:13): [True: 3.54M, False: 143M]
   ------------------
-  985|   234k|            return Z_TEXT;
+  985|  3.54M|            return Z_TEXT;
   986|       |
   987|       |    /* There are no "block-listed" or "allow-listed" bytes:
   988|       |     * this stream either is empty or has tolerated ("gray-listed") bytes only.
   989|       |     */
-  990|  1.40k|    return Z_BINARY;
-  991|   235k|}
+  990|  26.8k|    return Z_BINARY;
+  991|  3.57M|}
   992|       |
   993|       |/* ===========================================================================
   994|       | * Determine the best encoding for the current block: dynamic trees, static
   995|       | * trees or store, and write out the encoded block.
   996|       | */
   997|       |void ZLIB_INTERNAL _tr_flush_block(deflate_state *s, charf *buf,
-  998|  1.64M|                                   ulg stored_len, int last) {
-  999|  1.64M|    ulg opt_lenb, static_lenb; /* opt_len and static_len in bytes */
- 1000|  1.64M|    int max_blindex = 0;  /* index of last bit length code of non zero freq */
+  998|  28.2M|                                   ulg stored_len, int last) {
+  999|  28.2M|    ulg opt_lenb, static_lenb; /* opt_len and static_len in bytes */
+ 1000|  28.2M|    int max_blindex = 0;  /* index of last bit length code of non zero freq */
  1001|       |
  1002|       |    /* Build the Huffman trees unless a stored block is forced */
- 1003|  1.64M|    if (s->level > 0) {
+ 1003|  28.2M|    if (s->level > 0) {
   ------------------
-  |  Branch (1003:9): [True: 1.64M, False: 0]
+  |  Branch (1003:9): [True: 28.2M, False: 0]
   ------------------
  1004|       |
  1005|       |        /* Check if the file is binary or text */
- 1006|  1.64M|        if (s->strm->data_type == Z_UNKNOWN)
+ 1006|  28.2M|        if (s->strm->data_type == Z_UNKNOWN)
   ------------------
-  |  Branch (1006:13): [True: 1.01M, False: 638k]
+  |  Branch (1006:13): [True: 15.3M, False: 12.9M]
   ------------------
- 1007|  1.01M|            s->strm->data_type = detect_data_type(s);
+ 1007|  15.3M|            s->strm->data_type = detect_data_type(s);
  1008|       |
  1009|       |        /* Construct the literal and distance trees */
- 1010|  1.64M|        build_tree(s, (tree_desc *)(&(s->l_desc)));
- 1011|  1.64M|        Tracev((stderr, "\nlit data: dyn %ld, stat %ld", s->opt_len,
- 1012|  1.64M|                s->static_len));
+ 1010|  28.2M|        build_tree(s, (tree_desc *)(&(s->l_desc)));
+ 1011|  28.2M|        Tracev((stderr, "\nlit data: dyn %ld, stat %ld", s->opt_len,
+ 1012|  28.2M|                s->static_len));
  1013|       |
- 1014|  1.64M|        build_tree(s, (tree_desc *)(&(s->d_desc)));
- 1015|  1.64M|        Tracev((stderr, "\ndist data: dyn %ld, stat %ld", s->opt_len,
- 1016|  1.64M|                s->static_len));
+ 1014|  28.2M|        build_tree(s, (tree_desc *)(&(s->d_desc)));
+ 1015|  28.2M|        Tracev((stderr, "\ndist data: dyn %ld, stat %ld", s->opt_len,
+ 1016|  28.2M|                s->static_len));
  1017|       |        /* At this point, opt_len and static_len are the total bit lengths of
  1018|       |         * the compressed block data, excluding the tree representations.
  1019|       |         */
@@ -5729,27 +5729,27 @@
  1021|       |        /* Build the bit length tree for the above two trees, and get the index
  1022|       |         * in bl_order of the last bit length code to send.
  1023|       |         */
- 1024|  1.64M|        max_blindex = build_bl_tree(s);
+ 1024|  28.2M|        max_blindex = build_bl_tree(s);
  1025|       |
  1026|       |        /* Determine the best encoding. Compute the block lengths in bytes. */
- 1027|  1.64M|        opt_lenb = (s->opt_len + 3 + 7) >> 3;
- 1028|  1.64M|        static_lenb = (s->static_len + 3 + 7) >> 3;
+ 1027|  28.2M|        opt_lenb = (s->opt_len + 3 + 7) >> 3;
+ 1028|  28.2M|        static_lenb = (s->static_len + 3 + 7) >> 3;
  1029|       |
- 1030|  1.64M|        Tracev((stderr, "\nopt %lu(%lu) stat %lu(%lu) stored %lu lit %u ",
- 1031|  1.64M|                opt_lenb, s->opt_len, static_lenb, s->static_len, stored_len,
- 1032|  1.64M|                s->sym_next / 3));
+ 1030|  28.2M|        Tracev((stderr, "\nopt %lu(%lu) stat %lu(%lu) stored %lu lit %u ",
+ 1031|  28.2M|                opt_lenb, s->opt_len, static_lenb, s->static_len, stored_len,
+ 1032|  28.2M|                s->sym_next / 3));
  1033|       |
- 1034|  1.64M|#ifndef FORCE_STATIC
- 1035|  1.64M|        if (static_lenb <= opt_lenb || s->strategy == Z_FIXED)
-                                                     ^114           ^114
+ 1034|  28.2M|#ifndef FORCE_STATIC
+ 1035|  28.2M|        if (static_lenb <= opt_lenb || s->strategy == Z_FIXED)
+                                                     ^14.1k         ^14.1k
   ------------------
-  |  Branch (1035:13): [True: 1.64M, False: 114]
-  |  Branch (1035:40): [True: 0, False: 114]
+  |  Branch (1035:13): [True: 28.2M, False: 14.1k]
+  |  Branch (1035:40): [True: 0, False: 14.1k]
   ------------------
- 1036|  1.64M|#endif
- 1037|  1.64M|            opt_lenb = static_lenb;
+ 1036|  28.2M|#endif
+ 1037|  28.2M|            opt_lenb = static_lenb;
  1038|       |
- 1039|  1.64M|    } else {
+ 1039|  28.2M|    } else {
  1040|      0|        Assert(buf != (char*)0, "lost buf");
  1041|      0|        opt_lenb = static_lenb = stored_len + 5; /* force a stored block */
  1042|      0|    }
@@ -5757,60 +5757,60 @@
  1044|       |#ifdef FORCE_STORED
  1045|       |    if (buf != (char*)0) { /* force stored block */
  1046|       |#else
- 1047|  1.64M|    if (stored_len + 4 <= opt_lenb && buf != (char*)0) {
-                                                    ^0
+ 1047|  28.2M|    if (stored_len + 4 <= opt_lenb && buf != (char*)0) {
+                                                    ^18
   ------------------
-  |  Branch (1047:9): [True: 0, False: 1.64M]
-  |  Branch (1047:39): [True: 0, False: 0]
+  |  Branch (1047:9): [True: 18, False: 28.2M]
+  |  Branch (1047:39): [True: 18, False: 0]
   ------------------
  1048|       |                       /* 4: two words for the lengths */
- 1049|      0|#endif
+ 1049|     18|#endif
  1050|       |        /* The test buf != NULL is only necessary if LIT_BUFSIZE > WSIZE.
  1051|       |         * Otherwise we can't have processed more than WSIZE input bytes since
  1052|       |         * the last block flush, because compression would have been
  1053|       |         * successful. If LIT_BUFSIZE <= WSIZE, it is never too late to
  1054|       |         * transform a block into a stored block.
  1055|       |         */
- 1056|      0|        _tr_stored_block(s, buf, stored_len, last);
+ 1056|     18|        _tr_stored_block(s, buf, stored_len, last);
  1057|       |
- 1058|  1.64M|    } else if (static_lenb == opt_lenb) {
+ 1058|  28.2M|    } else if (static_lenb == opt_lenb) {
   ------------------
-  |  Branch (1058:16): [True: 1.64M, False: 114]
+  |  Branch (1058:16): [True: 28.2M, False: 14.1k]
   ------------------
- 1059|  1.64M|        send_bits(s, (STATIC_TREES<<1) + last, 3);
- 1060|  1.64M|        compress_block(s, (const ct_data *)static_ltree,
- 1061|  1.64M|                       (const ct_data *)static_dtree);
+ 1059|  28.2M|        send_bits(s, (STATIC_TREES<<1) + last, 3);
+ 1060|  28.2M|        compress_block(s, (const ct_data *)static_ltree,
+ 1061|  28.2M|                       (const ct_data *)static_dtree);
  1062|       |#ifdef ZLIB_DEBUG
  1063|       |        s->compressed_len += 3 + s->static_len;
  1064|       |#endif
- 1065|  1.64M|    } else {
- 1066|    114|        send_bits(s, (DYN_TREES<<1) + last, 3);
- 1067|    114|        send_all_trees(s, s->l_desc.max_code + 1, s->d_desc.max_code + 1,
- 1068|    114|                       max_blindex + 1);
- 1069|    114|        compress_block(s, (const ct_data *)s->dyn_ltree,
- 1070|    114|                       (const ct_data *)s->dyn_dtree);
+ 1065|  28.2M|    } else {
+ 1066|  14.1k|        send_bits(s, (DYN_TREES<<1) + last, 3);
+ 1067|  14.1k|        send_all_trees(s, s->l_desc.max_code + 1, s->d_desc.max_code + 1,
+ 1068|  14.1k|                       max_blindex + 1);
+ 1069|  14.1k|        compress_block(s, (const ct_data *)s->dyn_ltree,
+ 1070|  14.1k|                       (const ct_data *)s->dyn_dtree);
  1071|       |#ifdef ZLIB_DEBUG
  1072|       |        s->compressed_len += 3 + s->opt_len;
  1073|       |#endif
- 1074|    114|    }
- 1075|  1.64M|    Assert (s->compressed_len == s->bits_sent, "bad compressed size");
+ 1074|  14.1k|    }
+ 1075|  28.2M|    Assert (s->compressed_len == s->bits_sent, "bad compressed size");
  1076|       |    /* The above check is made mod 2^32, for files larger than 512 MB
  1077|       |     * and uLong implemented on 32 bits.
  1078|       |     */
- 1079|  1.64M|    init_block(s);
+ 1079|  28.2M|    init_block(s);
  1080|       |
- 1081|  1.64M|    if (last) {
+ 1081|  28.2M|    if (last) {
   ------------------
-  |  Branch (1081:9): [True: 1.00M, False: 642k]
+  |  Branch (1081:9): [True: 15.2M, False: 13.0M]
   ------------------
- 1082|  1.00M|        bi_windup(s);
+ 1082|  15.2M|        bi_windup(s);
  1083|       |#ifdef ZLIB_DEBUG
  1084|       |        s->compressed_len += 7;  /* align on byte boundary */
  1085|       |#endif
- 1086|  1.00M|    }
- 1087|  1.64M|    Tracev((stderr,"\ncomprlen %lu(%lu) ", s->compressed_len >> 3,
- 1088|  1.64M|           s->compressed_len - 7*last));
- 1089|  1.64M|}
+ 1086|  15.2M|    }
+ 1087|  28.2M|    Tracev((stderr,"\ncomprlen %lu(%lu) ", s->compressed_len >> 3,
+ 1088|  28.2M|           s->compressed_len - 7*last));
+ 1089|  28.2M|}
  1090|       |
  1091|       |/* ===========================================================================
  1092|       | * Save the match info and tally the frequency counts. Return true if
@@ -6179,20 +6179,20 @@
   283|       |extern void free(voidpf ptr);
   284|       |#endif
   285|       |
-  286|   381M|voidpf ZLIB_INTERNAL zcalloc(voidpf opaque, unsigned items, unsigned size) {
-  287|   381M|    (void)opaque;
-  288|   381M|    return sizeof(uInt) > 2 ? (voidpf)malloc(items * size) :
+  286|  7.34G|voidpf ZLIB_INTERNAL zcalloc(voidpf opaque, unsigned items, unsigned size) {
+  287|  7.34G|    (void)opaque;
+  288|  7.34G|    return sizeof(uInt) > 2 ? (voidpf)malloc(items * size) :
   ------------------
   |  Branch (288:12): [Folded - Ignored]
   ------------------
-  289|   381M|                              (voidpf)calloc(items, size);
+  289|  7.34G|                              (voidpf)calloc(items, size);
                                             ^0
-  290|   381M|}
+  290|  7.34G|}
   291|       |
-  292|   381M|void ZLIB_INTERNAL zcfree(voidpf opaque, voidpf ptr) {
-  293|   381M|    (void)opaque;
-  294|   381M|    free(ptr);
-  295|   381M|}
+  292|  7.34G|void ZLIB_INTERNAL zcfree(voidpf opaque, voidpf ptr) {
+  293|  7.34G|    (void)opaque;
+  294|  7.34G|    free(ptr);
+  295|  7.34G|}
   296|       |
   297|       |#endif /* MY_ZCALLOC */
   298|       |
