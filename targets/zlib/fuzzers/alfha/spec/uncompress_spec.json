@@ -1,0 +1,55 @@
+{
+  "function_name": "uncompress",
+  "function_code": "FC_ZLIB_UNCOMPRESS", 
+  "function_location": "zlib.h:1301",
+  "category": "Stream",
+  "priority": "Critical",
+  "input_structure": {
+    "dest": "Bytef* - destination buffer for uncompressed data",
+    "destLen": "uLongf* - pointer to destination buffer size/actual uncompressed size",
+    "source": "const Bytef* - compressed source data",
+    "sourceLen": "uLong - length of compressed source data"
+  },
+  "validation_conditions": [
+    "dest != NULL",
+    "destLen != NULL", 
+    "source != NULL or sourceLen == 0",
+    "*destLen > 0 (sufficient for uncompressed data)",
+    "sourceLen >= 0"
+  ],
+  "error_codes": [
+    "Z_OK",
+    "Z_MEM_ERROR",
+    "Z_BUF_ERROR",
+    "Z_DATA_ERROR"
+  ],
+  "side_effects": [
+    "writes uncompressed data to dest buffer",
+    "updates *destLen with actual uncompressed size",
+    "partial output written on Z_BUF_ERROR"
+  ],
+  "constraints": [
+    "destination buffer must be large enough for full uncompressed data",
+    "uncompressed size must be known in advance",
+    "input must be valid compressed data"
+  ],
+  "fuzzing_strategy": {
+    "input_generation": [
+      "valid compressed data with various sizes",
+      "corrupted/malformed compressed data", 
+      "truncated compressed data",
+      "buffer size edge cases (exact, too small, oversized)",
+      "empty/zero-length inputs",
+      "maximum size compressed data",
+      "NULL pointer combinations"
+    ],
+    "coverage_targets": [
+      "decompression algorithm paths",
+      "data validation and error detection",
+      "buffer boundary checks",
+      "memory allocation/deallocation", 
+      "partial output handling",
+      "corruption recovery"
+    ]
+  }
+}
