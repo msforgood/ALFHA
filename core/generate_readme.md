@@ -174,3 +174,35 @@ README.md에는 다음 산출물이 **정확한 경로로 정의**되어야 하�
 - 스펙 파일: `fuzzers/alfha/spec/<function>_spec.json`
 - 빌드/실행 기록: `analysis/logs/build_run.md`
 - 수정 루프 기록: `analysis/logs/iteration.md`
+
+
+## GENERATE (반드시 README.md 마지막에 포함)
+
+### 1) Git add / commit 명령어
+
+README.md의 마지막에는 **이번 작업에서 생성·수정되는 파일들을 기준으로**
+아래 형식의 명령어를 반드시 출력한다.
+
+```bash
+git add analysis/target.md
+git add analysis/results/functions.csv
+git add analysis/logs/build_run.md
+git add analysis/logs/iteration.md
+git add fuzzers/alfha/spec/
+
+git commit -m "feat: initialize ALFHA fuzzing workflow for <target_name>" \
+  -m "- target: <target_name>" \
+  -m "- functions: prioritized fuzzing candidate list" \
+  -m "- spec: initial function specification(s)" \
+  -m "- verified: build and execution feasibility loop completed"
+```
+
+### 2) 퍼저 빌드 및 실행 명령어
+
+README.md에는 이 퍼저를 실제로 가동할 수 있는 명령어를 반드시 포함한다.
+
+- standalone 퍼저 실행
+- (가능하다면) coverage 모드 실행
+
+형식 예시는 아래와 같으며, 타겟 구조에 맞게 실제 실행 가능한 명령으로 조정해야 한다.
+퍼저 빌드 - 퍼저 실행 (libFuzzer) - 커버리지 수집 및 자동 리포트 생성
