@@ -1,0 +1,78 @@
+{
+  "function_code": "FC_ZLIB_UNCOMPRESS2",
+  "function_name": "uncompress2",
+  "function_location": "zlib.h:1319",
+  "category": "Stream", 
+  "priority": "Critical",
+  "signature": "int uncompress2(Bytef *dest, uLongf *destLen, const Bytef *source, uLong *sourceLen)",
+  "input_structure": {
+    "dest": "Bytef* - destination buffer for uncompressed data",
+    "destLen": "uLongf* - pointer to destination buffer size (input/output)",
+    "source": "const Bytef* - compressed source data buffer",
+    "sourceLen": "uLong* - pointer to source data length (input/output)"
+  },
+  "validation_conditions": [
+    "dest != NULL", 
+    "destLen != NULL",
+    "source != NULL or *sourceLen == 0",
+    "sourceLen != NULL",
+    "*destLen > 0 for non-empty output",
+    "*sourceLen >= 0"
+  ],
+  "error_codes": [
+    "Z_OK - success",
+    "Z_MEM_ERROR - insufficient memory",
+    "Z_BUF_ERROR - output buffer too small", 
+    "Z_DATA_ERROR - input data corrupted or incomplete"
+  ],
+  "side_effects": [
+    "writes uncompressed data to dest buffer",
+    "updates *destLen with actual uncompressed size",
+    "updates *sourceLen with bytes consumed from source",
+    "may allocate temporary memory internally"
+  ],
+  "constraints": [
+    "dest buffer must be large enough for uncompressed data",
+    "destLen is both input (buffer size) and output (actual size)",
+    "sourceLen is both input (available bytes) and output (consumed bytes)",
+    "partial decompression allowed if output buffer too small"
+  ],
+  "fuzzing_strategy": {
+    "buffer_sizes": [
+      "empty input (*sourceLen=0)",
+      "small compressed data (1-16 bytes)",
+      "medium compressed data (1KB-64KB)",
+      "large compressed data (1MB+)",
+      "oversized destLen vs actual uncompressed size"
+    ],
+    "compression_formats": [
+      "valid zlib compressed data",
+      "corrupted compression headers",
+      "truncated compressed data",
+      "invalid compression format",
+      "mixed valid/invalid blocks"
+    ],
+    "buffer_conditions": [
+      "exact size destLen = actual uncompressed size",
+      "undersized destLen < actual uncompressed size", 
+      "oversized destLen > actual uncompressed size",
+      "destLen = 0",
+      "partial source data (*sourceLen < full compressed size)"
+    ],
+    "data_corruption": [
+      "bit flips in compressed data",
+      "modified compression headers",
+      "truncated data streams", 
+      "invalid huffman codes",
+      "checksum mismatches"
+    ]
+  },
+  "vulnerability_targets": [
+    "buffer overflow in dest buffer",
+    "integer overflow in length calculations", 
+    "out-of-bounds read from source",
+    "malformed compressed data parsing",
+    "memory allocation failures",
+    "infinite loops in decompression"
+  ]
+}

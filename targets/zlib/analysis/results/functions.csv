@@ -6,10 +6,10 @@ deflateEnd,zlib.h:367,Compression,Critical,1,true,false,int,true
 inflateInit,zlib.h:382,Compression,Critical,1,true,false,int,true
 inflate,zlib.h:405,Compression,Critical,2,true,true,int,true
 inflateEnd,zlib.h:525,Compression,Critical,1,true,false,int,true
-deflateInit2,zlib.h:543,Compression,High,6,true,false,int,false
-deflateSetDictionary,zlib.h:618,Compression,High,3,true,true,int,false
+deflateInit2,zlib.h:543,Compression,High,6,true,false,int,true
+deflateSetDictionary,zlib.h:618,Compression,High,3,true,true,int,true
 deflateGetDictionary,zlib.h:662,Compression,Medium,3,true,true,int,false
-deflateCopy,zlib.h:684,Compression,High,2,true,false,int,false
+deflateCopy,zlib.h:684,Compression,High,2,true,false,int,true
 deflateReset,zlib.h:702,Compression,High,1,true,false,int,false
 deflateParams,zlib.h:713,Compression,High,3,true,false,int,false
 deflateTune,zlib.h:751,Compression,Medium,5,true,false,int,false
@@ -18,8 +18,8 @@ deflatePending,zlib.h:783,Compression,Medium,3,true,false,int,false
 deflateUsed,zlib.h:798,Compression,Medium,2,true,false,int,false
 deflatePrime,zlib.h:810,Compression,Medium,3,true,false,int,false
 deflateSetHeader,zlib.h:827,Compression,Medium,2,true,false,int,false
-inflateInit2,zlib.h:853,Compression,High,2,true,false,int,false
-inflateSetDictionary,zlib.h:907,Compression,High,3,true,true,int,false
+inflateInit2,zlib.h:853,Compression,High,2,true,false,int,true
+inflateSetDictionary,zlib.h:907,Compression,High,3,true,true,int,true
 inflateGetDictionary,zlib.h:930,Compression,Medium,3,true,true,int,false
 inflateSync,zlib.h:945,Compression,High,1,true,false,int,false
 inflateCopy,zlib.h:964,Compression,High,2,true,false,int,false
@@ -33,10 +33,10 @@ inflateBack,zlib.h:1132,Compression,Medium,4,true,true,int,false
 inflateBackEnd,zlib.h:1202,Compression,Medium,1,true,false,int,false
 zlibCompileFlags,zlib.h:1210,Utility,Low,0,false,false,uLong,false
 compress,zlib.h:1263,Stream,Critical,4,false,true,int,true
-compress2,zlib.h:1278,Stream,Critical,5,false,true,int,false
+compress2,zlib.h:1278,Stream,Critical,5,false,true,int,true
 compressBound,zlib.h:1294,Stream,Medium,1,false,false,uLong,false
 uncompress,zlib.h:1301,Stream,Critical,4,false,true,int,true
-uncompress2,zlib.h:1319,Stream,Critical,5,false,true,int,false
+uncompress2,zlib.h:1319,Stream,Critical,5,false,true,int,true
 gzopen,zlib.h:1339,FileIO,High,2,true,false,gzFile,false
 gzdopen,zlib.h:1386,FileIO,High,2,true,false,gzFile,false
 gzbuffer,zlib.h:1411,FileIO,Medium,2,true,false,int,false

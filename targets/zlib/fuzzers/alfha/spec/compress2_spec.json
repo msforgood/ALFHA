@@ -1,0 +1,74 @@
+{
+  "function_code": "FC_ZLIB_COMPRESS2",
+  "function_name": "compress2",
+  "function_location": "zlib.h:1278",
+  "category": "Stream",
+  "priority": "Critical",
+  "signature": "int compress2(Bytef *dest, uLongf *destLen, const Bytef *source, uLong sourceLen, int level)",
+  "input_structure": {
+    "dest": "Bytef* - destination buffer for compressed data",
+    "destLen": "uLongf* - pointer to destination buffer size (input/output)",
+    "source": "const Bytef* - source data buffer to compress",
+    "sourceLen": "uLong - length of source data in bytes",
+    "level": "int - compression level (0-9, Z_DEFAULT_COMPRESSION)"
+  },
+  "validation_conditions": [
+    "dest != NULL",
+    "destLen != NULL",
+    "source != NULL or sourceLen == 0",
+    "*destLen >= compressBound(sourceLen)",
+    "level in range [-1, 9] (Z_DEFAULT_COMPRESSION to Z_BEST_COMPRESSION)"
+  ],
+  "error_codes": [
+    "Z_OK - success",
+    "Z_MEM_ERROR - insufficient memory", 
+    "Z_BUF_ERROR - output buffer too small",
+    "Z_STREAM_ERROR - invalid compression level"
+  ],
+  "side_effects": [
+    "writes compressed data to dest buffer",
+    "updates *destLen with actual compressed size",
+    "may allocate temporary memory internally"
+  ],
+  "constraints": [
+    "dest buffer must be at least compressBound(sourceLen) bytes",
+    "destLen is both input (buffer size) and output (actual size)",
+    "level must be valid compression level or Z_DEFAULT_COMPRESSION (-1)"
+  ],
+  "fuzzing_strategy": {
+    "buffer_sizes": [
+      "empty input (sourceLen=0)",
+      "small buffer (1-16 bytes)",
+      "medium buffer (1KB-64KB)", 
+      "large buffer (1MB+)",
+      "edge case sizes (power of 2 boundaries)"
+    ],
+    "compression_levels": [
+      "Z_NO_COMPRESSION (0)",
+      "Z_BEST_SPEED (1)",
+      "Z_BEST_COMPRESSION (9)",
+      "Z_DEFAULT_COMPRESSION (-1)",
+      "invalid levels (-2, 10, 100)"
+    ],
+    "buffer_conditions": [
+      "exact size destLen = compressBound(sourceLen)",
+      "undersized destLen < compressBound(sourceLen)",
+      "oversized destLen > compressBound(sourceLen)",
+      "destLen = 0"
+    ],
+    "data_patterns": [
+      "all zeros",
+      "random data",
+      "highly compressible patterns",
+      "incompressible data",
+      "mixed patterns"
+    ]
+  },
+  "vulnerability_targets": [
+    "integer overflow in length calculations",
+    "buffer overflow in dest buffer",
+    "out-of-bounds read from source",
+    "invalid compression level handling",
+    "memory allocation failures"
+  ]
+}
